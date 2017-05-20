@@ -1,0 +1,23 @@
+Identifizierung:
+# Sind broadcasts in dieser Art möglich?
+1. Board broadcastest Anwendungsidentifier & Link-Local Adresse
+2. Server (Pi) sendet eigene Link-Local Adresse
+-> Verbindung aufgebaut
+
+Übertragung:
+Polling durch Server
+
+Pakete:
+# Idealer weise nur 33 Bytes übertragen
+# Link-Local/Mac Adresse als Board-ID?
+Board Identifier (2B)
+# Sensor-ID beschreibt die Art des Sensors (Temp., CO2, etc.)
+# und identifiziert NICHT einen bestimmten Sensor 
+Sensor-ID (1B) + Temperatur in °C/K (2B)
+Sensor-ID (1B) + Luftfeuchtigkeit in % (1B)
+# Pa schein verbreiteter zu sein, aber bar wäre einfach zu übertragen
+Sensor-ID (1B) + Luftdruck in Pa/bar (4B/2B)
+Sensor-ID (1B) + CO2 gehalt in % (1B)
+
+-> insgesamt max. 14B
+
