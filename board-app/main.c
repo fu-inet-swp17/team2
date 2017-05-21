@@ -12,16 +12,17 @@ int main(void)
 
 	sock_udp_ep_t remote = SOCK_IPV6_EP_ANY;
 	remote.port = 2017;
-	ipv6_addr_from_str((ipv6_addr_t *)&remote.addr.ipv6, "ff01::1");
+	// ff02::1 -> addr für link-local broadcast
+	ipv6_addr_from_str((ipv6_addr_t *)&remote.addr.ipv6, "ff02::1");
+	
+	
 	if(sock_udp_send(NULL, "Hello world!", sizeof("Hello world!"), &remote) < 0) {
-		puts("Error sending\"Hello world!\"");
+		puts("Error sending \"Hello world!\"");
 		return EXIT_FAILURE;
 	}
 	
-	puts("Successfully send\"Hello world\"");
+	puts("Successfully send \"Hello world\"");
 
-	// char line_buf[SHELL_DEFAULT_BUFSIZE];
-    // shell_run(NULL, line_buf, SHELL_DEFAULT_BUFSIZE);
 
     return EXIT_SUCCESS;
 }

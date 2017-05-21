@@ -9,13 +9,8 @@
 uint8_t buf[128];
 
 int main(void) {
-	// printf("This is the server-emulator on %s.\n", RIOT_BOARD);
-	
-	// TODO herausfinden was genau 'shell_run' tut
-	// char line_buf[SHELL_DEFAULT_BUFSIZE];
-	// shell_run(NULL, line_buf, SHELL_DEFAULT_BUFSIZE);
+	printf("This is the server-emulator on %s.\n", RIOT_BOARD);
 
-	// TODO warum funktioniert SOCK_IPV6_EP_ANY nicht?
 	sock_udp_ep_t local = SOCK_IPV6_EP_ANY;
 	
 	/*{
@@ -28,6 +23,8 @@ int main(void) {
 	if(sock_udp_create(&sock, &local, NULL, 0) < 0) {
 		puts("Error creating UDP sock");
 		return EXIT_FAILURE;
+	} else {
+		puts("Successfull createt UDP socket");
 	}
 	
 	while(true) {
@@ -36,6 +33,10 @@ int main(void) {
 			printf("%.128s\n", buf);
 		}
 	}
-
+	
+	// TODO herausfinden was genau 'shell_run' tut
+	char line_buf[SHELL_DEFAULT_BUFSIZE];
+	shell_run(NULL, line_buf, SHELL_DEFAULT_BUFSIZE);
+	
     return EXIT_SUCCESS;
 }
