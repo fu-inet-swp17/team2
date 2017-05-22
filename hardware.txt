@@ -1,0 +1,7 @@
+2 phyWAVE-KW22
+
+pro phyWAVE-KW22:
+	- CO2 sensor
+	- Alk sensor
+	- 4 LED streifen
+
