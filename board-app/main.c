@@ -8,6 +8,10 @@
 #include "net/gnrc/ipv6/netif.h"
 #include "shell.h"
 
+#define START_MSG_NUM (sizeof(app_id) + IPV6_ADDR_MAX_STR_LEN + 2)
+
+const char app_id[] = "krasse-riot-se-app";
+
 int main(void) {
     printf("Smart Envoirement App on %s\n", RIOT_BOARD);
 
@@ -27,19 +31,17 @@ int main(void) {
 	printf("prefix: %s\n", addr_str);
 	
 
-	/*
 	sock_udp_ep_t remote = SOCK_IPV6_EP_ANY;
 	remote.port = 2017;
 	ipv6_addr_from_str((ipv6_addr_t *)&remote.addr.ipv6, "ff02::1");
 	
-	size_t intro_msg_len = sizeof("swp-se-app") + IPV6_ADDR_MAX_STR_LEN; 
-	char* intro_msg[intro_msg_len] = "swp-se-app";
+	char intro_msg[START_MSG_NUM];
+	snprintf(intro_msg, START_MSG_NUM, "%s %s", app_id, addr_str);
 	
-	if(sock_udp_send(NULL, intro_msg, intro_msg_len, &remote) < 0) {
+	if(sock_udp_send(NULL, intro_msg, START_MSG_NUM, &remote) < 0) {
 		puts("Error sending intro message!\n");
 		return EXIT_FAILURE;
 	}
-	*/
 
     return EXIT_SUCCESS;
 }
