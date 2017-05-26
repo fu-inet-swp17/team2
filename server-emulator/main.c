@@ -11,18 +11,19 @@
 #include "board.h"
 #include "thread.h"
 
+#include "./../smart_environment.h"
+
 #define MAX_BOARD_NUM 10
-#define BUFF_SIZE_NUM (sizeof(app_id) + IPV6_ADDR_MAX_STR_LEN + 2)
-
-const char app_id[] = "krasse-riot-se-app";
-
-char connect_stack[THREAD_STACKSIZE_DEFAULT];
 
 typedef struct SensorBoard {
-	ipv6_addr_t addr;
+	bool init;
+	char addr[IPV6_ADDR_MAX_STR_LEN];
 } SensorBoard;
 
 SensorBoard boards[MAX_BOARD_NUM];
+
+char own_addr[IPV6_ADDR_MAX_STR_LEN];
+char connect_stack[THREAD_STACKSIZE_DEFAULT];
 
 /*
  * #description: checks if string prefix is a prefix of string str
@@ -48,7 +49,7 @@ void button_handler(void* args) {
  */
 void* connect_thread_handler(void* args) {
 	(void)args;
-	char buf[BUFF_SIZE_NUM];
+	char buf[CLIENT_INIT_MSG_LEN];
 	
 	sock_udp_ep_t local = SOCK_IPV6_EP_ANY;
 	
@@ -68,7 +69,7 @@ void* connect_thread_handler(void* args) {
 		ssize_t res = sock_udp_recv(
 			&sock,
 			buf,
-			sizeof(buf),
+			CLIENT_INIT_MSG_LEN,
 			SOCK_NO_TIMEOUT,
 			NULL
 		);
@@ -77,9 +78,51 @@ void* connect_thread_handler(void* args) {
 			printf("Error during \"sock_udp_recv\": %d!\nAboarting.", res);
 			sock_ready = false;
 		} else if((res) >= 0) {
-			if(startsWith(buf, app_id)) {
+			if(startsWith(buf, client_id)) {
 				char* addr_str = strchr(buf, ' ');
-				printf("Board found on: %s\n", addr_str);
+				addr_str++; // addr_str zeigt sonst auf das Leerzeichen!
+				
+				size_t board_index;
+				for(board_index=0;
+					board_index<MAX_BOARD_NUM && boards[board_index].init;
+					board_index++
+				);
+				
+				if(board_index >= MAX_BOARD_NUM) {
+					printf("Max nr. of boards registered!\n");
+				} else {
+					boards[board_index].init = true;
+					strncpy(
+						boards[board_index].addr,
+						addr_str,
+						IPV6_ADDR_MAX_STR_LEN
+					);
+					
+					sock_udp_ep_t remote = SOCK_IPV6_EP_ANY;
+					remote.port = 2018;
+					ipv6_addr_from_str(
+						(ipv6_addr_t *)&remote.addr.ipv6,
+						boards[board_index].addr
+					);
+					
+					char resp_msg[SERVER_RESP_MSG_LEN];
+					snprintf(
+						resp_msg,
+						SERVER_RESP_MSG_LEN,
+						"%s %s",
+						server_id,
+						own_addr
+					);
+					
+					if(sock_udp_send(NULL, resp_msg, SERVER_RESP_MSG_LEN,  
+						&remote) < 0) {
+						printf("Error sending server response!\n");
+					} else {
+						printf("%s\n", resp_msg);
+					}
+					
+					printf("Board found on: %s\n", addr_str);
+				}
 			}
 		}
 	}
@@ -91,6 +134,10 @@ void* connect_thread_handler(void* args) {
 int main(void) {
 	printf("This is the server-emulator on %s with ", RIOT_BOARD);
 	
+	for(size_t i=0; i<MAX_BOARD_NUM; i++) {
+		boards[i].init = false;
+	}
+	
 	// zu suchendes Prefix in ipv6 umwandeln
 	ipv6_addr_t addr;
 	ipv6_addr_from_str(&addr, "fe80::");
@@ -99,9 +146,8 @@ int main(void) {
 	ipv6_addr_t* ll_addr = NULL;
 	gnrc_ipv6_netif_find_by_prefix(&ll_addr, &addr);
 	
-	char addr_str[IPV6_ADDR_MAX_STR_LEN];
-	ipv6_addr_to_str(addr_str, ll_addr, IPV6_ADDR_MAX_STR_LEN);
-	printf("\"%s\" as link-local address.\n", addr_str);
+	ipv6_addr_to_str(own_addr, ll_addr, IPV6_ADDR_MAX_STR_LEN);
+	printf("\"%s\" as link-local address.\n", own_addr);
 	
 	// funktioniert nur mit GPIO_IN_PU
 	// mit GPIO_RISING wird der Handler 2 mal bei Boardstart aufgerufen,

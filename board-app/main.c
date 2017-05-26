@@ -8,12 +8,10 @@
 #include "net/gnrc/ipv6/netif.h"
 #include "shell.h"
 
-#define START_MSG_NUM (sizeof(app_id) + IPV6_ADDR_MAX_STR_LEN + 2)
-
-const char app_id[] = "krasse-riot-se-app";
+#include "./../smart_environment.h"
 
 int main(void) {
-    printf("Smart Envoirement App on %s\n", RIOT_BOARD);
+    printf("Smart environment app on %s\n", RIOT_BOARD);
 
 	// ff02::1 -> addr für link-local broadcast
 	ipv6_addr_t addr;
@@ -21,27 +19,43 @@ int main(void) {
 
 	char addr_str[IPV6_ADDR_MAX_STR_LEN];
 	ipv6_addr_to_str(addr_str, &addr, IPV6_ADDR_MAX_STR_LEN);
-	printf("prefix: %s\n", addr_str);
 
 	ipv6_addr_t* out = NULL;
-	printf("DEBUG\n");
 	gnrc_ipv6_netif_find_by_prefix(&out, &addr);
 	
 	ipv6_addr_to_str(addr_str, out, IPV6_ADDR_MAX_STR_LEN);
-	printf("prefix: %s\n", addr_str);
-	
+	printf("own ipv6 addr: %s\n", addr_str);
 
 	sock_udp_ep_t remote = SOCK_IPV6_EP_ANY;
 	remote.port = 2017;
 	ipv6_addr_from_str((ipv6_addr_t *)&remote.addr.ipv6, "ff02::1");
 	
-	char intro_msg[START_MSG_NUM];
-	snprintf(intro_msg, START_MSG_NUM, "%s %s", app_id, addr_str);
+	char intro_msg[CLIENT_INIT_MSG_LEN];
+	snprintf(intro_msg, CLIENT_INIT_MSG_LEN, "%s %s", client_id, addr_str);
 	
-	if(sock_udp_send(NULL, intro_msg, START_MSG_NUM, &remote) < 0) {
+	if(sock_udp_send(NULL, intro_msg, CLIENT_INIT_MSG_LEN, &remote) < 0) {
 		puts("Error sending intro message!\n");
 		return EXIT_FAILURE;
 	}
-
+	
+	uint8_t buf[SERVER_RESP_MSG_LEN];
+	sock_udp_ep_t local = SOCK_IPV6_EP_ANY;
+	local.port = 2018;
+	sock_udp_t sock;
+	sock_udp_create(&sock, &local, NULL, 0);
+	ssize_t res = sock_udp_recv(
+			&sock,
+			buf,
+			sizeof(buf),
+			SOCK_NO_TIMEOUT,
+			NULL
+	);
+	
+	if(res < 0) {
+		printf("Error during receive!\n");
+	} else {
+		printf("%s\n", buf);
+	}
+	
     return EXIT_SUCCESS;
 }
