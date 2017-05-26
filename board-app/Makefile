@@ -3,7 +3,6 @@ APPLICATION = board-app
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= pba-d-01-kw2x #native
-SERIAL ?= "02000203C3014E6A3EFDB392"
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../RIOT

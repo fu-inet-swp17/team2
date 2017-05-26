@@ -3,7 +3,6 @@ APPLICATION = server-emulator
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= samr21-xpro #native
-SERIAL ?= "ATML2127031800001974"
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../RIOT
