@@ -1,11 +1,16 @@
+Client-port: 2018
+Server-conn-port: 2017
+Server-poll-port: 2018
+
 Identifizierung:
 # Sind broadcasts in dieser Art möglich?
-1. Board broadcastest Anwendungsidentifier & Link-Local Adresse
-2. Server (Pi) sendet eigene Link-Local Adresse
+1. Board broadcastest Identifier & Link-Local Adresse
+2. Server (Pi) sendet Identifier & eigene Link-Local Adresse
 -> Verbindung aufgebaut
 
 Übertragung:
 Polling durch Server
+Serialisierung mittels CoAP
 
 Pakete:
 # Idealer weise nur 33 Bytes übertragen

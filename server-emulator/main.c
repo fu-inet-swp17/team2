@@ -18,6 +18,7 @@
 typedef struct SensorBoard {
 	bool init;
 	char addr[IPV6_ADDR_MAX_STR_LEN];
+	sock_udp_ep_t sock;
 } SensorBoard;
 
 SensorBoard boards[MAX_BOARD_NUM];
@@ -32,11 +33,27 @@ char connect_stack[THREAD_STACKSIZE_DEFAULT];
  * #param[char* prefix]: the prefix to check for
  * #return[bool]: true wenn prefix is a prefix of str, false else
  */
-bool startsWith(const char* str, const char* prefix) {
+static bool startsWith(const char* str, const char* prefix) {
 	char* substr = strstr(str, prefix);
 	return substr == str;
 }
 
+/*
+ * @description: strncpy in Vernünftig, garantiert Nullterminator
+ * @param{char* dst}: Speicher in den rein kopiert wird
+ * @param{const char* src}: String der in 'dst' kopiert werden soll
+ * @param{size_t num}: max. Anzahl Zeichen die in dst geschrieben werden darf 
+ * @return{size_t}: Anzahl geschriebener Zeichen
+ */
+static size_t my_strncpy(char* dst, const char* src, size_t num) {
+	size_t i;
+	for(i=0; src[i] && i<(num-1); i++) {
+		dst[i] = src[i];
+	}
+	
+	dst[i] = 0;
+	return i;
+}
 
 void button_handler(void* args) {
 	printf("hipp hipp hurra\n");
@@ -45,7 +62,6 @@ void button_handler(void* args) {
 
 /*
  * Deamon der im Hintergrund läuft und neue Boards registriert
- * Frage: kann der das Array 'boards' sehen? 
  */
 void* connect_thread_handler(void* args) {
 	(void)args;
@@ -54,14 +70,14 @@ void* connect_thread_handler(void* args) {
 	sock_udp_ep_t local = SOCK_IPV6_EP_ANY;
 	
 	sock_udp_t sock;
-	local.port = 2017;
+	local.port = SERVER_CONN_PORT;
 	bool sock_ready = false;
 	if(sock_udp_create(&sock, &local, NULL, 0) < 0) {
-		puts("Error creating UDP sock");
+		fputs("Error creating UDP sock!\n", stderr);
 		sock_ready = false;
 	} else {
-		puts("Successfull createt UDP socket.");
-		puts("Waiting for boards.");
+		printf("Successfull createt UDP socket.\n");
+		printf("Waiting for boards...\n");
 		sock_ready = true;
 	}
 	
@@ -75,7 +91,11 @@ void* connect_thread_handler(void* args) {
 		);
 		
 		if(res < 0) {
-			printf("Error during \"sock_udp_recv\": %d!\nAboarting.", res);
+			fprintf(
+				stderr,
+				"Error during \"sock_udp_recv\": %d!\nAboarting.",
+				res
+			);
 			sock_ready = false;
 		} else if((res) >= 0) {
 			if(startsWith(buf, client_id)) {
@@ -89,19 +109,18 @@ void* connect_thread_handler(void* args) {
 				);
 				
 				if(board_index >= MAX_BOARD_NUM) {
-					printf("Max nr. of boards registered!\n");
+					fputs("Max nr. of boards registered!\n", stderr);
 				} else {
 					boards[board_index].init = true;
-					strncpy(
+					my_strncpy(
 						boards[board_index].addr,
 						addr_str,
 						IPV6_ADDR_MAX_STR_LEN
 					);
 					
-					sock_udp_ep_t remote = SOCK_IPV6_EP_ANY;
-					remote.port = 2018;
+					boards[board_index].sock.port = CLIENT_PORT;
 					ipv6_addr_from_str(
-						(ipv6_addr_t *)&remote.addr.ipv6,
+						(ipv6_addr_t *)&boards[board_index].sock.addr.ipv6,
 						boards[board_index].addr
 					);
 					
@@ -115,24 +134,21 @@ void* connect_thread_handler(void* args) {
 					);
 					
 					if(sock_udp_send(NULL, resp_msg, SERVER_RESP_MSG_LEN,  
-						&remote) < 0) {
-						printf("Error sending server response!\n");
+						&boards[board_index].sock) < 0) {
+						fputs("Error sending server response!\n", stderr);
 					} else {
-						printf("%s\n", resp_msg);
+						printf("Board found on: %s\n", addr_str);
 					}
-					
-					printf("Board found on: %s\n", addr_str);
 				}
 			}
 		}
 	}
 
-
 	return NULL;
 }
 
 int main(void) {
-	printf("This is the server-emulator on %s with ", RIOT_BOARD);
+	printf("This is the server-emulator on \"%s\".\n", RIOT_BOARD);
 	
 	for(size_t i=0; i<MAX_BOARD_NUM; i++) {
 		boards[i].init = false;
@@ -147,7 +163,7 @@ int main(void) {
 	gnrc_ipv6_netif_find_by_prefix(&ll_addr, &addr);
 	
 	ipv6_addr_to_str(own_addr, ll_addr, IPV6_ADDR_MAX_STR_LEN);
-	printf("\"%s\" as link-local address.\n", own_addr);
+	printf("Link-local address: \"%s\".\n", own_addr);
 	
 	// funktioniert nur mit GPIO_IN_PU
 	// mit GPIO_RISING wird der Handler 2 mal bei Boardstart aufgerufen,

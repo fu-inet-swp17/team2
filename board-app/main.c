@@ -15,6 +15,8 @@ int main(void) {
 
 	// ff02::1 -> addr für link-local broadcast
 	ipv6_addr_t addr;
+	// char prefix[IPV6_ADDR_MAX_STR_LEN];
+	// my_strncpy(prefix, , IPV6_ADDR_MAX_STR_LEN);
 	ipv6_addr_from_str(&addr, "fe80::");
 
 	char addr_str[IPV6_ADDR_MAX_STR_LEN];
@@ -27,7 +29,7 @@ int main(void) {
 	printf("own ipv6 addr: %s\n", addr_str);
 
 	sock_udp_ep_t remote = SOCK_IPV6_EP_ANY;
-	remote.port = 2017;
+	remote.port = SERVER_CONN_PORT;
 	ipv6_addr_from_str((ipv6_addr_t *)&remote.addr.ipv6, "ff02::1");
 	
 	char intro_msg[CLIENT_INIT_MSG_LEN];
@@ -40,7 +42,7 @@ int main(void) {
 	
 	uint8_t buf[SERVER_RESP_MSG_LEN];
 	sock_udp_ep_t local = SOCK_IPV6_EP_ANY;
-	local.port = 2018;
+	local.port = CLIENT_PORT; // empfangssocket also auf eigenen Port stellen
 	sock_udp_t sock;
 	sock_udp_create(&sock, &local, NULL, 0);
 	ssize_t res = sock_udp_recv(
