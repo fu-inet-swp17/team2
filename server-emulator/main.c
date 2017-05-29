@@ -14,13 +14,16 @@
 #include "./../smart_environment.h"
 
 #define MAX_BOARD_NUM 10
+#define TIMEOUT (uint32_t)2000000
 
 typedef struct SensorBoard {
 	bool init;
 	char addr[IPV6_ADDR_MAX_STR_LEN];
-	sock_udp_ep_t sock;
+	sock_udp_ep_t ep;
+	sock_udp_t sock;
 } SensorBoard;
 
+// gefährlich! sollte eigentlich gemutext werden
 SensorBoard boards[MAX_BOARD_NUM];
 
 char own_addr[IPV6_ADDR_MAX_STR_LEN];
@@ -39,11 +42,11 @@ static bool startsWith(const char* str, const char* prefix) {
 }
 
 /*
- * @description: strncpy in Vernünftig, garantiert Nullterminator
- * @param{char* dst}: Speicher in den rein kopiert wird
- * @param{const char* src}: String der in 'dst' kopiert werden soll
- * @param{size_t num}: max. Anzahl Zeichen die in dst geschrieben werden darf 
- * @return{size_t}: Anzahl geschriebener Zeichen
+ * #description: strncpy in Vernünftig, garantiert Nullterminator
+ * #param[char* dst]: Speicher in den rein kopiert wird
+ * #param[const char* src]: String der in 'dst' kopiert werden soll
+ * #param[size_t num]: max. Anzahl Zeichen die in dst geschrieben werden darf 
+ * #return[size_t]: Anzahl geschriebener Zeichen
  */
 static size_t my_strncpy(char* dst, const char* src, size_t num) {
 	size_t i;
@@ -56,7 +59,42 @@ static size_t my_strncpy(char* dst, const char* src, size_t num) {
 }
 
 void button_handler(void* args) {
-	printf("hipp hipp hurra\n");
+	printf("Requesting data from boards...\n");
+	
+	for(size_t i=0; i<MAX_BOARD_NUM; i++) {
+		if(!boards[i].init) {
+			printf("Slot %zu not used.\n", i);
+			continue;
+		}
+		
+		char* request = "request";
+		ssize_t res = sock_udp_send(
+			NULL,
+			request,
+			sizeof("request"),
+			&boards[i].ep
+		);
+		if(res < 0) {
+			fprintf(
+				stderr,
+				"Error sending server request to board nr. %zu: %zd!\n",
+				i,
+				res
+			);
+		} else {
+			printf("Reqest send to board %zu.\n", i);
+			char buf[128];
+			res = sock_udp_recv(&boards[i].sock, buf, sizeof(buf), TIMEOUT, NULL);
+			if(res == ETIMEDOUT) {
+				fprintf(stderr, "Board did not answer!\n");
+			} else if(res < 0) {
+				fprintf(stderr, "An error occoured: %zu!\n", res);
+			} else {
+				printf("%s\n", buf);
+			}
+		}
+		
+	}
 }
 
 
@@ -118,9 +156,9 @@ void* connect_thread_handler(void* args) {
 						IPV6_ADDR_MAX_STR_LEN
 					);
 					
-					boards[board_index].sock.port = CLIENT_PORT;
+					boards[board_index].ep.port = CLIENT_PORT;
 					ipv6_addr_from_str(
-						(ipv6_addr_t *)&boards[board_index].sock.addr.ipv6,
+						(ipv6_addr_t *)&boards[board_index].ep.addr.ipv6,
 						boards[board_index].addr
 					);
 					
@@ -133,8 +171,14 @@ void* connect_thread_handler(void* args) {
 						own_addr
 					);
 					
+					sock_udp_create(
+						&boards[board_index].sock,
+						&boards[board_index].ep,
+						NULL,
+						0
+					);
 					if(sock_udp_send(NULL, resp_msg, SERVER_RESP_MSG_LEN,  
-						&boards[board_index].sock) < 0) {
+						&boards[board_index].ep) < 0) {
 						fputs("Error sending server response!\n", stderr);
 					} else {
 						printf("Board found on: %s\n", addr_str);
@@ -171,6 +215,7 @@ int main(void) {
 	gpio_init_int(BUTTON_GPIO, GPIO_IN_PU, GPIO_FALLING, button_handler, NULL);
 	printf("Button activated.\n");
 	
+	printf("%d - %u\n", THREAD_STACKSIZE_DEFAULT, sizeof(sock_udp_t));
 	/*kernel_pid_t conn_t_pid =*/ thread_create(
 		connect_stack,
 		THREAD_STACKSIZE_DEFAULT,
