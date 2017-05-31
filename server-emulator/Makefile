@@ -25,5 +25,7 @@ USEMODULE += gnrc_ipv6_router_default
 USEMODULE += gnrc_sock_udp
 USEMODULE += ipv6_addr
 
+INCLUDES += -I$(CURDIR)/include
+INCLUDES += -I$(CURDIR)/../include
 
 include $(RIOTBASE)/Makefile.include
