@@ -64,13 +64,14 @@ int main(void) {
 	initialize_sensors();
 
 	printf("The SAUL registry contains the following devices: ");
-	do {
+	while(1) {
 		printf("%s", saul_reg->name);
-		if (saul_reg->next != NULL) {
-			printf(", ");
-			saul_reg = saul_reg->next;
+		if (saul_reg->next == NULL) {
+			break;
 		}
-	} while (saul_reg->next != NULL);
+		printf(", ");
+		saul_reg = saul_reg->next;
+	};
 	printf("\n");
 
 	// ff02::1 -> addr für link-local broadcast
