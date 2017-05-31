@@ -13,6 +13,7 @@
 #include "mag3110_params.h"
 #include "mag3110_saul.h"
 #include "mma8x5x_params.h"
+#include "mma8x5x_saul.h"
 
 #include "smart_environment.h"
 
