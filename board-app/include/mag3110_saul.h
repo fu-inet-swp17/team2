@@ -26,8 +26,4 @@
 
 int read_mag(void *dev, phydat_t *res);
 
-const saul_driver_t mag3110_saul_driver = {
-    .read = read_mag,
-    .write = saul_notsup,
-    .type = SAUL_SENSE_MAG,
-};
+const saul_driver_t mag3110_saul_driver;

@@ -17,23 +17,43 @@
 #include "smart_environment.h"
 
 static inline void initialize_sensors(void) {
-	mag3110_t mag;
-	memset(&mag, 0, sizeof(mag));
-	if (!mag3110_init(&mag, mag3110_params)) {
-		printf("Magnetometer successfully initialized.\n");
+	mag3110_t mag3110;
+	memset(&mag3110, 0, sizeof(mag3110));
+	if (!mag3110_init(&mag3110, mag3110_params)) {
+		printf("mag3110 (magnetometer) successfully initialized.\n");
 	}
 
-	saul_reg_t mag_saul = {
+	saul_reg_t mag3110_saul = {
 		NULL,
-		&mag,
+		&mag3110,
 		"mag3110 (magnetometer)",
 		&mag3110_saul_driver
 	};
 
-	int mag3110_saul_add = saul_reg_add(&mag_saul);
+	int mag3110_saul_add = saul_reg_add(&mag3110_saul);
 
 	if (!mag3110_saul_add) {
-		printf("Magnetometer successfully added to SAUL registry.\n");
+		printf("mag3110 (magnetometer) successfully added to SAUL registry.\n");
+	}
+
+
+	mma8x5x_t mma8x5x;
+	memset(&mma8x5x, 0, sizeof(mma8x5x));
+	if (!mma8x5x_init(&mma8x5x, mma8x5x_params)) {
+		printf("mma8652 (accelerometer) successfully initialized.\n");
+	}
+
+	saul_reg_t mma8x5x_saul = {
+		NULL,
+		&mma8x5x,
+		"mma8652 (accelerometer)",
+		&mma8x5x_saul_driver
+	};
+
+	int mma8x5x_saul_add = saul_reg_add(&mma8x5x_saul);
+
+	if (!mma8x5x_saul_add) {
+		printf("mma8652 (accelerometer) successfully added to SAUL registry.\n");
 	}
 }
 
