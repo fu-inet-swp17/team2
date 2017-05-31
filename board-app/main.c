@@ -7,11 +7,50 @@
 #include "net/sock/udp.h"
 #include "net/gnrc/ipv6/netif.h"
 #include "shell.h"
+#include "saul.h"
+#include "saul_reg.h"
 
-#include "./../smart_environment.h"
+#include "mag3110_params.h"
+#include "mag3110_saul.h"
+#include "mma8x5x_params.h"
+
+#include "smart_environment.h"
+
+static inline void initialize_sensors(void) {
+	mag3110_t mag;
+	memset(&mag, 0, sizeof(mag));
+	if (!mag3110_init(&mag, mag3110_params)) {
+		printf("Magnetometer successfully initialized.\n");
+	}
+
+	saul_reg_t mag_saul = {
+		NULL,
+		&mag,
+		"mag3110 (magnetometer)",
+		&mag3110_saul_driver
+	};
+
+	int mag3110_saul_add = saul_reg_add(&mag_saul);
+
+	if (!mag3110_saul_add) {
+		printf("Magnetometer successfully added to SAUL registry.\n");
+	}
+}
 
 int main(void) {
     printf("Smart environment app on %s\n", RIOT_BOARD);
+
+	initialize_sensors();
+
+	printf("The SAUL registry contains the following devices: ");
+	do {
+		printf("%s", saul_reg->name);
+		if (saul_reg->next != NULL) {
+			printf(", ");
+			saul_reg = saul_reg->next;
+		}
+	} while (saul_reg->next != NULL);
+	printf("\n");
 
 	// ff02::1 -> addr für link-local broadcast
 	ipv6_addr_t addr;
