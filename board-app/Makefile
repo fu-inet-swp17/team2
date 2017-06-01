@@ -24,6 +24,11 @@ USEMODULE += auto_init_gnrc_netif
 USEMODULE += gnrc_ipv6_router_default
 USEMODULE += gnrc_sock_udp
 USEMODULE += ipv6_addr
+USEMODULE += saul
+USEMODULE += saul_reg
+
+USEMODULE += mag3110
+USEMODULE += mma8x5x
 
 INCLUDES += -I$(CURDIR)/include
 INCLUDES += -I$(CURDIR)/../include
