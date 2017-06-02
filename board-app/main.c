@@ -14,6 +14,7 @@
 #include "mag3110_saul.h"
 #include "mma8x5x_params.h"
 #include "mma8x5x_saul.h"
+#include "tmp006_saul.h"
 
 #include "smart_environment.h"
 
@@ -27,14 +28,14 @@ static inline void initialize_sensors(void) {
 	saul_reg_t mag3110_saul = {
 		NULL,
 		&mag3110,
-		"mag3110 (magnetometer)",
+		"mag3110 (magnetic field strength)",
 		&mag3110_saul_driver
 	};
 
 	int mag3110_saul_add = saul_reg_add(&mag3110_saul);
 
 	if (!mag3110_saul_add) {
-		printf("mag3110 (magnetometer) successfully added to SAUL registry.\n");
+		printf("mag3110 (magnetic field strength) successfully added to SAUL registry.\n");
 	}
 
 
@@ -47,14 +48,34 @@ static inline void initialize_sensors(void) {
 	saul_reg_t mma8x5x_saul = {
 		NULL,
 		&mma8x5x,
-		"mma8652 (accelerometer)",
+		"mma8652 (acceleration)",
 		&mma8x5x_saul_driver
 	};
 
 	int mma8x5x_saul_add = saul_reg_add(&mma8x5x_saul);
 
 	if (!mma8x5x_saul_add) {
-		printf("mma8652 (accelerometer) successfully added to SAUL registry.\n");
+		printf("mma8652 (acceleration) successfully added to SAUL registry.\n");
+	}
+
+
+	tmp006_t tmp006;
+	memset(&tmp006, 0, sizeof(tmp006));
+	if (!tmp006_init(&tmp006, 0, TMP006_I2C_ADDRESS, 4)) {
+		printf("tmp006 (thermometer) successfully initialized.\n");
+	}
+
+	saul_reg_t tmp006_saul = {
+		NULL,
+		&tmp006,
+		"tmp006 (temperature)",
+		&tmp006_saul_driver
+	};
+
+	int tmp006_saul_add = saul_reg_add(&tmp006_saul);
+
+	if (!tmp006_saul_add) {
+		printf("tmp006 (temperature) successfully added to SAUL registry.\n");
 	}
 }
 

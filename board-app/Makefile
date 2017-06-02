@@ -29,6 +29,7 @@ USEMODULE += saul_reg
 
 USEMODULE += mag3110
 USEMODULE += mma8x5x
+USEMODULE += tmp006
 
 INCLUDES += -I$(CURDIR)/include
 INCLUDES += -I$(CURDIR)/../include
