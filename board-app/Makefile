@@ -31,6 +31,7 @@ USEMODULE += mag3110
 USEMODULE += mma8x5x
 USEMODULE += tmp006
 USEMODULE += mpl3115a2
+USEMODULE += hdc1000
 
 INCLUDES += -I$(CURDIR)/drivers/include
 INCLUDES += -I$(CURDIR)/include
