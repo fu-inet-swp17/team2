@@ -20,6 +20,9 @@
 
 #include "mpl3115a2.h"
 
+char* mpl3115a2_name = "mpl3115a2";
+char* mpl3115a2_saul_name = "pressure sensor";
+
 int read_press(void *dev, phydat_t *res);
 
 const saul_driver_t mpl3115a2_saul_driver;

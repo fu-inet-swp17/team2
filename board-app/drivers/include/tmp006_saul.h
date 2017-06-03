@@ -20,6 +20,9 @@
 
 #include "tmp006.h"
 
+char* tmp006_name = "tmp006";
+char* tmp006_saul_name = "thermometer";
+
 int read_temp(void *dev, phydat_t *res);
 
 const saul_driver_t tmp006_saul_driver;

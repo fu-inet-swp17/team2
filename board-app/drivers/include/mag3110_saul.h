@@ -20,6 +20,9 @@
 
 #include "mag3110.h"
 
+char* mag3110_name = "mag3110";
+char* mag3110_saul_name = "magnetometer";
+
 int read_mag(void *dev, phydat_t *res);
 
 const saul_driver_t mag3110_saul_driver;

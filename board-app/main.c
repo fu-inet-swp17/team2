@@ -24,9 +24,9 @@ static inline void initialize_sensors(void) {
 	memset(&mag3110, 0, sizeof(mag3110));
 	uint8_t mag3110_init_res = mag3110_init(&mag3110, mag3110_params);
 	if (mag3110_init_res) {
-		puts("Initialization of mag3110 (magnetometer) failed.");
+		printf("Initialization of %s (%s) failed.\n", mag3110_name, mag3110_saul_name);
 	} else {
-		puts("mag3110 (magnetometer) successfully initialized.");
+		printf("%s (%s) successfully initialized.\n", mag3110_name, mag3110_saul_name);
 	}
 
 	/**
@@ -36,12 +36,12 @@ static inline void initialize_sensors(void) {
 	saul_reg_t mag3110_saul = {
 		NULL,
 		&mag3110,
-		"mag3110 (magnetic field strength)",
+		mag3110_saul_name,
 		&mag3110_saul_driver
 	};
 
 	if (!mag3110_init_res && !saul_reg_add(&mag3110_saul)) {
-		puts("mag3110 (magnetic field strength) successfully added to SAUL registry.");
+		printf("%s successfully added to SAUL registry.\n", mag3110_name);
 	} else {
 		free(&mag3110_saul);
 	}
@@ -51,9 +51,9 @@ static inline void initialize_sensors(void) {
 	memset(&mma8x5x, 0, sizeof(mma8x5x));
 	uint8_t mma8x5x_init_res = mma8x5x_init(&mma8x5x, mma8x5x_params);
 	if (mma8x5x_init_res) {
-		puts("Initialization of mma8652 (accelerometer) failed.");
+		printf("Initialization of %s (%s) failed.\n", mma8x5x_name, mma8x5x_saul_name);
 	} else {
-		puts("mma8652 (accelerometer) successfully initialized.");
+		printf("%s (%s) successfully initialized.\n", mma8x5x_name, mma8x5x_saul_name);
 	}
 
 	/**
@@ -63,12 +63,12 @@ static inline void initialize_sensors(void) {
 	saul_reg_t mma8x5x_saul = {
 		NULL,
 		&mma8x5x,
-		"mma8652 (acceleration)",
+		mma8x5x_saul_name,
 		&mma8x5x_saul_driver
 	};
 
 	if (!mma8x5x_init_res && !saul_reg_add(&mma8x5x_saul)) {
-		puts("mma8652 (acceleration) successfully added to SAUL registry.");
+		printf("%s successfully added to SAUL registry.\n", mma8x5x_name);
 	} else {
 		free(&mma8x5x_saul);
 	}
@@ -78,9 +78,9 @@ static inline void initialize_sensors(void) {
 	memset(&tmp006, 0, sizeof(tmp006));
 	uint8_t tmp006_init_res = tmp006_init(&tmp006, 0, TMP006_I2C_ADDRESS, TMP006_CONFIG_CR_DEF);
 	if (tmp006_init_res) {
-		puts("Initialization of tmp006 (thermometer) failed.");
+		printf("Initialization of %s (%s) failed.\n", tmp006_name, tmp006_saul_name);
 	} else {
-		puts("tmp006 (thermometer) successfully initialized.");
+		printf("%s (%s) successfully initialized.\n", tmp006_name, tmp006_saul_name);
 	}
 
 	/**
@@ -90,12 +90,12 @@ static inline void initialize_sensors(void) {
 	saul_reg_t tmp006_saul = {
 		NULL,
 		&tmp006,
-		"tmp006 (temperature)",
+		tmp006_saul_name,
 		&tmp006_saul_driver
 	};
 
 	if (!tmp006_init_res && !saul_reg_add(&tmp006_saul)) {
-		puts("tmp006 (temperature) successfully added to SAUL registry.");
+		printf("%s successfully added to SAUL registry.\n", tmp006_name);
 	} else {
 		free(&tmp006_saul);
 	}
@@ -105,9 +105,9 @@ static inline void initialize_sensors(void) {
 	memset(&mpl3115a2, 0, sizeof(mpl3115a2));
 	uint8_t mpl3115a2_init_res = mpl3115a2_init(&mpl3115a2, 0, MPL3115A2_I2C_ADDRESS, MPL3115A2_OS_RATIO_DEFAULT);
 	if (mpl3115a2_init_res) {
-		puts("Initialization of mpl3115a2 (pressure sensor) failed.");
+		printf("Initialization of %s (%s) failed.\n", mpl3115a2_name, mpl3115a2_saul_name);
 	} else {
-		puts("mpl3115a2 (pressure sensor) successfully initialized.");
+		printf("%s (%s) successfully initialized.\n", mpl3115a2_name, mpl3115a2_saul_name);
 	}
 
 	/**
@@ -117,12 +117,12 @@ static inline void initialize_sensors(void) {
 	saul_reg_t mpl3115a2_saul = {
 		NULL,
 		&mpl3115a2,
-		"mpl3115a2 (pressure)",
+		mpl3115a2_saul_name,
 		&mpl3115a2_saul_driver
 	};
 
 	if (!mpl3115a2_init_res && !saul_reg_add(&mpl3115a2_saul)) {
-		puts("mpl3115a2 (pressure) successfully added to SAUL registry.");
+		printf("%s successfully added to SAUL registry.\n", mpl3115a2_name);
 	} else {
 		free(&mpl3115a2_saul);
 	}

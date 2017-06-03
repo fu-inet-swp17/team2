@@ -21,6 +21,9 @@
 
 #include "mma8x5x.h"
 
+char* mma8x5x_name = "mma8x5x";
+char* mma8x5x_saul_name = "accelerometer";
+
 int read_acc(void *dev, phydat_t *res);
 
 const saul_driver_t mma8x5x_saul_driver;
