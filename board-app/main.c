@@ -144,7 +144,7 @@ int main(void) {
 	snprintf(intro_msg, CLIENT_INIT_MSG_LEN, "%s %s", client_id, addr_str);
 	
 	if(sock_udp_send(NULL, intro_msg, CLIENT_INIT_MSG_LEN, &remote) < 0) {
-		puts("Error sending intro message!\n");
+		puts("Error sending intro message!");
 		return EXIT_FAILURE;
 	}
 	
@@ -162,7 +162,7 @@ int main(void) {
 	);
 	
 	if(res < 0) {
-		printf("Error during receive!\n");
+		puts("Error during receive!");
 	} else {
 		printf("%s\n", buf);
 	}
