@@ -21,10 +21,17 @@
 static inline void initialize_sensors(void) {
 	mag3110_t mag3110;
 	memset(&mag3110, 0, sizeof(mag3110));
-	if (!mag3110_init(&mag3110, mag3110_params)) {
-		printf("mag3110 (magnetometer) successfully initialized.\n");
+	uint8_t mag3110_init_res = mag3110_init(&mag3110, mag3110_params);
+	if (mag3110_init_res) {
+		puts("Initialization of mag3110 (magnetometer) failed.");
+	} else {
+		puts("mag3110 (magnetometer) successfully initialized.");
 	}
 
+	/**
+	* This needs to be outside the else clause because the SAUL registry requires it to be inside a persistent memory location.
+	* If the device is not added to the SAUL registry or the addition fails, the memory taken up by the struct is freed later.
+	*/
 	saul_reg_t mag3110_saul = {
 		NULL,
 		&mag3110,
@@ -32,19 +39,26 @@ static inline void initialize_sensors(void) {
 		&mag3110_saul_driver
 	};
 
-	int mag3110_saul_add = saul_reg_add(&mag3110_saul);
-
-	if (!mag3110_saul_add) {
-		printf("mag3110 (magnetic field strength) successfully added to SAUL registry.\n");
+	if (!mag3110_init_res && !saul_reg_add(&mag3110_saul)) {
+		puts("mag3110 (magnetic field strength) successfully added to SAUL registry.");
+	} else {
+		free(&mag3110_saul);
 	}
 
 
 	mma8x5x_t mma8x5x;
 	memset(&mma8x5x, 0, sizeof(mma8x5x));
-	if (!mma8x5x_init(&mma8x5x, mma8x5x_params)) {
-		printf("mma8652 (accelerometer) successfully initialized.\n");
+	uint8_t mma8x5x_init_res = mma8x5x_init(&mma8x5x, mma8x5x_params);
+	if (mma8x5x_init_res) {
+		puts("Initialization of mma8652 (accelerometer) failed.");
+	} else {
+		puts("mma8652 (accelerometer) successfully initialized.");
 	}
 
+	/**
+	* This needs to be outside the else clause because the SAUL registry requires it to be inside a persistent memory location.
+	* If the device is not added to the SAUL registry or the addition fails, the memory taken up by the struct is freed later.
+	*/
 	saul_reg_t mma8x5x_saul = {
 		NULL,
 		&mma8x5x,
@@ -52,19 +66,27 @@ static inline void initialize_sensors(void) {
 		&mma8x5x_saul_driver
 	};
 
-	int mma8x5x_saul_add = saul_reg_add(&mma8x5x_saul);
-
-	if (!mma8x5x_saul_add) {
-		printf("mma8652 (acceleration) successfully added to SAUL registry.\n");
+	if (!mma8x5x_init_res && !saul_reg_add(&mma8x5x_saul)) {
+		puts("mma8652 (acceleration) successfully added to SAUL registry.");
+	} else {
+		free(&mma8x5x_saul);
 	}
 
 
 	tmp006_t tmp006;
 	memset(&tmp006, 0, sizeof(tmp006));
-	if (!tmp006_init(&tmp006, 0, TMP006_I2C_ADDRESS, 4)) {
-		printf("tmp006 (thermometer) successfully initialized.\n");
+	uint8_t conv_rate = 4; // number of averaged samples
+	uint8_t tmp006_init_res = tmp006_init(&tmp006, 0, TMP006_I2C_ADDRESS, conv_rate);
+	if (tmp006_init_res) {
+		puts("Initialization of tmp006 (thermometer) failed.");
+	} else {
+		puts("tmp006 (thermometer) successfully initialized.");
 	}
 
+	/**
+	* This needs to be outside the else clause because the SAUL registry requires it to be inside a persistent memory location.
+	* If the device is not added to the SAUL registry or the addition fails, the memory taken up by the struct is freed later.
+	*/
 	saul_reg_t tmp006_saul = {
 		NULL,
 		&tmp006,
@@ -72,10 +94,10 @@ static inline void initialize_sensors(void) {
 		&tmp006_saul_driver
 	};
 
-	int tmp006_saul_add = saul_reg_add(&tmp006_saul);
-
-	if (!tmp006_saul_add) {
-		printf("tmp006 (temperature) successfully added to SAUL registry.\n");
+	if (!tmp006_init_res && !saul_reg_add(&tmp006_saul)) {
+		puts("tmp006 (temperature) successfully added to SAUL registry.");
+	} else {
+		free(&tmp006_saul);
 	}
 }
 
