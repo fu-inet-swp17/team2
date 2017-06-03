@@ -18,10 +18,6 @@
  * @}
  */
 
-#include <string.h>
-#include <stdio.h>
-
-#include "saul.h"
 #include "mpl3115a2.h"
 
 int read_press(void *dev, phydat_t *res);

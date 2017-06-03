@@ -18,10 +18,6 @@
  * @}
  */
 
-#include <string.h>
-#include <stdio.h>
-
-#include "saul.h"
 #include "tmp006.h"
 
 int read_temp(void *dev, phydat_t *res);

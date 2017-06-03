@@ -18,10 +18,6 @@
  * @}
  */
 
-#include <string.h>
-#include <stdio.h>
-
-#include "saul.h"
 #include "mag3110.h"
 
 int read_mag(void *dev, phydat_t *res);

@@ -19,10 +19,6 @@
  * @}
  */
 
-#include <string.h>
-#include <stdio.h>
-
-#include "saul.h"
 #include "mma8x5x.h"
 
 int read_acc(void *dev, phydat_t *res);
