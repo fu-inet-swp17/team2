@@ -18,6 +18,8 @@
 #include "mpl3115a2_saul.h"
 #include "hdc1000_params.h"
 #include "hdc1000_saul.h"
+#include "tcs37727_params.h"
+#include "tcs37727_saul.h"
 
 #include "smart_environment.h"
 
@@ -154,6 +156,33 @@ static inline void initialize_sensors(void) {
 		printf("%s successfully added to SAUL registry.\n", hdc1000_name);
 	} else {
 		free(&hdc1000_saul);
+	}
+
+
+	tcs37727_t tcs37727;
+	memset(&tcs37727, 0, sizeof(tcs37727));
+	uint8_t tcs37727_init_res = tcs37727_init(&tcs37727, tcs37727_params);
+	if (tcs37727_init_res) {
+		printf("Initialization of %s (%s) failed.\n", tcs37727_name, tcs37727_saul_name);
+	} else {
+		printf("%s (%s) successfully initialized.\n", tcs37727_name, tcs37727_saul_name);
+	}
+
+	/**
+	* This needs to be outside the else clause because the SAUL registry requires it to be inside a persistent memory location.
+	* If the device is not added to the SAUL registry or the addition fails, the memory taken up by the struct is freed later.
+	*/
+	saul_reg_t tcs37727_saul = {
+		NULL,
+		&tcs37727,
+		tcs37727_saul_name,
+		&tcs37727_saul_driver
+	};
+
+	if (!tcs37727_init_res && !saul_reg_add(&tcs37727_saul)) {
+		printf("%s successfully added to SAUL registry.\n", tcs37727_name);
+	} else {
+		free(&tcs37727_saul);
 	}
 }
 
