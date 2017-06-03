@@ -106,16 +106,20 @@ int main(void) {
 
 	initialize_sensors();
 
-	printf("The SAUL registry contains the following devices: ");
-	while(1) {
-		printf("%s", saul_reg->name);
-		if (saul_reg->next == NULL) {
-			break;
-		}
-		printf(", ");
-		saul_reg = saul_reg->next;
-	};
-	printf("\n");
+	if (saul_reg == NULL) {
+		puts("The SAUL registry does not contain any devices.");
+	} else {
+		printf("The SAUL registry contains the following devices: ");
+		while(1) {
+			printf("%s", saul_reg->name);
+			if (saul_reg->next == NULL) {
+				break;
+			}
+			printf(", ");
+			saul_reg = saul_reg->next;
+		};
+		printf("\n");
+	}
 
 	// ff02::1 -> addr für link-local broadcast
 	ipv6_addr_t addr;
