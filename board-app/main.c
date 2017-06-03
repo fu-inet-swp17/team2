@@ -75,8 +75,7 @@ static inline void initialize_sensors(void) {
 
 	tmp006_t tmp006;
 	memset(&tmp006, 0, sizeof(tmp006));
-	uint8_t conv_rate = 4; // number of averaged samples
-	uint8_t tmp006_init_res = tmp006_init(&tmp006, 0, TMP006_I2C_ADDRESS, conv_rate);
+	uint8_t tmp006_init_res = tmp006_init(&tmp006, 0, TMP006_I2C_ADDRESS, TMP006_CONFIG_CR_DEF);
 	if (tmp006_init_res) {
 		puts("Initialization of tmp006 (thermometer) failed.");
 	} else {
