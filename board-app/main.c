@@ -15,6 +15,7 @@
 #include "mma8x5x_params.h"
 #include "mma8x5x_saul.h"
 #include "tmp006_saul.h"
+#include "mpl3115a2_saul.h"
 
 #include "smart_environment.h"
 
@@ -97,6 +98,33 @@ static inline void initialize_sensors(void) {
 		puts("tmp006 (temperature) successfully added to SAUL registry.");
 	} else {
 		free(&tmp006_saul);
+	}
+
+
+	mpl3115a2_t mpl3115a2;
+	memset(&mpl3115a2, 0, sizeof(mpl3115a2));
+	uint8_t mpl3115a2_init_res = mpl3115a2_init(&mpl3115a2, 0, MPL3115A2_I2C_ADDRESS, MPL3115A2_OS_RATIO_DEFAULT);
+	if (mpl3115a2_init_res) {
+		puts("Initialization of mpl3115a2 (pressure sensor) failed.");
+	} else {
+		puts("mpl3115a2 (pressure sensor) successfully initialized.");
+	}
+
+	/**
+	* This needs to be outside the else clause because the SAUL registry requires it to be inside a persistent memory location.
+	* If the device is not added to the SAUL registry or the addition fails, the memory taken up by the struct is freed later.
+	*/
+	saul_reg_t mpl3115a2_saul = {
+		NULL,
+		&mpl3115a2,
+		"mpl3115a2 (pressure)",
+		&mpl3115a2_saul_driver
+	};
+
+	if (!mpl3115a2_init_res && !saul_reg_add(&mpl3115a2_saul)) {
+		puts("mpl3115a2 (pressure) successfully added to SAUL registry.");
+	} else {
+		free(&mpl3115a2_saul);
 	}
 }
 
