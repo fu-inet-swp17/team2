@@ -26,18 +26,13 @@
 
 static int read_temp(void *dev, phydat_t *res)
 {
-    int16_t* rawv;
-    memset(&rawv, 0, sizeof(rawv));
-    int16_t* rawt;
-    memset(&rawt, 0, sizeof(rawt));
-    uint8_t* drdy;
-    memset(&drdy, 0, sizeof(drdy));
+    int16_t* rawv = 0;
+    int16_t* rawt = 0;
+    uint8_t* drdy = 0;
     tmp006_read((tmp006_t *)dev, rawv, rawt, drdy);
 
-    float* tamb;
-    memset(&tamb, 0, sizeof(tamb));
-    float* tobj;
-    memset(&tobj, 0, sizeof(tobj));
+    float* tamb = 0;
+    float* tobj = 0;
     tmp006_convert(*rawv, *rawt, tamb, tobj);
 
     res->val[0] = *tamb;
