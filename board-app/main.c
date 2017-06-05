@@ -23,7 +23,7 @@
 
 #include "smart_environment.h"
 
-static inline void initialize_sensors(void) {
+static inline void sensors_initialize(void) {
 	mag3110_t mag3110;
 	memset(&mag3110, 0, sizeof(mag3110));
 	uint8_t mag3110_init_res = mag3110_init(&mag3110, mag3110_params);
@@ -189,19 +189,21 @@ static inline void initialize_sensors(void) {
 int main(void) {
     printf("Smart environment app on %s\n", RIOT_BOARD);
 
-	initialize_sensors();
+	sensors_initialize();
 
-	if (saul_reg == NULL) {
+	saul_reg_t* saul_reg_cur = saul_reg;
+
+	if (saul_reg_cur == NULL) {
 		puts("The SAUL registry does not contain any devices.");
 	} else {
 		printf("The SAUL registry contains the following devices: ");
 		while(1) {
-			printf("%s", saul_reg->name);
-			if (saul_reg->next == NULL) {
+			printf("%s", saul_reg_cur->name);
+			if (saul_reg_cur->next == NULL) {
 				break;
 			}
 			printf(", ");
-			saul_reg = saul_reg->next;
+			saul_reg_cur = saul_reg_cur->next;
 		};
 		printf("\n");
 	}
