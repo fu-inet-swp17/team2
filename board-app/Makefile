@@ -3,6 +3,7 @@ APPLICATION = board-app
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= pba-d-01-kw2x #native
+#SERIAL ?= 02000203C3014E6A3EFDB392
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../RIOT
@@ -15,6 +16,9 @@ CFLAGS += -DDEVELHELP
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
+#Packeges to include:
+USEPKG += nanocoap
+
 # Modules to include:
 USEMODULE += shell
 USEMODULE += shell_commands
@@ -26,6 +30,7 @@ USEMODULE += gnrc_sock_udp
 USEMODULE += ipv6_addr
 USEMODULE += saul
 USEMODULE += saul_reg
+USEMODULE += gcoap
 
 USEMODULE += mag3110
 USEMODULE += mma8x5x

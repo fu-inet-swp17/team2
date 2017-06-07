@@ -9,6 +9,7 @@
 #include "shell.h"
 #include "saul.h"
 #include "saul_reg.h"
+#include "net/gcoap.h"
 
 #include "mag3110_params.h"
 #include "mag3110_saul.h"
@@ -22,6 +23,66 @@
 #include "tcs37727_saul.h"
 
 #include "smart_environment.h"
+
+/*
+ * #description: checks if string prefix is a prefix of string str
+ * #requires: stdbool.h, string.h
+ * #param[char* str]: string that should start with something
+ * #param[char* prefix]: the prefix to check for
+ * #return[bool]: true wenn prefix is a prefix of str, false else
+ */
+static inline bool startsWith(const char* str, const char* prefix) {
+	char* substr = strstr(str, prefix);
+	return substr == str;
+}
+
+
+/**********************************COAP STUFF**********************************/
+static ssize_t temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t humid_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+
+char own_addr[IPV6_ADDR_MAX_STR_LEN];
+sock_udp_ep_t local = SOCK_IPV6_EP_ANY;
+sock_udp_ep_t server_ep;
+
+// TODO Ressourcen, Listener und Handler für alle Sensoren anlegen
+
+// Die Ressourcen muessen in alphabetischer Reihnfolge eingefuegt werden!!!
+static const coap_resource_t se_resources[] = {
+	{"/se-app/humid", COAP_GET, humid_handler},
+	{"/se-app/temp", COAP_GET, temp_handler},
+};
+
+static gcoap_listener_t humid_listener = {
+	(coap_resource_t*)&se_resources[1],
+	sizeof(se_resources) / sizeof(se_resources[1]),
+	NULL
+};
+
+static gcoap_listener_t temp_listener = {
+	(coap_resource_t*)&se_resources[0],
+	sizeof(se_resources) / sizeof(se_resources[0]),
+	&temp_listener
+};
+
+
+static ssize_t temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+	gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+	// Temperatur Sensorwert mit SAUL abfragen und in pdu->payload schreiben
+	// Anzahl der Bytes speichern und an gcoap_finish übergeben
+	size_t payload_size = 0;
+	return gcoap_finish(pdu, payload_size, COAP_FORMAT_NONE);
+}
+
+static ssize_t humid_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+	gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+	// Luftfeutigkeit Sensorwert mit SAUL abfragen und in pdu->payload schreiben
+	// Anzahl der Bytes speichern und an gcoap_finish übergeben
+	size_t payload_size = 0;
+	return gcoap_finish(pdu, payload_size, COAP_FORMAT_NONE);
+}
+
+/**********************************COAP STUFF**********************************/
 
 static inline void sensors_initialize(void) {
 	mag3110_t mag3110;
@@ -208,51 +269,69 @@ int main(void) {
 		printf("\n");
 	}
 
+	// TODO listener registrieren
+	gcoap_register_listener(&temp_listener);
+	gcoap_register_listener(&humid_listener);
+
 	// ff02::1 -> addr für link-local broadcast
 	ipv6_addr_t addr;
 	// char prefix[IPV6_ADDR_MAX_STR_LEN];
 	// my_strncpy(prefix, , IPV6_ADDR_MAX_STR_LEN);
 	ipv6_addr_from_str(&addr, "fe80::");
 
-	char addr_str[IPV6_ADDR_MAX_STR_LEN];
-	ipv6_addr_to_str(addr_str, &addr, IPV6_ADDR_MAX_STR_LEN);
+	ipv6_addr_to_str(own_addr, &addr, IPV6_ADDR_MAX_STR_LEN);
 
 	ipv6_addr_t* out = NULL;
 	gnrc_ipv6_netif_find_by_prefix(&out, &addr);
 	
-	ipv6_addr_to_str(addr_str, out, IPV6_ADDR_MAX_STR_LEN);
-	printf("own ipv6 addr: %s\n", addr_str);
+	ipv6_addr_to_str(own_addr, out, IPV6_ADDR_MAX_STR_LEN);
+	printf("own ipv6 addr: %s\n", own_addr);
 
 	sock_udp_ep_t remote = SOCK_IPV6_EP_ANY;
 	remote.port = SERVER_CONN_PORT;
 	ipv6_addr_from_str((ipv6_addr_t *)&remote.addr.ipv6, "ff02::1");
 	
 	char intro_msg[CLIENT_INIT_MSG_LEN];
-	snprintf(intro_msg, CLIENT_INIT_MSG_LEN, "%s %s", client_id, addr_str);
+	snprintf(intro_msg, CLIENT_INIT_MSG_LEN, "%s %s", client_id, own_addr);
 	
 	if(sock_udp_send(NULL, intro_msg, CLIENT_INIT_MSG_LEN, &remote) < 0) {
 		puts("Error sending intro message!");
 		return EXIT_FAILURE;
 	}
 	
-	uint8_t buf[SERVER_RESP_MSG_LEN];
+	uint8_t resp_buf[SERVER_RESP_MSG_LEN];
 	sock_udp_ep_t local = SOCK_IPV6_EP_ANY;
 	local.port = CLIENT_PORT; // empfangssocket also auf eigenen Port stellen
 	sock_udp_t sock;
 	sock_udp_create(&sock, &local, NULL, 0);
-	ssize_t res = sock_udp_recv(
+	do {
+		ssize_t res = sock_udp_recv(
 			&sock,
-			buf,
-			sizeof(buf),
+			resp_buf,
+			sizeof(resp_buf),
 			SOCK_NO_TIMEOUT,
 			NULL
+		);
+		
+		if(res < 0) {
+			puts("Error during receive!");
+			continue;
+		}
+		
+	} while(!startsWith((const char*)resp_buf, server_id));
+	
+	char* se_addr_str = strchr((const char*)resp_buf, ' ');
+	se_addr_str++; // addr_str zeigt sonst auf das Leerzeichen!
+	printf("server found on: %s\n", se_addr_str);
+	
+	server_ep.family =  AF_INET6;
+	server_ep.port = SERVER_POLL_PORT;
+	ipv6_addr_from_str(
+		(ipv6_addr_t *)&server_ep.addr.ipv6,
+		se_addr_str
 	);
 	
-	if(res < 0) {
-		puts("Error during receive!");
-	} else {
-		printf("%s\n", buf);
-	}
+	
 	
     return EXIT_SUCCESS;
 }

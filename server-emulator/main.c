@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
@@ -11,23 +12,26 @@
 #include "board.h"
 #include "thread.h"
 
-#include "./../smart_environment.h"
+#include "smart_environment.h"
 
-#define MAX_BOARD_NUM 10
+#define MAX_BOARD_NUM 5
 #define TIMEOUT (uint32_t)2000000
 
 typedef struct SensorBoard {
 	bool init;
 	char addr[IPV6_ADDR_MAX_STR_LEN];
 	sock_udp_ep_t ep;
-	sock_udp_t sock;
 } SensorBoard;
 
 // gefährlich! sollte eigentlich gemutext werden
 SensorBoard boards[MAX_BOARD_NUM];
 
 char own_addr[IPV6_ADDR_MAX_STR_LEN];
-char connect_stack[THREAD_STACKSIZE_DEFAULT];
+char connect_stack[THREAD_STACKSIZE_MAIN];
+
+uint8_t conn_buf[CLIENT_INIT_MSG_LEN];
+
+uint8_t req_buf[128];
 
 /*
  * #description: checks if string prefix is a prefix of string str
@@ -36,7 +40,7 @@ char connect_stack[THREAD_STACKSIZE_DEFAULT];
  * #param[char* prefix]: the prefix to check for
  * #return[bool]: true wenn prefix is a prefix of str, false else
  */
-static bool startsWith(const char* str, const char* prefix) {
+static inline bool startsWith(const char* str, const char* prefix) {
 	char* substr = strstr(str, prefix);
 	return substr == str;
 }
@@ -48,7 +52,7 @@ static bool startsWith(const char* str, const char* prefix) {
  * #param[size_t num]: max. Anzahl Zeichen die in dst geschrieben werden darf 
  * #return[size_t]: Anzahl geschriebener Zeichen
  */
-static size_t my_strncpy(char* dst, const char* src, size_t num) {
+static inline size_t my_strncpy(char* dst, const char* src, size_t num) {
 	size_t i;
 	for(i=0; src[i] && i<(num-1); i++) {
 		dst[i] = src[i];
@@ -59,38 +63,61 @@ static size_t my_strncpy(char* dst, const char* src, size_t num) {
 }
 
 void button_handler(void* args) {
-	printf("Requesting data from boards...\n");
+	// puts("Requesting data from boards...");
 	
 	for(size_t i=0; i<MAX_BOARD_NUM; i++) {
 		if(!boards[i].init) {
-			printf("Slot %zu not used.\n", i);
+			printf("Slot %u not used.\n", i);
 			continue;
 		}
 		
-		char* request = "request";
+		char request[] = "request";
 		ssize_t res = sock_udp_send(
 			NULL,
-			request,
+			request, 
 			sizeof("request"),
 			&boards[i].ep
 		);
 		if(res < 0) {
 			fprintf(
 				stderr,
-				"Error sending server request to board nr. %zu: %zd!\n",
+				"Error sending server request to board nr. %u: %d!\n",
 				i,
 				res
 			);
 		} else {
-			printf("Reqest send to board %zu.\n", i);
-			char buf[128];
-			res = sock_udp_recv(&boards[i].sock, buf, sizeof(buf), TIMEOUT, NULL);
-			if(res == ETIMEDOUT) {
-				fprintf(stderr, "Board did not answer!\n");
+			printf("Reqest send to board %u.\n", i);
+			
+			sock_udp_ep_t resp_ep = SOCK_IPV6_EP_ANY;
+			resp_ep.port = SERVER_POLL_PORT;
+			
+			sock_udp_t resp_sock;
+			sock_udp_create(&resp_sock, &resp_ep, NULL, 0);
+			// printf("beg: %p, size: %u\n", (void*)req_buf, sizeof(req_buf));
+			res = sock_udp_recv(
+				&resp_sock,
+				req_buf,
+				sizeof(req_buf),
+				(uint32_t)2000000,
+				&boards[i].ep
+			);
+			
+			if(res == -ETIMEDOUT) {
+				fputs("-ETIMEDOUT\n", stderr);
+			} else if(res == -EADDRNOTAVAIL) {
+				fputs("-EADDRNOTAVAIL\n", stderr);
+			} else if(res == -EAGAIN) {
+				fputs("-EAGAIN\n", stderr);
+			} else if(res == -ENOBUFS) {
+				fputs("-ENOBUFS\n", stderr);
+			} else if(res == -ENOMEM) {
+				fputs("-EPROTO\n", stderr);
+			} else if(res == -EPROTO) {
+				fputs("-ENOMEM\n", stderr);
 			} else if(res < 0) {
-				fprintf(stderr, "An error occoured: %zu!\n", res);
+				fprintf(stderr, "An error occoured: %d!\n", res);
 			} else {
-				printf("%s\n", buf);
+				printf("%s\n", req_buf);
 			}
 		}
 		
@@ -103,7 +130,6 @@ void button_handler(void* args) {
  */
 void* connect_thread_handler(void* args) {
 	(void)args;
-	char buf[CLIENT_INIT_MSG_LEN];
 	
 	sock_udp_ep_t local = SOCK_IPV6_EP_ANY;
 	
@@ -114,15 +140,15 @@ void* connect_thread_handler(void* args) {
 		fputs("Error creating UDP sock!\n", stderr);
 		sock_ready = false;
 	} else {
-		printf("Successfull createt UDP socket.\n");
-		printf("Waiting for boards...\n");
+		puts("Successfull createt UDP socket.");
+		puts("Waiting for boards...");
 		sock_ready = true;
 	}
 	
 	while(sock_ready) {
 		ssize_t res = sock_udp_recv(
 			&sock,
-			buf,
+			conn_buf,
 			CLIENT_INIT_MSG_LEN,
 			SOCK_NO_TIMEOUT,
 			NULL
@@ -136,53 +162,66 @@ void* connect_thread_handler(void* args) {
 			);
 			sock_ready = false;
 		} else if((res) >= 0) {
-			if(startsWith(buf, client_id)) {
-				char* addr_str = strchr(buf, ' ');
-				addr_str++; // addr_str zeigt sonst auf das Leerzeichen!
+			if(!startsWith((const char*)conn_buf, client_id)) {
+				continue;
+			}
+		
+			char* addr_str = strchr((const char*)conn_buf, ' ');
+			addr_str++; // addr_str zeigt sonst auf das Leerzeichen!
 				
-				size_t board_index;
-				for(board_index=0;
-					board_index<MAX_BOARD_NUM && boards[board_index].init;
-					board_index++
+			size_t board_index;
+			for(board_index=0;
+				board_index<MAX_BOARD_NUM && boards[board_index].init;
+				board_index++
+			);
+				
+			if(board_index >= MAX_BOARD_NUM) {
+				fputs("Max nr. of boards registered!\n", stderr);
+			} else {
+				boards[board_index].init = true;
+				my_strncpy(
+					boards[board_index].addr,
+					addr_str,
+					IPV6_ADDR_MAX_STR_LEN
 				);
 				
-				if(board_index >= MAX_BOARD_NUM) {
-					fputs("Max nr. of boards registered!\n", stderr);
+				boards[board_index].ep.family = AF_INET6;
+				boards[board_index].ep.port = CLIENT_PORT;
+				ipv6_addr_from_str(
+					(ipv6_addr_t *)&boards[board_index].ep.addr.ipv6,
+					boards[board_index].addr
+				);
+					
+				char resp_msg[SERVER_RESP_MSG_LEN];
+				snprintf(
+					resp_msg,
+					SERVER_RESP_MSG_LEN,
+					"%s %s",
+					server_id,
+					own_addr
+				);
+					
+				res = sock_udp_send(
+					NULL,
+					resp_msg,
+					SERVER_RESP_MSG_LEN,  
+					&boards[board_index].ep
+				);
+				
+				if(res == -EAFNOSUPPORT) {
+					fputs("-EAFNOSUPPORT\n", stderr);
+				} else if(res == -EHOSTUNREACH) {
+					fputs("-EHOSTUNREACH\n", stderr);
+				} else if(res == -EINVAL) {
+					fputs("-EINVAL\n", stderr);
+				} else if(res == -ENOMEM) {
+					fputs("-ENOMEM\n", stderr);
+				} else if(res == -ENOTCONN) {
+					fputs("-ENOTCONN\n", stderr);
+				} else if(res < 0) {
+					fputs("error\n", stderr);
 				} else {
-					boards[board_index].init = true;
-					my_strncpy(
-						boards[board_index].addr,
-						addr_str,
-						IPV6_ADDR_MAX_STR_LEN
-					);
-					
-					boards[board_index].ep.port = CLIENT_PORT;
-					ipv6_addr_from_str(
-						(ipv6_addr_t *)&boards[board_index].ep.addr.ipv6,
-						boards[board_index].addr
-					);
-					
-					char resp_msg[SERVER_RESP_MSG_LEN];
-					snprintf(
-						resp_msg,
-						SERVER_RESP_MSG_LEN,
-						"%s %s",
-						server_id,
-						own_addr
-					);
-					
-					sock_udp_create(
-						&boards[board_index].sock,
-						&boards[board_index].ep,
-						NULL,
-						0
-					);
-					if(sock_udp_send(NULL, resp_msg, SERVER_RESP_MSG_LEN,  
-						&boards[board_index].ep) < 0) {
-						fputs("Error sending server response!\n", stderr);
-					} else {
-						printf("Board found on: %s\n", addr_str);
-					}
+					printf("Board found on: %s\n", addr_str);
 				}
 			}
 		}
@@ -213,19 +252,18 @@ int main(void) {
 	// mit GPIO_RISING wird der Handler 2 mal bei Boardstart aufgerufen,
 	// Grund unbekannt
 	gpio_init_int(BUTTON_GPIO, GPIO_IN_PU, GPIO_FALLING, button_handler, NULL);
-	printf("Button activated.\n");
+	puts("Button activated.");
 	
-	printf("%d - %u\n", THREAD_STACKSIZE_DEFAULT, sizeof(sock_udp_t));
-	/*kernel_pid_t conn_t_pid =*/ thread_create(
+	thread_create(
 		connect_stack,
-		THREAD_STACKSIZE_DEFAULT,
+		sizeof(connect_stack),
 		THREAD_PRIORITY_MAIN-1,
 		THREAD_CREATE_STACKTEST,
 		connect_thread_handler,
 		NULL,
-		"connection thread"
+		"connect thread"
 	);
-	
+		
 	// TODO shell-commands bauen?
 	char line_buf[SHELL_DEFAULT_BUFSIZE];
 	shell_run(NULL, line_buf, SHELL_DEFAULT_BUFSIZE);
