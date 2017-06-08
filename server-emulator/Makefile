@@ -3,6 +3,8 @@ APPLICATION = server-emulator
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= samr21-xpro #native
+#SERIAL ?= "ATML2127031800001974"
+#CFLAGS += -DDEBUG_ASSERT_VERBOSE
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../RIOT
@@ -15,6 +17,9 @@ CFLAGS += -DDEVELHELP
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
+#Packeges to include:
+USEPKG += nanocoap
+
 # Modules to include:
 USEMODULE += shell
 USEMODULE += shell_commands
@@ -24,6 +29,8 @@ USEMODULE += auto_init_gnrc_netif
 USEMODULE += gnrc_ipv6_router_default
 USEMODULE += gnrc_sock_udp
 USEMODULE += ipv6_addr
+USEMODULE += gcoap
+USEMODULE += xtimer
 
 INCLUDES += -I$(CURDIR)/include
 INCLUDES += -I$(CURDIR)/../include

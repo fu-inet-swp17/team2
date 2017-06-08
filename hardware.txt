@@ -1,7 +1,8 @@
-2 phyWAVE-KW22
+- CO2 sensor (https://www.amazon.de/iHaospace-MH-Z14A-Carbon-Sensor-0-5000PPM/dp/B071RTKQG4/ref=sr_1_1?ie=UTF8&qid=1494859094&sr=8-1&keywords=MH-Z14+NDIR)
+- Alk sensor (parkFun MQ-3 Alcohol Gas Sensor)
+- 4 LED streifen (https://www.amazon.com/NooElec-Addressable-Waterproof-Connectors-Pre-Soldered/dp/B008F05N54), (https://www.adafruit.com/product/306)
 
-pro phyWAVE-KW22:
-	- CO2 sensor
-	- Alk sensor
-	- 4 LED streifen
+ATX-Netzteil (stromversorgung der LED-Streifen)
+ein Phytec Board
+ein Atmel SAMR21 X PLAINED
 

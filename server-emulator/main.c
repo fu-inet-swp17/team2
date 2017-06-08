@@ -8,9 +8,11 @@
 #include "net/ipv6/addr.h"
 #include "net/sock/udp.h"
 #include "net/gnrc/ipv6/netif.h"
+#include "net/gcoap.h"
 #include "shell.h"
 #include "board.h"
 #include "thread.h"
+#include "xtimer.h"
 
 #include "smart_environment.h"
 
@@ -20,7 +22,6 @@
 typedef struct SensorBoard {
 	bool init;
 	char addr[IPV6_ADDR_MAX_STR_LEN];
-	sock_udp_ep_t ep;
 } SensorBoard;
 
 // gefährlich! sollte eigentlich gemutext werden
@@ -62,65 +63,64 @@ static inline size_t my_strncpy(char* dst, const char* src, size_t num) {
 	return i;
 }
 
-void button_handler(void* args) {
-	// puts("Requesting data from boards...");
+
+/**********************************COAP STUFF**********************************/
+
+coap_pkt_t pdu;
+uint8_t coap_buff[GCOAP_PDU_BUF_SIZE];
+
+static void sensors_resp_handler(unsigned req_state, coap_pkt_t* pdu) {
+	if (req_state == GCOAP_MEMO_TIMEOUT) {
+		printf("timeout for msg ID %02u\n", coap_get_id(pdu));
+		return;
+	} else if (req_state == GCOAP_MEMO_ERR) {
+		printf("error in response\n");
+		return;
+	}
 	
-	for(size_t i=0; i<MAX_BOARD_NUM; i++) {
+	printf("Request: %02u\nSensors: %s\n\n", coap_get_id(pdu), pdu->payload);
+}
+
+/**********************************COAP STUFF**********************************/
+
+/*
+ * printf schwierig, sorgt für Stackoverflow
+ */
+static void button_handler(void* args) {
+	puts("Requesting data from boards...");
+	
+	for(uint8_t i=0; i<MAX_BOARD_NUM; i++) {		
 		if(!boards[i].init) {
 			printf("Slot %u not used.\n", i);
 			continue;
 		}
 		
-		char request[] = "request";
-		ssize_t res = sock_udp_send(
-			NULL,
-			request, 
-			sizeof("request"),
-			&boards[i].ep
+		gcoap_request(
+			&pdu,
+			coap_buff,
+			GCOAP_PDU_BUF_SIZE,
+			COAP_GET,
+			"/se-app/sensors"
 		);
-		if(res < 0) {
-			fprintf(
-				stderr,
-				"Error sending server request to board nr. %u: %d!\n",
-				i,
-				res
-			);
-		} else {
-			printf("Reqest send to board %u.\n", i);
-			
-			sock_udp_ep_t resp_ep = SOCK_IPV6_EP_ANY;
-			resp_ep.port = SERVER_POLL_PORT;
-			
-			sock_udp_t resp_sock;
-			sock_udp_create(&resp_sock, &resp_ep, NULL, 0);
-			// printf("beg: %p, size: %u\n", (void*)req_buf, sizeof(req_buf));
-			res = sock_udp_recv(
-				&resp_sock,
-				req_buf,
-				sizeof(req_buf),
-				(uint32_t)2000000,
-				&boards[i].ep
-			);
-			
-			if(res == -ETIMEDOUT) {
-				fputs("-ETIMEDOUT\n", stderr);
-			} else if(res == -EADDRNOTAVAIL) {
-				fputs("-EADDRNOTAVAIL\n", stderr);
-			} else if(res == -EAGAIN) {
-				fputs("-EAGAIN\n", stderr);
-			} else if(res == -ENOBUFS) {
-				fputs("-ENOBUFS\n", stderr);
-			} else if(res == -ENOMEM) {
-				fputs("-EPROTO\n", stderr);
-			} else if(res == -EPROTO) {
-				fputs("-ENOMEM\n", stderr);
-			} else if(res < 0) {
-				fprintf(stderr, "An error occoured: %d!\n", res);
-			} else {
-				printf("%s\n", req_buf);
-			}
-		}
 		
+		sock_udp_ep_t board_ep;
+		board_ep.family = AF_INET6;
+		board_ep.netif = SOCK_ADDR_ANY_NETIF;
+		board_ep.port = GCOAP_PORT;
+		ipv6_addr_from_str((ipv6_addr_t *)&board_ep.addr.ipv6, boards[i].addr);
+		size_t bytes_sent = gcoap_req_send2(
+			coap_buff,
+			GCOAP_PDU_BUF_SIZE,
+			&board_ep,
+			sensors_resp_handler
+		);
+		// puts("Request send");
+		printf(
+			"Send request %u to board %u. Size: %u\n",
+			coap_get_id(&pdu),
+			i, 
+			bytes_sent
+		);
 	}
 }
 
@@ -128,7 +128,7 @@ void button_handler(void* args) {
 /*
  * Deamon der im Hintergrund läuft und neue Boards registriert
  */
-void* connect_thread_handler(void* args) {
+static void* connect_thread_handler(void* args) {
 	(void)args;
 	
 	sock_udp_ep_t local = SOCK_IPV6_EP_ANY;
@@ -177,53 +177,82 @@ void* connect_thread_handler(void* args) {
 				
 			if(board_index >= MAX_BOARD_NUM) {
 				fputs("Max nr. of boards registered!\n", stderr);
-			} else {
-				boards[board_index].init = true;
-				my_strncpy(
-					boards[board_index].addr,
-					addr_str,
-					IPV6_ADDR_MAX_STR_LEN
-				);
-				
-				boards[board_index].ep.family = AF_INET6;
-				boards[board_index].ep.port = CLIENT_PORT;
-				ipv6_addr_from_str(
-					(ipv6_addr_t *)&boards[board_index].ep.addr.ipv6,
-					boards[board_index].addr
-				);
-					
-				char resp_msg[SERVER_RESP_MSG_LEN];
-				snprintf(
-					resp_msg,
-					SERVER_RESP_MSG_LEN,
-					"%s %s",
-					server_id,
-					own_addr
-				);
-					
-				res = sock_udp_send(
-					NULL,
-					resp_msg,
-					SERVER_RESP_MSG_LEN,  
-					&boards[board_index].ep
-				);
-				
-				if(res == -EAFNOSUPPORT) {
-					fputs("-EAFNOSUPPORT\n", stderr);
-				} else if(res == -EHOSTUNREACH) {
-					fputs("-EHOSTUNREACH\n", stderr);
-				} else if(res == -EINVAL) {
-					fputs("-EINVAL\n", stderr);
-				} else if(res == -ENOMEM) {
-					fputs("-ENOMEM\n", stderr);
-				} else if(res == -ENOTCONN) {
-					fputs("-ENOTCONN\n", stderr);
-				} else if(res < 0) {
-					fputs("error\n", stderr);
-				} else {
-					printf("Board found on: %s\n", addr_str);
-				}
+				break; // der Thread beendet sich!!!
 			}
+			boards[board_index].init = true;
+			my_strncpy(
+				boards[board_index].addr,
+				addr_str,
+				IPV6_ADDR_MAX_STR_LEN
+			);
+				
+			sock_udp_ep_t board_ep;
+			board_ep.family = AF_INET6;
+			board_ep.netif = SOCK_ADDR_ANY_NETIF;
+			board_ep.port = CLIENT_PORT;
+			ipv6_addr_from_str(
+				(ipv6_addr_t *)&board_ep.addr.ipv6,
+				boards[board_index].addr
+			);
+					
+			char resp_msg[SERVER_RESP_MSG_LEN];
+			snprintf(
+				resp_msg,
+				SERVER_RESP_MSG_LEN,
+				"%s %s",
+				server_id,
+				own_addr
+			);
+					
+			res = sock_udp_send(
+				NULL,
+				resp_msg,
+				SERVER_RESP_MSG_LEN,  
+				&board_ep
+			);
+				
+			if(res == -EAFNOSUPPORT) {
+				fputs("-EAFNOSUPPORT\n", stderr);
+			} else if(res == -EHOSTUNREACH) {
+				fputs("-EHOSTUNREACH\n", stderr);
+			} else if(res == -EINVAL) {
+				fputs("-EINVAL\n", stderr);
+			} else if(res == -ENOMEM) {
+				fputs("-ENOMEM\n", stderr);
+			} else if(res == -ENOTCONN) {
+				fputs("-ENOTCONN\n", stderr);
+			} else if(res < 0) {
+				fputs("error\n", stderr);
+			} else {
+				printf("Board found on: %s\n", addr_str);
+			}
+				
+			xtimer_sleep(10);
+			
+			gcoap_request(
+				&pdu,
+				coap_buff,
+				GCOAP_PDU_BUF_SIZE,
+				COAP_GET,
+				"/se-app/sensors"
+			);
+
+			board_ep.port = GCOAP_PORT;
+				
+			size_t bytes_sent = gcoap_req_send2(
+				coap_buff,
+				GCOAP_PDU_BUF_SIZE,
+				&board_ep,
+				sensors_resp_handler
+			);
+			// puts("Request send");
+			printf(
+				"Send request %u to board %u. Size: %u\n",
+				coap_get_id(&pdu),
+				board_index, 
+				bytes_sent
+			);
+				
 		}
 	}
 
@@ -254,6 +283,7 @@ int main(void) {
 	gpio_init_int(BUTTON_GPIO, GPIO_IN_PU, GPIO_FALLING, button_handler, NULL);
 	puts("Button activated.");
 	
+	puts("Coap gedingst.");
 	thread_create(
 		connect_stack,
 		sizeof(connect_stack),
