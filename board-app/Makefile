@@ -32,6 +32,7 @@ USEMODULE += saul
 USEMODULE += saul_reg
 USEMODULE += saul_default
 USEMODULE += gcoap
+USEMODULE += xtimer
 
 INCLUDES += -I$(CURDIR)/drivers/include
 INCLUDES += -I$(CURDIR)/include
