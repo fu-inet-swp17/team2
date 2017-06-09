@@ -30,14 +30,8 @@ USEMODULE += gnrc_sock_udp
 USEMODULE += ipv6_addr
 USEMODULE += saul
 USEMODULE += saul_reg
+USEMODULE += saul_default
 USEMODULE += gcoap
-
-USEMODULE += mag3110
-USEMODULE += mma8x5x
-USEMODULE += tmp006
-USEMODULE += mpl3115a2
-USEMODULE += hdc1000
-USEMODULE += tcs37727
 
 INCLUDES += -I$(CURDIR)/drivers/include
 INCLUDES += -I$(CURDIR)/include

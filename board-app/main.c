@@ -11,17 +11,6 @@
 #include "saul_reg.h"
 #include "net/gcoap.h"
 
-#include "mag3110_params.h"
-#include "mag3110_saul.h"
-#include "mma8x5x_params.h"
-#include "mma8x5x_saul.h"
-#include "tmp006_saul.h"
-#include "mpl3115a2_saul.h"
-#include "hdc1000_params.h"
-#include "hdc1000_saul.h"
-#include "tcs37727_params.h"
-#include "tcs37727_saul.h"
-
 #include "smart_environment.h"
 
 /*
@@ -29,7 +18,7 @@
  * #requires: stdbool.h, string.h
  * #param[char* str]: string that should start with something
  * #param[char* prefix]: the prefix to check for
- * #return[bool]: true wenn prefix is a prefix of str, false else
+ * #return[bool]: true if prefix is a prefix of str, false else
  */
 static inline bool startsWith(const char* str, const char* prefix) {
 	char* substr = strstr(str, prefix);
@@ -93,7 +82,7 @@ static ssize_t sensors_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
 /*
 static ssize_t temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
 	gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
-	// Temperatur Sensorwert mit SAUL abfragen und in pdu->payload schreiben
+	// Temperatur-Sensorwert mit SAUL abfragen und in pdu->payload schreiben
 	// Anzahl der Bytes speichern und an gcoap_finish übergeben
 	size_t payload_size = 0;
 	return gcoap_finish(pdu, payload_size, COAP_FORMAT_NONE);
@@ -101,7 +90,7 @@ static ssize_t temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
 
 static ssize_t humid_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
 	gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
-	// Luftfeutigkeit Sensorwert mit SAUL abfragen und in pdu->payload schreiben
+	// Luftfeuchtigkeit-Sensorwert mit SAUL abfragen und in pdu->payload schreiben
 	// Anzahl der Bytes speichern und an gcoap_finish übergeben
 	size_t payload_size = 0;
 	return gcoap_finish(pdu, payload_size, COAP_FORMAT_NONE);
@@ -109,190 +98,47 @@ static ssize_t humid_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
 */
 /**********************************COAP STUFF**********************************/
 
-static inline void sensors_initialize(void) {
-	mag3110_t mag3110;
-	memset(&mag3110, 0, sizeof(mag3110));
-	uint8_t mag3110_init_res = mag3110_init(&mag3110, mag3110_params);
-	if (mag3110_init_res) {
-		printf("Initialization of %s (%s) failed.\n", mag3110_name, mag3110_saul_name);
-	} else {
-		printf("%s (%s) successfully initialized.\n", mag3110_name, mag3110_saul_name);
-	}
+static inline void sensors_test(void) {
+	puts("\n##############################################");
+	puts("############## SAUL sensor test ##############\n");
 
-	/**
-	* This needs to be outside the else clause because the SAUL registry requires it to be inside a persistent memory location.
-	* If the device is not added to the SAUL registry or the addition fails, the memory taken up by the struct is freed later.
-	*/
-	saul_reg_t mag3110_saul = {
-		NULL,
-		&mag3110,
-		mag3110_saul_name,
-		&mag3110_saul_driver
-	};
+    saul_reg_t* dev = saul_reg;
 
-	if (!mag3110_init_res && !saul_reg_add(&mag3110_saul)) {
-		printf("%s successfully added to SAUL registry.\n", mag3110_name);
-	} else {
-		free(&mag3110_saul);
-	}
+    while(1) {
+        phydat_t res;
+        int dim = saul_reg_read(dev, &res);
+        printf("%s of type %s returns the following data: \n", dev->name, saul_class_to_str(dev->driver->type));
+		phydat_dump(&res, dim);
+        if (dev->next == NULL) {
+            break;
+        }
+        dev = dev->next;
+    };
 
-
-	mma8x5x_t mma8x5x;
-	memset(&mma8x5x, 0, sizeof(mma8x5x));
-	uint8_t mma8x5x_init_res = mma8x5x_init(&mma8x5x, mma8x5x_params);
-	if (mma8x5x_init_res) {
-		printf("Initialization of %s (%s) failed.\n", mma8x5x_name, mma8x5x_saul_name);
-	} else {
-		printf("%s (%s) successfully initialized.\n", mma8x5x_name, mma8x5x_saul_name);
-	}
-
-	/**
-	* This needs to be outside the else clause because the SAUL registry requires it to be inside a persistent memory location.
-	* If the device is not added to the SAUL registry or the addition fails, the memory taken up by the struct is freed later.
-	*/
-	saul_reg_t mma8x5x_saul = {
-		NULL,
-		&mma8x5x,
-		mma8x5x_saul_name,
-		&mma8x5x_saul_driver
-	};
-
-	if (!mma8x5x_init_res && !saul_reg_add(&mma8x5x_saul)) {
-		printf("%s successfully added to SAUL registry.\n", mma8x5x_name);
-	} else {
-		free(&mma8x5x_saul);
-	}
-
-
-	tmp006_t tmp006;
-	memset(&tmp006, 0, sizeof(tmp006));
-	uint8_t tmp006_init_res = tmp006_init(&tmp006, 0, TMP006_I2C_ADDRESS, TMP006_CONFIG_CR_DEF);
-	if (tmp006_init_res) {
-		printf("Initialization of %s (%s) failed.\n", tmp006_name, tmp006_saul_name);
-	} else {
-		printf("%s (%s) successfully initialized.\n", tmp006_name, tmp006_saul_name);
-	}
-
-	/**
-	* This needs to be outside the else clause because the SAUL registry requires it to be inside a persistent memory location.
-	* If the device is not added to the SAUL registry or the addition fails, the memory taken up by the struct is freed later.
-	*/
-	saul_reg_t tmp006_saul = {
-		NULL,
-		&tmp006,
-		tmp006_saul_name,
-		&tmp006_saul_driver
-	};
-
-	if (!tmp006_init_res && !saul_reg_add(&tmp006_saul)) {
-		printf("%s successfully added to SAUL registry.\n", tmp006_name);
-	} else {
-		free(&tmp006_saul);
-	}
-
-
-	mpl3115a2_t mpl3115a2;
-	memset(&mpl3115a2, 0, sizeof(mpl3115a2));
-	uint8_t mpl3115a2_init_res = mpl3115a2_init(&mpl3115a2, 0, MPL3115A2_I2C_ADDRESS, MPL3115A2_OS_RATIO_DEFAULT);
-	if (mpl3115a2_init_res) {
-		printf("Initialization of %s (%s) failed.\n", mpl3115a2_name, mpl3115a2_saul_name);
-	} else {
-		printf("%s (%s) successfully initialized.\n", mpl3115a2_name, mpl3115a2_saul_name);
-	}
-
-	/**
-	* This needs to be outside the else clause because the SAUL registry requires it to be inside a persistent memory location.
-	* If the device is not added to the SAUL registry or the addition fails, the memory taken up by the struct is freed later.
-	*/
-	saul_reg_t mpl3115a2_saul = {
-		NULL,
-		&mpl3115a2,
-		mpl3115a2_saul_name,
-		&mpl3115a2_saul_driver
-	};
-
-	if (!mpl3115a2_init_res && !saul_reg_add(&mpl3115a2_saul)) {
-		printf("%s successfully added to SAUL registry.\n", mpl3115a2_name);
-	} else {
-		free(&mpl3115a2_saul);
-	}
-
-
-	hdc1000_t hdc1000;
-	memset(&hdc1000, 0, sizeof(hdc1000));
-	uint8_t hdc1000_init_res = hdc1000_init(&hdc1000, hdc1000_params);
-	if (hdc1000_init_res) {
-		printf("Initialization of %s (%s) failed.\n", hdc1000_name, hdc1000_saul_name);
-	} else {
-		printf("%s (%s) successfully initialized.\n", hdc1000_name, hdc1000_saul_name);
-	}
-
-	/**
-	* This needs to be outside the else clause because the SAUL registry requires it to be inside a persistent memory location.
-	* If the device is not added to the SAUL registry or the addition fails, the memory taken up by the struct is freed later.
-	*/
-	saul_reg_t hdc1000_saul = {
-		NULL,
-		&hdc1000,
-		hdc1000_saul_name,
-		&hdc1000_saul_hum_driver
-	};
-
-	if (!hdc1000_init_res && !saul_reg_add(&hdc1000_saul)) {
-		printf("%s successfully added to SAUL registry.\n", hdc1000_name);
-	} else {
-		free(&hdc1000_saul);
-	}
-
-
-	tcs37727_t tcs37727;
-	memset(&tcs37727, 0, sizeof(tcs37727));
-	uint8_t tcs37727_init_res = tcs37727_init(&tcs37727, tcs37727_params);
-	if (tcs37727_init_res) {
-		printf("Initialization of %s (%s) failed.\n", tcs37727_name, tcs37727_saul_name);
-	} else {
-		printf("%s (%s) successfully initialized.\n", tcs37727_name, tcs37727_saul_name);
-	}
-
-	/**
-	* This needs to be outside the else clause because the SAUL registry requires it to be inside a persistent memory location.
-	* If the device is not added to the SAUL registry or the addition fails, the memory taken up by the struct is freed later.
-	*/
-	saul_reg_t tcs37727_saul = {
-		NULL,
-		&tcs37727,
-		tcs37727_saul_name,
-		&tcs37727_saul_driver
-	};
-
-	if (!tcs37727_init_res && !saul_reg_add(&tcs37727_saul)) {
-		printf("%s successfully added to SAUL registry.\n", tcs37727_name);
-	} else {
-		free(&tcs37727_saul);
-	}
+	puts("##############################################\n");
 }
 
 int main(void) {
     printf("Smart environment app on %s\n", RIOT_BOARD);
 
-	sensors_initialize();
+	saul_reg_t* dev = saul_reg;
 
-	saul_reg_t* saul_reg_cur = saul_reg;
-
-	if (saul_reg_cur == NULL) {
+	if (dev == NULL) {
 		puts("The SAUL registry does not contain any devices.");
 	} else {
 		printf("The SAUL registry contains the following devices: ");
 		while(1) {
-			printf("%s", saul_reg_cur->name);
-			if (saul_reg_cur->next == NULL) {
+			printf("%s", dev->name);
+			if (dev->next == NULL) {
 				break;
 			}
 			printf(", ");
-			saul_reg_cur = saul_reg_cur->next;
+			dev = dev->next;
 		};
 		printf("\n");
 	}
+
+	sensors_test();
 
 	// ff02::1 -> addr für link-local broadcast
 	ipv6_addr_t addr;
