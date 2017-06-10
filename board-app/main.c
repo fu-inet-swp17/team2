@@ -129,17 +129,17 @@ static void* ping_handler(void* args) {
 		);
 		
 		if(res == -EAFNOSUPPORT) {
-			puts("Ping: EAFNOSUPPORT");
+			fputs("Ping: EAFNOSUPPORT", stderr);
 		} else if(res == -EHOSTUNREACH) {
-			puts("Ping: EHOSTUNREACH");
+			fputs("Ping: EHOSTUNREACH", stderr);
 		} else if(res == -EINVAL) {
-			puts("Ping: EINVAL");
+			fputs("Ping: EINVAL", stderr);
 		} else if(res == -ENOMEM) {
-			puts("Ping: ENOMEM");
+			fputs("Ping: ENOMEM", stderr);
 		} else if(res == -ENOTCONN) {
-			puts("Ping: ENOTCONN");
+			fputs("Ping: ENOTCONN", stderr);
 		} else if(res < 0) {
-			printf("Ping error: %d\n", res);
+			fprintf(stderr, "Ping error: %d\n", res);
 		}
 		
 		if(res < 0) {

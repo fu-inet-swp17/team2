@@ -16,12 +16,13 @@
 
 #include "smart_environment.h"
 
-#define MAX_BOARD_NUM 5
+#define MAX_BOARD_NUM 10
 #define TIMEOUT (uint32_t)2000000
 
 typedef struct SensorBoard {
     bool init;
-    char addr[IPV6_ADDR_MAX_STR_LEN];
+	sock_udp_ep_t board_ep;
+	// char addr[IPV6_ADDR_MAX_STR_LEN];
 } SensorBoard;
 
 // gefährlich! sollte eigentlich gemutext werden
@@ -44,6 +45,23 @@ uint8_t req_buf[128];
 static inline bool startsWith(const char* str, const char* prefix) {
     char* substr = strstr(str, prefix);
     return substr == str;
+}
+
+/*
+ * #description: compares two IPv6 Addresses
+ * #param[ipv6_addr_t* addr1]: first address for compare
+ * #param[ipv6_addr_t* addr2]: second address for compare
+ * #return[bool]: true if addresses are equal, false if not
+ */
+static inline bool compareIPv6Addr(ipv6_addr_t* addr1, ipv6_addr_t* addr2) {
+	// wegen der blöden Typdefs akzeptiert der Compiler direkte Vergleiche nicht
+	for(size_t i=0; i<16; i++) {
+		if(addr1->u8[i] != addr2->u8[i]) {
+			return false;
+		}
+	}
+	
+	return true;
 }
 
 /*
@@ -107,7 +125,7 @@ static void button_handler(void* args) {
         board_ep.family = AF_INET6;
         board_ep.netif = SOCK_ADDR_ANY_NETIF;
         board_ep.port = GCOAP_PORT;
-        ipv6_addr_from_str((ipv6_addr_t *)&board_ep.addr.ipv6, boards[i].addr);
+        //ipv6_addr_from_str((ipv6_addr_t *)&board_ep.addr.ipv6, boards[i].addr);
         size_t bytes_sent = gcoap_req_send2(
             coap_buff,
             GCOAP_PDU_BUF_SIZE,
@@ -132,9 +150,10 @@ static void* connect_thread_handler(void* args) {
     (void)args;
     
     sock_udp_ep_t local = SOCK_IPV6_EP_ANY;
-    
-    sock_udp_t sock;
     local.port = SERVER_CONN_PORT;
+    ipv6_addr_from_str((ipv6_addr_t *)&local.addr.ipv6, "ff02::1");
+    sock_udp_t sock;
+    
     bool sock_ready = false;
     if(sock_udp_create(&sock, &local, NULL, 0) < 0) {
         fputs("Error creating UDP sock!\n", stderr);
@@ -146,15 +165,17 @@ static void* connect_thread_handler(void* args) {
     }
     
     while(sock_ready) {
+    	sock_udp_ep_t remote;
         ssize_t res = sock_udp_recv(
             &sock,
             conn_buf,
             CLIENT_INIT_MSG_LEN,
             SOCK_NO_TIMEOUT,
-            NULL
+            &remote
         );
         
         if(res < 0) {
+        	// TODO Fehlerabfrage
             fprintf(
                 stderr,
                 "Error during \"sock_udp_recv\": %d!\nAboarting.",
@@ -165,94 +186,44 @@ static void* connect_thread_handler(void* args) {
             if(!startsWith((const char*)conn_buf, client_id)) {
                 continue;
             }
-        
-            char* addr_str = strchr((const char*)conn_buf, ' ');
-            addr_str++; // addr_str zeigt sonst auf das Leerzeichen!
                 
             size_t board_index;
+            bool in_use = false;
             for(board_index=0;
                 board_index<MAX_BOARD_NUM && boards[board_index].init;
                 board_index++
-            );
+            ) {
+            	if(compareIPv6Addr(
+            		(ipv6_addr_t*)&boards[board_index].board_ep.addr.ipv6,
+            		(ipv6_addr_t*)&remote.addr.ipv6
+            	)) {
+            		printf("Ping from board: %u\n", board_index);
+            		in_use = true;
+            	}
+            }
                 
             if(board_index >= MAX_BOARD_NUM) {
                 fputs("Max nr. of boards registered!\n", stderr);
                 break; // der Thread beendet sich!!!
             }
-            boards[board_index].init = true;
-            my_strncpy(
-                boards[board_index].addr,
-                addr_str,
-                IPV6_ADDR_MAX_STR_LEN
-            );
-                
-            sock_udp_ep_t board_ep;
-            board_ep.family = AF_INET6;
-            board_ep.netif = SOCK_ADDR_ANY_NETIF;
-            board_ep.port = CLIENT_PORT;
-            ipv6_addr_from_str(
-                (ipv6_addr_t *)&board_ep.addr.ipv6,
-                boards[board_index].addr
-            );
-                    
-            char resp_msg[SERVER_RESP_MSG_LEN];
-            snprintf(
-                resp_msg,
-                SERVER_RESP_MSG_LEN,
-                "%s %s",
-                server_id,
-                own_addr
-            );
-                    
-            res = sock_udp_send(
-                NULL,
-                resp_msg,
-                SERVER_RESP_MSG_LEN,  
-                &board_ep
-            );
-                
-            if(res == -EAFNOSUPPORT) {
-                fputs("-EAFNOSUPPORT\n", stderr);
-            } else if(res == -EHOSTUNREACH) {
-                fputs("-EHOSTUNREACH\n", stderr);
-            } else if(res == -EINVAL) {
-                fputs("-EINVAL\n", stderr);
-            } else if(res == -ENOMEM) {
-                fputs("-ENOMEM\n", stderr);
-            } else if(res == -ENOTCONN) {
-                fputs("-ENOTCONN\n", stderr);
-            } else if(res < 0) {
-                fputs("error\n", stderr);
-            } else {
-                printf("Board found on: %s\n", addr_str);
-            }
-                
-            xtimer_sleep(10);
             
-            gcoap_request(
-                &pdu,
-                coap_buff,
-                GCOAP_PDU_BUF_SIZE,
-                COAP_GET,
-                "/se-app/sensors"
-            );
-
-            board_ep.port = GCOAP_PORT;
-                
-            size_t bytes_sent = gcoap_req_send2(
-                coap_buff,
-                GCOAP_PDU_BUF_SIZE,
-                &board_ep,
-                sensors_resp_handler
-            );
-            // puts("Request send");
-            printf(
-                "Send request %u to board %u. Size: %u\n",
-                coap_get_id(&pdu),
-                board_index, 
-                bytes_sent
-            );
-                
+            if(!in_use) {
+            	boards[board_index].init = true;
+            	memcpy(
+            		(void*)&boards[board_index].board_ep,
+            		(void*)&remote,
+            		sizeof(sock_udp_ep_t)
+            	);
+            
+            	char addr_str[IPV6_ADDR_MAX_STR_LEN];
+            	ipv6_addr_to_str(
+            		addr_str,
+            		(ipv6_addr_t*)&boards[board_index].board_ep.addr.ipv6,
+            		IPV6_ADDR_MAX_STR_LEN
+            	);
+            
+           		printf("board found at: %s\n", addr_str);
+            }
         }
     }
 
