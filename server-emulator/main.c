@@ -121,15 +121,11 @@ static void button_handler(void* args) {
             "/se-app/sensors"
         );
         
-        sock_udp_ep_t board_ep;
-        board_ep.family = AF_INET6;
-        board_ep.netif = SOCK_ADDR_ANY_NETIF;
-        board_ep.port = GCOAP_PORT;
-        //ipv6_addr_from_str((ipv6_addr_t *)&board_ep.addr.ipv6, boards[i].addr);
+        boards[i].board_ep.port = GCOAP_PORT;
         size_t bytes_sent = gcoap_req_send2(
             coap_buff,
             GCOAP_PDU_BUF_SIZE,
-            &board_ep,
+            &boards[i].board_ep,
             sensors_resp_handler
         );
         // puts("Request send");

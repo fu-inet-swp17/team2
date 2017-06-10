@@ -16,10 +16,14 @@
 
 #include "smart_environment.h"
 
-#define PING_TIMEOUT 10
+#define ENABLE_DEBUG 1
+
+#define PING_TIMEOUT 60
+#define TIMEOUT (uint32_t)2000000
+#define RESSOURCE_COUNTER 1
 
 char ping_stack[THREAD_STACKSIZE_DEFAULT];
-char coap_stack[THREAD_STACKSIZE_DEFAULT];
+char coap_stack[THREAD_STACKSIZE_MAIN*2];
 
 char intro_msg[CLIENT_INIT_MSG_LEN];
 char own_addr[IPV6_ADDR_MAX_STR_LEN];
@@ -40,7 +44,7 @@ static inline bool startsWith(const char* str, const char* prefix) {
 coap_pkt_t pdu;
 uint8_t coap_buff[GCOAP_PDU_BUF_SIZE];
 
-// static ssize_t sensors_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
+static ssize_t sensors_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 // static ssize_t temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 // static ssize_t humid_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len);
 
@@ -48,12 +52,12 @@ uint8_t coap_buff[GCOAP_PDU_BUF_SIZE];
 
 // Array mit den CoAP Ressourcen
 // Die Ressourcen muessen in alphabetischer Reihnfolge eingefuegt werden!!!
-/*static const coap_resource_t se_resources[] = {
+static const coap_resource_t se_resources[] = {
     // ressource-path, ressource-type, response-handler
-    {"/se-app/sensors", COAP_GET, sensors_handler},
+    {"/se-app/sensors", COAP_GET, &sensors_handler},
     // {"/se-app/humid", COAP_GET, humid_handler},
     // {"/se-app/temp", COAP_GET, temp_handler},
-};*/
+};
 
 // TODO sind die listener so korrekt initialisiert?
 // listener für gcoap
@@ -78,19 +82,23 @@ static gcoap_listener_t temp_listener = {
 
 // handler der angesprochen werden sollte wenn, eine anfrage nach den Sensoren
 // kommmt
-/*
+
 static ssize_t sensors_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
-    size_t payload_size = (size_t)snprintf(
-        (char*)pdu->payload, 
-        len,
+    
+    size_t payload_size = (size_t)sprintf(
+        (char*)pdu->payload,
         "%s",
-        "temp-humid"
+        "temp-humid-mag"
     );
-    puts("responed");
-    return gcoap_finish(pdu, payload_size, COAP_FORMAT_TEXT);
+    
+    printf("%u\n", payload_size);
+    printf("%s\n", (char*)pdu->payload);
+    
+    
+    return gcoap_finish(pdu, 0, COAP_FORMAT_NONE);
 }
-
+/*
 static ssize_t temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
     // Temperatur-Sensorwert mit SAUL abfragen und in pdu->payload schreiben
@@ -110,9 +118,9 @@ static ssize_t humid_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
 /**********************************COAP STUFF**********************************/
 
 // Thread-Routine zum senden regelmäßiger Pings
-static void* ping_handler(void* args) {
-	(void)args;
-	sock_udp_ep_t remote = SOCK_IPV6_EP_ANY;
+/*static void* ping_handler(void* args) {
+    (void)args;
+    sock_udp_ep_t remote = SOCK_IPV6_EP_ANY;
     remote.port = SERVER_CONN_PORT;
     // ff02::1 -> addr für link-local broadcast
     ipv6_addr_from_str((ipv6_addr_t *)&remote.addr.ipv6, "ff02::1");
@@ -121,88 +129,108 @@ static void* ping_handler(void* args) {
     snprintf(intro_msg, CLIENT_INIT_MSG_LEN, "%s %s", client_id, own_addr);
     
     while(true) {
-		ssize_t res = sock_udp_send(
-			NULL,
-			intro_msg,
-			CLIENT_INIT_MSG_LEN,
-			&remote
-		);
-		
-		if(res == -EAFNOSUPPORT) {
-			fputs("Ping: EAFNOSUPPORT", stderr);
-		} else if(res == -EHOSTUNREACH) {
-			fputs("Ping: EHOSTUNREACH", stderr);
-		} else if(res == -EINVAL) {
-			fputs("Ping: EINVAL", stderr);
-		} else if(res == -ENOMEM) {
-			fputs("Ping: ENOMEM", stderr);
-		} else if(res == -ENOTCONN) {
-			fputs("Ping: ENOTCONN", stderr);
-		} else if(res < 0) {
-			fprintf(stderr, "Ping error: %d\n", res);
-		}
-		
-		if(res < 0) {
-			break;
-		} else {
-			xtimer_sleep(PING_TIMEOUT);
-		}
-	}
-	
+        ssize_t res = sock_udp_send(
+            NULL,
+            intro_msg,
+            CLIENT_INIT_MSG_LEN,
+            &remote
+        );
+        
+        if(res == -EAFNOSUPPORT) {
+            fputs("Ping: EAFNOSUPPORT", stderr);
+        } else if(res == -EHOSTUNREACH) {
+            fputs("Ping: EHOSTUNREACH", stderr);
+        } else if(res == -EINVAL) {
+            fputs("Ping: EINVAL", stderr);
+        } else if(res == -ENOMEM) {
+            fputs("Ping: ENOMEM", stderr);
+        } else if(res == -ENOTCONN) {
+            fputs("Ping: ENOTCONN", stderr);
+        } else if(res < 0) {
+            fprintf(stderr, "Ping error: %d\n", res);
+        }
+        
+        if(res < 0) {
+            break;
+        } else {
+            xtimer_sleep(PING_TIMEOUT);
+        }
+    }
+    
     return NULL;
-}
+}*/
 
 // Thread-Routine für einen CoAP-Server
 static void* coap_handler(void* args) {
-	(void)args;
-	sock_udp_ep_t local = SOCK_IPV6_EP_ANY;
-	local.port = GCOAP_PORT;
-	
-	sock_udp_t sock;
-	// TODO detalliertere Fehlerabfrage
-	if(sock_udp_create(&sock, &local, NULL, 0) < 0) {
-		puts("coap: error creating socket!");
-		return NULL;
-	}
-	
-	while(true) {
-		sock_udp_ep_t remote;
-		ssize_t msg_len = sock_udp_recv(
-			&sock,
-			coap_buff,
-			GCOAP_PDU_BUF_SIZE,
-			SOCK_NO_TIMEOUT, // ggf. ändern
-			&remote
-		);
-		
-		if(msg_len == -EADDRNOTAVAIL) {
-			puts("coap: EADDRNOTAVAIL");
-		} else if(msg_len == -EAGAIN) {
-			puts("coap: EAGAIN");
-		} else if(msg_len == -ENOBUFS) {
-			puts("coap: ENOBUFS");
-		} else if(msg_len == -ENOMEM) {
-			puts("coap: ENOMEM");
-		} else if(msg_len == -EPROTO) {
-			puts("coap: EPROTO");
-		/*} else if(msg_len == -ETIMEDOUT) {
-			puts("coap: ETIMEDOUT");*/
-		} else if(msg_len < 0) {
-			printf("coap error: %d\n", msg_len);
-		}
-
-		if(msg_len < 0) {
-			break;
-		}
-		
-		ssize_t res = coap_parse(&pdu, coap_buff, msg_len);
-		if(res < 0) {
-			puts("coap: parse error!");
-			break;
-		}
-	}	
-	
-	return NULL;
+    (void)args;
+    sock_udp_ep_t local = SOCK_IPV6_EP_ANY;
+    local.port = GCOAP_PORT;
+    
+    sock_udp_t sock;
+    if(sock_udp_create(&sock, &local, NULL, 0) < 0) {
+        puts("coap: error creating socket!");
+        return NULL;
+    }
+    
+    // TODO detalliertere Fehlerabfrage
+    while(true) {
+        // sock_udp_recv erzeugt mitunter eine Stackpointer Corruption
+        sock_udp_ep_t remote;
+        ssize_t msg_len = sock_udp_recv(
+            &sock,
+            coap_buff,
+            GCOAP_PDU_BUF_SIZE,
+            SOCK_NO_TIMEOUT, // ggf. ändern
+            &remote
+        );
+        
+        if(msg_len == -EADDRNOTAVAIL) {
+            puts("coap: EADDRNOTAVAIL");
+        } else if(msg_len == -EAGAIN) {
+            puts("coap: EAGAIN");
+        } else if(msg_len == -ENOBUFS) {
+            puts("coap: ENOBUFS");
+        } else if(msg_len == -ENOMEM) {
+            puts("coap: ENOMEM");
+        } else if(msg_len == -EPROTO) {
+            puts("coap: EPROTO");
+        } else if(msg_len == -ETIMEDOUT) {
+            puts("coap: ETIMEDOUT");
+            continue;
+        } else if(msg_len < 0) {
+            printf("coap error: %d\n", msg_len);
+        
+        }
+        if(msg_len < 0) {
+            break;
+        }
+        ssize_t res = coap_parse(&pdu, coap_buff, msg_len);
+        if(res < 0) {
+            puts("coap: parse error!");
+            continue;
+        }
+        // CoAP-URL muss geparst werden
+        // aus irgend einem Grund wird die mit / aufgefüllt
+        size_t i;
+        for(i=NANOCOAP_URL_MAX-1; pdu.url[i] == '/' && i > 0; i--);
+        pdu.url[i+1] = 0;
+        puts((char*)pdu.url);
+        
+        for(i=0; i<RESSOURCE_COUNTER; i++) {
+            if(!strcmp((char*)pdu.url, se_resources[i].path)) {
+                memset(coap_buff, 0,  sizeof(coap_buff));
+                memcpy(coap_buff, &pdu, sizeof(coap_pkt_t));
+                
+                se_resources[i].handler(&pdu,
+                    coap_buff, GCOAP_PDU_BUF_SIZE);
+                printf("sent: %s\n", (char*)pdu.payload);
+                break;
+            }
+        }
+    }    
+    
+    sock_udp_close(&sock);
+    return NULL;
 }
 
 static inline void sensors_test(void) {
@@ -258,27 +286,27 @@ int main(void) {
     ipv6_addr_to_str(own_addr, out, IPV6_ADDR_MAX_STR_LEN);
     printf("own ipv6 addr: %s\n", own_addr);
 
-	// thread für pings
-	thread_create(
-		ping_stack,
-		THREAD_STACKSIZE_DEFAULT,
-		THREAD_PRIORITY_MAIN-1,
-		0,
-		ping_handler,
-		NULL,
-		"ping"
-	);
-	
-	// thread für coap
-	thread_create(
-		coap_stack,
-		THREAD_STACKSIZE_DEFAULT,
-		THREAD_PRIORITY_MAIN-1,
-		0,
-		coap_handler,
-		NULL,
-		"coap"
-	);
+    // thread für pings
+    /*thread_create(
+        ping_stack,
+        THREAD_STACKSIZE_DEFAULT,
+        THREAD_PRIORITY_MAIN-1,
+        0,
+        ping_handler,
+        NULL,
+        "ping"
+    );*/
+    
+    // thread für coap
+    thread_create(
+        coap_stack,
+        THREAD_STACKSIZE_DEFAULT,
+        THREAD_PRIORITY_MAIN-1,
+        0,
+        coap_handler,
+        NULL,
+        "coap"
+    );
     
     // shell starten damit Application nicht terminiert
     char line_buf[SHELL_DEFAULT_BUFSIZE];
