@@ -23,7 +23,7 @@ func RegisterDeviceResource(path string, device data.Device) {
 	defer db.Close()
 
 	// check if the device resource is already in the db
-	rows, err := db.Query("SELECT BoardId FROM "+sqlConfiguration.DeviceResourceTableName+" WHERE ResourcePath=?", path)
+	rows, err := db.Query("SELECT * FROM "+sqlConfiguration.DeviceResourceTableName+" WHERE BoardId=? AND ResourcePath=?", device.Id, path)
 	if err != nil {
 		log.Error("checking if device resource already exists: ", err)
 		return

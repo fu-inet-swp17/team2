@@ -10,4 +10,4 @@ import (
 
 // vars
 
-var log = logging.MustGetLogger("riotcomm")
+var log = logging.MustGetLogger("riot")

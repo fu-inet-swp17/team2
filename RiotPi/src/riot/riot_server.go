@@ -44,9 +44,9 @@ func listenToLinkLocalMulticast(configuration config.Configuration) {
 	for {
 		_, remoteAddr, err := conn.ReadFromUDP(buffer[0:])
 		if err != nil {
-			log.Error("reading: ", err)
+			log.Error("reading message: ", err)
 		} else {
-			log.Debugf("got message from " + remoteAddr.IP.String() + " with content: " + string(buffer[:]))
+			log.Debugf("got message from " + remoteAddr.IP.String() + " with content:\n" + string(buffer[:]))
 		}
 	}
 }

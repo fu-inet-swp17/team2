@@ -76,6 +76,8 @@ func main() {
 	log.Debugf("registering devices for debug")
 	db.RegisterDevice("fe80::e870:6d5b:5292:432a")
 	db.RegisterDeviceResource("/se-app/sensors", data.Device{Id: 1, Address: "fe80::e870:6d5b:5292:432a", LastPing: ""})
+	db.RegisterDevice("fe80::7b76:6260:b7e3:dbce")
+	db.RegisterDeviceResource("/se-app/sensors", data.Device{Id: 2, Address: "fe80::7b76:6260:b7e3:dbce", LastPing: ""})
 
 	// initializing finished
 	log.Notice("server started")
