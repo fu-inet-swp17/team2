@@ -7,10 +7,9 @@ package riot
 import (
 	"../config" // configuration
 	"../db"     // get all devices
-	//"github.com/dustin/go-coap" // coap
-	"net"  // udp server
-	"time" // timer
-	//"strconv"	// atoi/itoa
+	"fmt"       // sprintf
+	"net"       // udp server
+	"time"      // timer
 )
 
 // listening for client announcements
@@ -25,7 +24,8 @@ func StartListeningForDevices(configuration config.Configuration, completion cha
 func listenToLinkLocalMulticast(configuration config.Configuration) {
 	// build the address
 	//udpAddr, err := net.ResolveUDPAddr("udp6", ":" + strconv.Itoa(configuration.ListeningPort))
-	udpAddr, err := net.ResolveUDPAddr("udp", "[ff02::1]:2017")
+	udpinfo := fmt.Sprintf("[ff02::1]:%d", configuration.ListeningPort)
+	udpAddr, err := net.ResolveUDPAddr("udp", udpinfo)
 	if err != nil {
 		log.Error("resolving udp address: ", err)
 		return
@@ -51,13 +51,13 @@ func listenToLinkLocalMulticast(configuration config.Configuration) {
 	}
 }
 
-func StartScheduledPolling(pollingInterval int, cancel chan struct{}) {
-	ticker := time.NewTicker(time.Duration(pollingInterval) * time.Second)
+func StartScheduledPolling(configuration config.Configuration, cancel chan struct{}) {
+	ticker := time.NewTicker(time.Duration(configuration.PollingInterval) * time.Second)
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
-				go getInformationFromRegisteredDevices()
+				go getInformationFromRegisteredDevices(configuration)
 			case <-cancel:
 				ticker.Stop()
 				log.Info("stop listening")
@@ -67,11 +67,10 @@ func StartScheduledPolling(pollingInterval int, cancel chan struct{}) {
 	}()
 }
 
-func getInformationFromRegisteredDevices() {
-	log.Debugf("polling now")
-
+func getInformationFromRegisteredDevices(configuration config.Configuration) {
 	devices := db.GetRegisteredDevices()
 	for _, device := range devices {
-		GetInformation(device)
+		deviceResources := db.GetRegisteredDeviceResources(device)
+		GetInformation(device, deviceResources, configuration)
 	}
 }

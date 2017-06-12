@@ -46,16 +46,19 @@ func WriteSampleConfig() {
 
 	// create sample config
 	configuration := &Configuration{
-		PollingInterval: 10,
-		ListeningPort:   1234,
+		PollingInterval:     10,
+		ListeningPort:       1234,
+		RiotPort:            5683,
+		LowPanInterfaceName: "lowpan0",
 		SQL: SQLSettings{
-			Address:         "sqladdr",
-			Port:            1234,
-			User:            "sqluser",
-			Password:        "sqlpw",
-			DatabaseName:    "sqldb",
-			DeviceTableName: "sqldevicetable",
-			DataTableName:   "sqldatatable",
+			Address:                 "sqladdr",
+			Port:                    1234,
+			User:                    "sqluser",
+			Password:                "sqlpw",
+			DatabaseName:            "sqldb",
+			DeviceTableName:         "sqldevicetable",
+			DeviceResourceTableName: "sqldeviceresourcetable",
+			DataTableName:           "sqldatatable",
 		},
 	}
 

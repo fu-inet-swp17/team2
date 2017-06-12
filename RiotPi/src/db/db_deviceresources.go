@@ -10,10 +10,9 @@ import (
 	"fmt"                              // sprintf
 	_ "github.com/go-sql-driver/mysql" // mysql driver
 	"strconv"                          // atoi/itoa
-	"time"                             // time
 )
 
-func RegisterDevice(address string) {
+func RegisterDeviceResource(path string, device data.Device) {
 	// create connection
 	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port, sqlConfiguration.DatabaseName)
 	db, err := sql.Open("mysql", dbinfo)
@@ -23,39 +22,33 @@ func RegisterDevice(address string) {
 	}
 	defer db.Close()
 
-	// check if the device is already in the db
-	rows, err := db.Query("SELECT ID FROM "+sqlConfiguration.DeviceTableName+" WHERE Address=?", address)
+	// check if the device resource is already in the db
+	rows, err := db.Query("SELECT BoardId FROM "+sqlConfiguration.DeviceResourceTableName+" WHERE ResourcePath=?", path)
 	if err != nil {
-		log.Error("checking if device already exists: ", err)
+		log.Error("checking if device resource already exists: ", err)
 		return
 	}
 	if rows.Next() {
-		var id int
-		err = rows.Scan(&id)
-		if err != nil {
-			log.Warning("device already in db with ID=", id)
-		} else {
-			log.Warning("device already in db")
-		}
+		log.Warning("device resource already in db")
 		return
 	}
 
 	// prepare insert
-	stmt, err := db.Prepare("INSERT " + sqlConfiguration.DeviceTableName + " SET Address=?,LastPing=?")
+	stmt, err := db.Prepare("INSERT " + sqlConfiguration.DeviceResourceTableName + " SET BoardId=?,ResourcePath=?")
 	if err != nil {
 		log.Error("error preparing insert statement: ", err)
 		return
 	}
 
 	// execute insert
-	_, err = stmt.Exec(address, time.Now())
+	_, err = stmt.Exec(device.Id, path)
 	if err != nil {
 		log.Error("error executing insert statement: ", err)
 		return
 	}
 }
 
-func UnregisterDevice(deviceId int) {
+func UnregisterDeviceResource(path string, device data.Device) {
 	// create connection
 	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port, sqlConfiguration.DatabaseName)
 	db, err := sql.Open("mysql", dbinfo)
@@ -66,21 +59,21 @@ func UnregisterDevice(deviceId int) {
 	defer db.Close()
 
 	// prepare delete
-	stmt, err := db.Prepare("DELETE FROM " + sqlConfiguration.DeviceTableName + " WHERE ID=?")
+	stmt, err := db.Prepare("DELETE FROM " + sqlConfiguration.DeviceResourceTableName + " WHERE BoardId=? AND ResourcePath=?")
 	if err != nil {
 		log.Error("error preparing delete statement: ", err)
 		return
 	}
 
 	// execute delete
-	_, err = stmt.Exec(deviceId)
+	_, err = stmt.Exec(device.Id, path)
 	if err != nil {
 		log.Error("error executing delete statement: ", err)
 		return
 	}
 }
 
-func GetRegisteredDevices() []data.Device {
+func GetRegisteredDeviceResources(device data.Device) []data.DeviceResource {
 	// create connection
 	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port, sqlConfiguration.DatabaseName)
 	db, err := sql.Open("mysql", dbinfo)
@@ -91,28 +84,27 @@ func GetRegisteredDevices() []data.Device {
 	defer db.Close()
 
 	// select
-	rows, err := db.Query("SELECT * FROM " + sqlConfiguration.DeviceTableName)
+	rows, err := db.Query("SELECT * FROM "+sqlConfiguration.DeviceResourceTableName+" WHERE BoardId=?", device.Id)
 	if err != nil {
 		log.Error("querying from database: ", err)
 		return nil
 	}
 
 	// iterate over results
-	var devices []data.Device
+	var deviceResources []data.DeviceResource
 	for rows.Next() {
-		var id int
-		var address string
-		var lastPing string
-		err = rows.Scan(&id, &address, &lastPing)
+		var boardId int
+		var path string
+		err = rows.Scan(&boardId, &path)
 		if err != nil {
 			log.Warning("reading values from row: ", err)
 			continue
 		}
 
-		devices = append(devices, data.Device{Id: id, Address: address, LastPing: lastPing})
+		deviceResources = append(deviceResources, data.DeviceResource{BoardId: boardId, Path: path})
 	}
 
-	log.Debugf("got " + strconv.Itoa(len(devices)) + " devices")
+	log.Debugf("got " + strconv.Itoa(len(deviceResources)) + " device resources")
 
-	return devices
+	return deviceResources
 }

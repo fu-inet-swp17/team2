@@ -14,7 +14,7 @@ import (
 
 // vars
 
-var log = logging.MustGetLogger("dbhandler")
+var log = logging.MustGetLogger("db")
 
 var sqlConfiguration config.SQLSettings
 
@@ -52,6 +52,13 @@ func InitDatabase() {
 
 	// create device table
 	_, err = db.Exec("CREATE TABLE `" + sqlConfiguration.DeviceTableName + "` (ID INT PRIMARY KEY AUTO_INCREMENT, Address varchar(255) NOT NULL, LastPing DATE NULL DEFAULT NULL);")
+	if err != nil {
+		log.Error("creating device table: ", err)
+		panic(err)
+	}
+
+	// create device resource table
+	_, err = db.Exec("CREATE TABLE `" + sqlConfiguration.DeviceResourceTableName + "` (BoardId INT NOT NULL, ResourcePath varchar(255) NOT NULL);")
 	if err != nil {
 		log.Error("creating device table: ", err)
 		panic(err)

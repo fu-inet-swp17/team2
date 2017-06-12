@@ -7,14 +7,14 @@ package db
 import (
 	"../data"                          // data for Device struct
 	"database/sql"                     // sql
+	"fmt"                              // sprintf
 	_ "github.com/go-sql-driver/mysql" // mysql driver
-	"strconv"                          // atoi/itoa
 )
 
 func InsertSensorData(sensordata data.SensorData) {
 	// create connection
-	sqlConnectString := sqlConfiguration.User + ":" + sqlConfiguration.Password + "@tcp(" + sqlConfiguration.Address + ":" + strconv.Itoa(sqlConfiguration.Port) + ")/" + sqlConfiguration.DatabaseName
-	db, err := sql.Open("mysql", sqlConnectString)
+	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port, sqlConfiguration.DatabaseName)
+	db, err := sql.Open("mysql", dbinfo)
 	if err != nil {
 		log.Error("creating connection to database: ", err)
 		return
@@ -38,8 +38,8 @@ func InsertSensorData(sensordata data.SensorData) {
 
 func DeleteSensorData(boardId int) {
 	// create connection
-	sqlConnectString := sqlConfiguration.User + ":" + sqlConfiguration.Password + "@tcp(" + sqlConfiguration.Address + ":" + strconv.Itoa(sqlConfiguration.Port) + ")/" + sqlConfiguration.DatabaseName
-	db, err := sql.Open("mysql", sqlConnectString)
+	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port, sqlConfiguration.DatabaseName)
+	db, err := sql.Open("mysql", dbinfo)
 	if err != nil {
 		log.Error("creating connection to database: ", err)
 		return
@@ -63,8 +63,8 @@ func DeleteSensorData(boardId int) {
 
 func GetSensorData() []data.SensorData {
 	// create connection
-	sqlConnectString := sqlConfiguration.User + ":" + sqlConfiguration.Password + "@tcp(" + sqlConfiguration.Address + ":" + strconv.Itoa(sqlConfiguration.Port) + ")/" + sqlConfiguration.DatabaseName
-	db, err := sql.Open("mysql", sqlConnectString)
+	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port, sqlConfiguration.DatabaseName)
+	db, err := sql.Open("mysql", dbinfo)
 	if err != nil {
 		log.Error("creating connection to database: ", err)
 		return nil
