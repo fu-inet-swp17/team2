@@ -9,7 +9,6 @@ import (
 	"database/sql"                     // sql
 	"fmt"                              // sprintf
 	_ "github.com/go-sql-driver/mysql" // mysql driver
-	"strconv"                          // atoi/itoa
 	"time"                             // time
 )
 
@@ -111,8 +110,6 @@ func GetRegisteredDevices() []data.Device {
 
 		devices = append(devices, data.Device{Id: id, Address: address, LastPing: lastPing})
 	}
-
-	log.Debugf("got " + strconv.Itoa(len(devices)) + " devices")
 
 	return devices
 }

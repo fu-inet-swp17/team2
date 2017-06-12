@@ -26,6 +26,7 @@ func readCommandLineArgs() config.Configuration {
 	configPathPtr := flag.String("config", "conf.json", "Path to the config file")
 	sampleConfigPtr := flag.Bool("sampleconfig", false, "If a conf.json file with default values should be created in the current directory")
 	initDBPtr := flag.Bool("initdb", false, "If the database should be initialized using the configuration provided in the conf.json file")
+	clearDBPtr := flag.Bool("cleardb", false, "If the database should be cleared")
 
 	// parse command line arguments
 	flag.Parse()
@@ -42,6 +43,10 @@ func readCommandLineArgs() config.Configuration {
 
 	// initialize db package
 	db.InitWithConfiguration(configuration)
+
+	if *clearDBPtr {
+		db.ClearDatabase()
+	}
 
 	// init database if set
 	if *initDBPtr {

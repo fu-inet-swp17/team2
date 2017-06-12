@@ -7,9 +7,9 @@ package db
 import (
 	"../config"                        // configuration
 	"database/sql"                     // sql
+	"fmt"                              // sprintf
 	_ "github.com/go-sql-driver/mysql" // mysql driver
 	"github.com/op/go-logging"         // logging
-	"strconv"                          // atoi/itoa
 )
 
 // vars
@@ -24,12 +24,34 @@ func InitWithConfiguration(configuration config.Configuration) {
 	sqlConfiguration = configuration.SQL
 }
 
+func ClearDatabase() {
+	// create connection
+	log.Notice("clearing database")
+
+	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port)
+	db, err := sql.Open("mysql", dbinfo)
+	if err != nil {
+		log.Error("connecting to server: ", err)
+		panic(err)
+	}
+	defer db.Close()
+
+	// drop database
+	_, err = db.Exec("DROP DATABASE " + sqlConfiguration.DatabaseName)
+	if err != nil {
+		log.Error("dropping database: ", err)
+		panic(err)
+	}
+
+	log.Notice("database cleared")
+}
+
 func InitDatabase() {
 	// create connection
 	log.Notice("initialize database")
 
-	sqlConnectString := sqlConfiguration.User + ":" + sqlConfiguration.Password + "@tcp(" + sqlConfiguration.Address + ":" + strconv.Itoa(sqlConfiguration.Port) + ")/"
-	db, err := sql.Open("mysql", sqlConnectString)
+	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port)
+	db, err := sql.Open("mysql", dbinfo)
 	if err != nil {
 		log.Error("connecting to server: ", err)
 		panic(err)

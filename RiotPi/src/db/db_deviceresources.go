@@ -9,7 +9,6 @@ import (
 	"database/sql"                     // sql
 	"fmt"                              // sprintf
 	_ "github.com/go-sql-driver/mysql" // mysql driver
-	"strconv"                          // atoi/itoa
 )
 
 func RegisterDeviceResource(path string, device data.Device) {
@@ -103,8 +102,6 @@ func GetRegisteredDeviceResources(device data.Device) []data.DeviceResource {
 
 		deviceResources = append(deviceResources, data.DeviceResource{BoardId: boardId, Path: path})
 	}
-
-	log.Debugf("got " + strconv.Itoa(len(deviceResources)) + " device resources")
 
 	return deviceResources
 }
