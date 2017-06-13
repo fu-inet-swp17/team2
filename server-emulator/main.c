@@ -27,12 +27,9 @@ typedef struct SensorBoard {
 
 // gefährlich! sollte eigentlich gemutext werden
 SensorBoard boards[MAX_BOARD_NUM];
-
 char own_addr[IPV6_ADDR_MAX_STR_LEN];
 char connect_stack[THREAD_STACKSIZE_MAIN];
-
 uint8_t conn_buf[CLIENT_INIT_MSG_LEN];
-
 uint8_t req_buf[128];
 
 /*
@@ -126,7 +123,7 @@ static void button_handler(void* args) {
             coap_buff,
             GCOAP_PDU_BUF_SIZE,
             &boards[i].board_ep,
-            sensors_resp_handler
+            &sensors_resp_handler
         );
         // puts("Request send");
         printf(
@@ -228,7 +225,10 @@ static void* connect_thread_handler(void* args) {
 
 int main(void) {
     printf("This is the server-emulator on \"%s\".\n", RIOT_BOARD);
-    
+        
+    msg_t msg_queueq[8];
+	msg_init_queue(msg_queueq, 8);
+     
     for(size_t i=0; i<MAX_BOARD_NUM; i++) {
         boards[i].init = false;
     }
