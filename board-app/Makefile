@@ -27,6 +27,7 @@ USEMODULE += fmt
 USEMODULE += gcoap
 USEMODULE += saul_default
 USEMODULE += ipv6_addr
+USEMODULE += ps
 #USEMODULE += auto_init
 # Include GNRC
 USEMODULE += gnrc_netdev_default

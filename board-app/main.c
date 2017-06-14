@@ -76,10 +76,6 @@ static ssize_t sensors_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
         "temp-humid-mag"
     );
     
-    puts("Hurra");
-    // printf("handler: %u\n", payload_size);
-    // printf("handler: %s\n", (char*)pdu->payload);
-    
     return gcoap_finish(pdu, payload_size, COAP_FORMAT_NONE);
 }
 
@@ -168,7 +164,7 @@ static inline void sensors_test(void) {
 
 int main(void) {
     printf("Smart environment app on %s\n", RIOT_BOARD);
-
+	
 	msg_t msg_queueq[8];
 	msg_init_queue(msg_queueq, 8);
 
@@ -216,17 +212,6 @@ int main(void) {
         NULL,
         "ping"
     );
-    
-    // thread für coap
-    /*thread_create(
-        coap_stack,
-        THREAD_STACKSIZE_DEFAULT,
-        THREAD_PRIORITY_MAIN-1,
-        0,
-        coap_handler,
-        NULL,
-        "coap"
-    );*/
     
     // shell starten damit Application nicht terminiert
     char line_buf[SHELL_DEFAULT_BUFSIZE];

@@ -109,8 +109,9 @@ static void button_handler(void* args) {
             printf("Slot %u not used.\n", i);
             continue;
         }
+        boards[i].board_ep.port = GCOAP_PORT;
         
-        gcoap_request(
+        size_t req_len = (size_t)gcoap_request(
             &pdu,
             coap_buff,
             GCOAP_PDU_BUF_SIZE,
@@ -118,18 +119,25 @@ static void button_handler(void* args) {
             "/se-app/sensors"
         );
         
-        boards[i].board_ep.port = GCOAP_PORT;
         size_t bytes_sent = gcoap_req_send2(
             coap_buff,
-            GCOAP_PDU_BUF_SIZE,
+            req_len,
             &boards[i].board_ep,
             &sensors_resp_handler
         );
-        // puts("Request send");
+        
+        
+
+        char addr_str[IPV6_ADDR_MAX_STR_LEN];
+        ipv6_addr_to_str(
+         	addr_str,
+            (ipv6_addr_t*)&boards[i].board_ep.addr.ipv6,
+            IPV6_ADDR_MAX_STR_LEN
+        );
         printf(
-            "Send request %u to board %u. Size: %u\n",
+            "Send request %u to addr %s. Size: %u\n",
             coap_get_id(&pdu),
-            i, 
+            addr_str,
             bytes_sent
         );
     }
