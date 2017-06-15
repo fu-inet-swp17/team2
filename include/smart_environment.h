@@ -1,18 +1,16 @@
 #ifndef _SMART_ENVIRONMENT_H_
 #define _SMART_ENVIRONMENT_H_
 
-#define CLIENT_PORT 2018
-#define SERVER_CONN_PORT 2017
-#define SERVER_POLL_PORT 2018
+#define TEMP_SENSOR		0x00000001
+#define HUMID_SENSOR	0x00000002
+#define MAG_SENSOR		0x00000004
 
-#define CLIENT_ID_LEN sizeof(client_id)
-#define SERVER_ID_LEN sizeof(server_id)
 
-#define CLIENT_INIT_MSG_LEN CLIENT_ID_LEN + IPV6_ADDR_MAX_STR_LEN + 1
-#define SERVER_RESP_MSG_LEN SERVER_ID_LEN + IPV6_ADDR_MAX_STR_LEN + 1
+#define SERVER_CONN_PORT	2017
+#define APP_ID_LEN			sizeof(app_id)
+#define APP_PING_MSG_LEN	APP_ID_LEN + 1 + 4
 
 // statische globals, nach außen hin nicht sichtbar
-const char server_id[] = "riot-swp-2017-se-app-server";
-const char client_id[] = "riot-swp-2017-se-app-client";
+const char app_id[] = "riot-swp-2017-se";
 
 #endif

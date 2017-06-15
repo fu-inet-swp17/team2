@@ -16,13 +16,11 @@
 
 #include "smart_environment.h"
 
-#define PING_TIMEOUT 10
-#define TIMEOUT (uint32_t)2000000
-#define RESSOURCE_COUNTER 1
+#define PING_TIMEOUT	10
 
 char ping_stack[THREAD_STACKSIZE_DEFAULT];
 
-char intro_msg[CLIENT_INIT_MSG_LEN];
+char intro_msg[APP_PING_MSG_LEN];
 char own_addr[IPV6_ADDR_MAX_STR_LEN];
 
 /*
@@ -90,7 +88,7 @@ static ssize_t temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
 static ssize_t humid_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
     // Luftfeuchtigkeit-Sensorwert mit SAUL abfragen und in pdu->payload schreiben
-    // Anzahl der Bytes speichern und an gcoap_finish übergeben
+    // Anzahl der Bytes in 'payload_size' speichern und an gcoap_finish übergeben
     size_t payload_size = 0;
     return gcoap_finish(pdu, payload_size, COAP_FORMAT_NONE);
 }
@@ -104,7 +102,7 @@ static void* ping_handler(void* args) {
     remote.port = SERVER_CONN_PORT;
     // ff02::1 -> addr für link-local broadcast
     ipv6_addr_from_str((ipv6_addr_t *)&remote.addr.ipv6, "ff02::1");
-    snprintf(intro_msg, CLIENT_INIT_MSG_LEN, "%s", client_id);
+    snprintf(intro_msg, APP_PING_MSG_LEN, "%s", app_id);
     
     puts("Ping thread running");
     
@@ -112,7 +110,7 @@ static void* ping_handler(void* args) {
         ssize_t res = sock_udp_send(
             NULL,
             intro_msg,
-            CLIENT_INIT_MSG_LEN,
+            APP_PING_MSG_LEN,
             &remote
         );
         

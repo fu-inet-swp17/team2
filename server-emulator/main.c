@@ -126,8 +126,6 @@ static void button_handler(void* args) {
             &sensors_resp_handler
         );
         
-        
-
         char addr_str[IPV6_ADDR_MAX_STR_LEN];
         ipv6_addr_to_str(
          	addr_str,
@@ -160,8 +158,7 @@ static void* connect_thread_handler(void* args) {
         fputs("Error creating UDP sock!\n", stderr);
         sock_ready = false;
     } else {
-        puts("Successfull createt UDP socket.");
-        puts("Waiting for boards...");
+        puts("Successfull createt UDP socket.\nWaiting for boards...");
         sock_ready = true;
     }
     
@@ -184,7 +181,7 @@ static void* connect_thread_handler(void* args) {
             );
             sock_ready = false;
         } else if((res) >= 0) {
-            if(!startsWith((const char*)conn_buf, client_id)) {
+            if(!startsWith((const char*)conn_buf, app_id)) {
                 continue;
             }
                 
