@@ -20,7 +20,7 @@
 
 char ping_stack[THREAD_STACKSIZE_DEFAULT];
 
-char intro_msg[APP_PING_MSG_LEN];
+PingMsg intro_msg;
 char own_addr[IPV6_ADDR_MAX_STR_LEN];
 
 /*
@@ -68,13 +68,17 @@ static gcoap_listener_t listener = {
 static ssize_t sensors_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
     
-    size_t payload_size = (size_t)sprintf(
-        (char*)pdu->payload,
-        "%s",
-        "temp-humid-mag"
+    ssize_t payload_len = snprintf(
+    	(char*)pdu->payload,
+    	GCOAP_PDU_BUF_SIZE,
+    	"%u",
+    	(unsigned int)IR_TEMP_SENSOR | HUMID_SENSOR | MAG_SENSOR | 
+    	RGB_LIGHT_SENDSOR | PRESS_SENSOR | ACC_SENSOR
     );
     
-    return gcoap_finish(pdu, payload_size, COAP_FORMAT_NONE);
+    // *((uint64_t*)pdu->payload) =
+    puts("handler!");
+    return gcoap_finish(pdu, (size_t)payload_len, COAP_FORMAT_TEXT);
 }
 
 static ssize_t temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
@@ -102,14 +106,17 @@ static void* ping_handler(void* args) {
     remote.port = SERVER_CONN_PORT;
     // ff02::1 -> addr für link-local broadcast
     ipv6_addr_from_str((ipv6_addr_t *)&remote.addr.ipv6, "ff02::1");
-    snprintf(intro_msg, APP_PING_MSG_LEN, "%s", app_id);
+    snprintf(intro_msg.app_id, APP_ID_LEN, "%s", app_id);
+    
+    intro_msg.sensors = IR_TEMP_SENSOR | HUMID_SENSOR | MAG_SENSOR |
+    RGB_LIGHT_SENDSOR | PRESS_SENSOR | ACC_SENSOR;
     
     puts("Ping thread running");
     
     while(true) {
         ssize_t res = sock_udp_send(
             NULL,
-            intro_msg,
+            &intro_msg,
             APP_PING_MSG_LEN,
             &remote
         );
@@ -162,6 +169,7 @@ static inline void sensors_test(void) {
 
 int main(void) {
     printf("Smart environment app on %s\n", RIOT_BOARD);
+	printf("%u\n", APP_ID_LEN);
 	
 	msg_t msg_queueq[8];
 	msg_init_queue(msg_queueq, 8);
