@@ -7,13 +7,15 @@ package riot
 import (
 	"../config"                 // config for Configuration struct
 	"../data"                   // data for Device struct
+	"../senml"                  // SenML parsing
+	"errors"                    // create errors
 	"fmt"                       // sprintf
 	"github.com/dustin/go-coap" // coap
 )
 
 var messageCount int = 0
 
-func GetInformation(device data.Device, deviceResources []data.DeviceResource, configuration config.Configuration) []data.SensorData {
+func GetSensorData(device data.Device, deviceResources []data.DeviceResource, configuration config.Configuration) ([]data.SensorData, error) {
 	for _, resource := range deviceResources {
 		// create the request
 		req := coap.Message{
@@ -29,14 +31,14 @@ func GetInformation(device data.Device, deviceResources []data.DeviceResource, c
 		c, err := coap.Dial("udp", coapinfo)
 		if err != nil {
 			log.Error("dial address: ", err)
-			return nil
+			return nil, err
 		}
 
 		// send request and receive response
 		resp, err := c.Send(req)
 		if err != nil {
 			log.Error("sending message: ", err)
-			return nil
+			return nil, err
 		}
 
 		// update the message count
@@ -46,15 +48,27 @@ func GetInformation(device data.Device, deviceResources []data.DeviceResource, c
 		}
 
 		// parse response
-		if resp != nil {
-			if len(resp.Payload) > 0 {
-				log.Notice("response payload: " + string(resp.Payload[:]))
-			} else {
-				log.Warning("response payload is empty")
-			}
-		} else {
-			log.Warning("no response")
+		if resp == nil {
+			log.Warning("no response received")
+			return nil, errors.New("no response received")
 		}
+
+		if len(resp.Payload) <= 0 {
+			log.Warning("response payload is empty")
+			return nil, errors.New("response payload is empty")
+		}
+
+		log.Debugf("response payload: " + string(resp.Payload[:]))
+
+		parsedResponse, err := senml.ParseMessage(resp.Payload)
+		if err != nil {
+			log.Error("parsing SenML: ", err)
+			return nil, err
+		}
+
+		log.Debugf("successfully parsed SenML")
+		senml.LogMessage(*parsedResponse)
 	}
-	return nil
+
+	return nil, nil
 }
