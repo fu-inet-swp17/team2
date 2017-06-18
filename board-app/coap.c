@@ -30,14 +30,14 @@ static ssize_t temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     phydat_t res;
     saul_reg_t* dev = saul_reg_find_type(SAUL_SENSE_TEMP);
 
-    uint8_t senml_len = 50; // TODO senml message length
     char dev_name[50]; // TODO dev name length
     strncpy(dev_name, dev->name, 50);
     saul_reg_read(dev, &res);
 
     temp_sum += res.val[0];
 
-    char senml_json_output[50];
+    uint8_t senml_len = 50; // TODO senml message length
+    char senml_json_output[senml_len];
     senml_base_info_t base_info = {
         .version = SENML_SUPPORTED_VERSION,
         .base_name = dev_name,
