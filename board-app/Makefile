@@ -20,12 +20,14 @@ QUIET ?= 1
 
 #Packeges to include:
 USEPKG += nanocoap
+USEPKG += jsmn
 
 # Modules to include:
 # We going to need some parts of RIOT
 USEMODULE += fmt
 USEMODULE += gcoap
 USEMODULE += saul_default
+USEMODULE += senml
 USEMODULE += ipv6_addr
 USEMODULE += ps
 #USEMODULE += auto_init

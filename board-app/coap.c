@@ -1,5 +1,7 @@
 #include "saul_reg.h"
 #include "net/gcoap.h"
+#include "senml.h"
+#include "xtimer.h"
 
 #include "smart_environment.h"
 
@@ -21,16 +23,48 @@ static ssize_t sensors_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     return gcoap_finish(pdu, (size_t)payload_len, COAP_FORMAT_TEXT);
 }
 
+static int64_t temp_sum = 0; // TODO size of temp sum
+
 static ssize_t temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
     phydat_t res;
-    saul_reg_read(saul_reg_find_type(SAUL_SENSE_TEMP), &res);
+    saul_reg_t* dev = saul_reg_find_type(SAUL_SENSE_TEMP);
+
+    uint8_t senml_len = 50; // TODO senml message length
+    char dev_name[50]; // TODO dev name length
+    strncpy(dev_name, dev->name, 50);
+    saul_reg_read(dev, &res);
+
+    temp_sum += res.val[0];
+
+    char senml_json_output[50];
+    senml_base_info_t base_info = {
+        .version = SENML_SUPPORTED_VERSION,
+        .base_name = dev_name,
+        .base_time = xtimer_now_usec() / 1e6,
+        .base_unit = (char*) ((int) res.unit),
+        .base_value = 0,
+        .base_sum = 0
+    };
+    senml_record_t records = {
+        .update_time = 1,
+        .value_sum = (double) temp_sum,
+        .value_type = SENML_TYPE_FLOAT,
+        .value.f = (double) res.val[0]
+    };
+    senml_pack_t pack = {
+        &base_info,
+        &records,
+        1
+    };
+
+    senml_encode_json_s(&pack, senml_json_output, senml_len);
     
     ssize_t payload_len = snprintf(
     	(char*)pdu->payload,
     	GCOAP_PDU_BUF_SIZE,
-    	"%d",
-    	res.val[0]
+    	"%s",
+    	senml_json_output
     );
 
     puts("Data from thermometer requested.");
