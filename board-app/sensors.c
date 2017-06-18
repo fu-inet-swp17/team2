@@ -2,6 +2,7 @@
 
 #include "saul_reg.h"
 
+
 void sensors_test(void) {
     puts("\n##############################################");
     puts("############## SAUL sensor test ##############\n");

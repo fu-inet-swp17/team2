@@ -162,10 +162,10 @@ static void* connect_thread_handler(void* args) {
     
     bool sock_ready = false;
     if(sock_udp_create(&sock, &local, NULL, 0) < 0) {
-        fputs("Error creating UDP sock!\n", stderr);
+        fputs("Error creating UDP socket!\n", stderr);
         sock_ready = false;
     } else {
-        puts("Successfull createt UDP socket.\nWaiting for boards...");
+        puts("Successfully created UDP socket.\nWaiting for boards...");
         sock_ready = true;
     }
     
