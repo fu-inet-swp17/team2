@@ -13,7 +13,7 @@
 
 
 // statische globals, nach außen hin nicht sichtbar
-const char app_id[] = "riot-swp-2017-se";
+static const char app_id[] = "riot-swp-2017-se";
 #define APP_ID_LEN			sizeof(app_id)
 
 typedef struct PingMsg {
