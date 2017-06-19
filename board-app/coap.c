@@ -7,22 +7,6 @@
 
 #define PING_TIMEOUT	10
 
-
-static ssize_t sensors_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
-    gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
-    
-    ssize_t payload_len = snprintf(
-    	(char*)pdu->payload,
-    	GCOAP_PDU_BUF_SIZE,
-    	"%u",
-    	(unsigned int)IR_TEMP_SENSOR | HUMID_SENSOR | MAG_SENSOR | 
-    	RGB_LIGHT_SENDSOR | PRESS_SENSOR | ACC_SENSOR
-    );
-    
-    puts("List of sensors requested.");
-    return gcoap_finish(pdu, (size_t)payload_len, COAP_FORMAT_TEXT);
-}
-
 static int64_t temp_sum = 0; // TODO size of temp sum
 
 static ssize_t temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
@@ -153,7 +137,6 @@ void* ping_handler(void* args) {
 
 const coap_resource_t coap_resources[] = {
     // ressource-path, ressource-type, response-handler
-    {"/se-app/sensors", COAP_GET, &sensors_handler},
     {"/se-app/temp", COAP_GET, &temp_handler},
     {"/se-app/humid", COAP_GET, &humid_handler},
     {"/se-app/mag", COAP_GET, &mag_handler}

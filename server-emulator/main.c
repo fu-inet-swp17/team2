@@ -93,13 +93,8 @@ static void sensors_resp_handler(unsigned req_state, coap_pkt_t* pdu) {
         return;
     }
     
-    puts("resp");
+    puts("resp!");
     printf("%s\n", (char*)pdu->payload);
-    uint64_t sensors = strtoull((char*)pdu->payload, NULL, 10);
-    
-    if(sensors & IR_TEMP_SENSOR) {
-    	puts("IR-Temp-Sensor");
-    }
     // TODO weitere Sensoren einfügen
 }
 
@@ -123,7 +118,7 @@ static void button_handler(void* args) {
             coap_buff,
             GCOAP_PDU_BUF_SIZE,
             COAP_GET,
-            "/se-app/sensors"
+            "/.well-known/core"
         );
         
         size_t bytes_sent = gcoap_req_send2(
