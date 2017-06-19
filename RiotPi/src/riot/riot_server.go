@@ -71,6 +71,6 @@ func getInformationFromRegisteredDevices(configuration config.Configuration) {
 	devices := db.GetRegisteredDevices()
 	for _, device := range devices {
 		deviceResources := db.GetRegisteredDeviceResources(device)
-		GetSensorData(device, deviceResources, configuration)
+		_ = GetSensorData(device, deviceResources, configuration)
 	}
 }
