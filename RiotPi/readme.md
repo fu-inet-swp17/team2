@@ -26,10 +26,16 @@ go get github.com/op/go-logging
 go get github.com/go-sql-driver/mysql
 ```
 
-### go coap
+### go CoAP
 
 ```sh
 go get github.com/dustin/go-coap
+```
+
+### go SenML
+
+```sh
+go get github.com/nkristek/go-senml
 ```
 
 ## Go Path
