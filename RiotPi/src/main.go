@@ -27,6 +27,7 @@ func readCommandLineArgs() config.Configuration {
 	sampleConfigPtr := flag.Bool("sampleconfig", false, "If a conf.json file with default values should be created in the current directory")
 	initDBPtr := flag.Bool("initdb", false, "If the database should be initialized using the configuration provided in the conf.json file")
 	clearDBPtr := flag.Bool("cleardb", false, "If the database should be cleared")
+	reinitDBPtr := flag.Bool("reinitdb", false, "If the database should be cleared and initialized afterwards. Basically combines cleardb and initdb.")
 
 	// parse command line arguments
 	flag.Parse()
@@ -44,11 +45,15 @@ func readCommandLineArgs() config.Configuration {
 	// initialize db package
 	db.InitWithConfiguration(configuration)
 
+	if *reinitDBPtr {
+		*clearDBPtr = true
+		*initDBPtr = true
+	}
+
 	if *clearDBPtr {
 		db.ClearDatabase()
 	}
 
-	// init database if set
 	if *initDBPtr {
 		db.InitDatabase()
 	}
@@ -79,10 +84,19 @@ func main() {
 
 	// TODO: remove lines after debug
 	log.Debugf("registering devices for debug")
+	/*
 	db.RegisterDevice("fe80::e870:6d5b:5292:432a")
 	db.RegisterDeviceResource("/se-app/sensors", data.Device{Id: 1, Address: "fe80::e870:6d5b:5292:432a", LastPing: ""})
+	*/
+	/*
 	db.RegisterDevice("fe80::7b76:6260:b7e3:dbce")
-	db.RegisterDeviceResource("/se-app/sensors", data.Device{Id: 2, Address: "fe80::7b76:6260:b7e3:dbce", LastPing: ""})
+	db.RegisterDeviceResource("/se-app/sensors", data.Device{Id: 1, Address: "fe80::7b76:6260:b7e3:dbce", LastPing: ""})
+	*/
+
+	db.RegisterDevice("fe80::9ab0:6d51:52a4:432a")
+	db.RegisterDeviceResource("/se-app/temp", data.Device{Id: 1, Address: "fe80::9ab0:6d51:52a4:432a", LastPing: ""})
+	//db.RegisterDeviceResource("/se-app/humid", data.Device{Id: 1, Address: "fe80::9ab0:6d51:52a4:432a", LastPing: ""})
+	//db.RegisterDeviceResource("/se-app/mag", data.Device{Id: 1, Address: "fe80::9ab0:6d51:52a4:432a", LastPing: ""})
 
 	// initializing finished
 	log.Notice("server started")
