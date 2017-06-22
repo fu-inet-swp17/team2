@@ -27,7 +27,6 @@ USEPKG += jsmn
 USEMODULE += fmt
 USEMODULE += gcoap
 USEMODULE += saul_default
-USEMODULE += senml
 USEMODULE += ipv6_addr
 USEMODULE += ps
 #USEMODULE += auto_init
