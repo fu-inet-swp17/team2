@@ -1,90 +1,103 @@
 #include "saul_reg.h"
 #include "net/gcoap.h"
 #include "senml.h"
-#include "xtimer.h"
 
 #include "smart_environment.h"
 
 #define PING_TIMEOUT	10
+#define SENML_LEN       75
 
-static int64_t temp_sum = 0; // TODO size of temp sum
 
-static ssize_t temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
-    gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+int8_t senml_json_strout(char* json_buf, uint8_t dev_type, senml_value_type_t value_type) {
     phydat_t res;
-    saul_reg_t* dev = saul_reg_find_type(SAUL_SENSE_TEMP);
+    saul_reg_t* dev = saul_reg_find_type(dev_type);
 
-    char dev_name[50]; // TODO dev name length
-    strncpy(dev_name, dev->name, 50);
-    saul_reg_read(dev, &res);
+    char dev_name[21];
+    strncpy(dev_name, dev->name, 20);
+    dev_name[20] = '\0';
+    size_t num = saul_reg_read(dev, &res);
 
-    temp_sum += res.val[0];
+    char unit[4];
+    strncpy(unit, phydat_unit_to_str(res.unit), 3);
+    unit[3] = '\0';
 
-    uint8_t senml_len = 50; // TODO senml message length
-    char senml_json_output[senml_len];
     senml_base_info_t base_info = {
         .version = SENML_SUPPORTED_VERSION,
         .base_name = dev_name,
-        .base_time = xtimer_now_usec() / 1e6,
-        .base_unit = (char*) ((int) res.unit),
-        .base_value = 0,
-        .base_sum = 0
+        .base_time = 0,
+        .base_unit = unit
     };
-    senml_record_t records = {
-        .update_time = 1,
-        .value_sum = (double) temp_sum,
-        .value_type = SENML_TYPE_FLOAT,
-        .value.f = (double) res.val[0]
-    };
+    senml_record_t records[num];
+    for (size_t i=0; i<num; i++) {
+        records[i].name = NULL;
+        records[i].unit = NULL;
+        records[i].link = NULL;
+        records[i].time = 0;
+        records[i].update_time = 0;
+        records[i].value_sum = 0;
+        records[i].value_type = value_type;
+        records[i].value.f = res.val[i];
+    }
     senml_pack_t pack = {
-        &base_info,
-        &records,
-        1
+        .base_info = &base_info,
+        .num = num,
+        .records = records
     };
+    int8_t senml_res = senml_encode_json_s(&pack, json_buf, SENML_LEN);
 
-    senml_encode_json_s(&pack, senml_json_output, senml_len);
-    
-    ssize_t payload_len = snprintf(
-    	(char*)pdu->payload,
-    	GCOAP_PDU_BUF_SIZE,
-    	"%s",
-    	senml_json_output
-    );
+    if (!senml_res) {
+        return 0;
+    } else {
+        return -1;
+    }
+}
 
+ssize_t senml_json_send(coap_pkt_t* pdu, uint8_t *buf, size_t len, uint8_t dev_type, senml_value_type_t value_type) {
+    gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
+
+    // char json_buf[SENML_LEN];
+    char* json_buf = malloc(SENML_LEN);
+    int8_t senml_res = senml_json_strout(json_buf, dev_type, value_type);
+
+    if (!senml_res) {
+        printf("Successfully created SenML JSON string: %s\n", json_buf);
+
+        size_t payload_len = snprintf(
+            (char*)pdu->payload,
+            GCOAP_PDU_BUF_SIZE,
+            "%s",
+            json_buf
+        );
+
+        free(json_buf);
+
+        int8_t gcoap_res = gcoap_finish(pdu, payload_len, COAP_FORMAT_JSON);
+        if (gcoap_res < 0) {
+            puts("Failure sending message.");
+        } else {
+            printf("Message successfully sent with PDU size %d.\n", gcoap_res);
+        }
+        return gcoap_res;
+    } else {
+        puts("Failed to create full SenML JSON string. Message will not be sent.");
+        free(json_buf);
+        return -1;
+    }
+}
+
+ssize_t temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     puts("Data from thermometer requested.");
-    return gcoap_finish(pdu, (size_t)payload_len, COAP_FORMAT_NONE);
+    return senml_json_send(pdu, buf, len, SAUL_SENSE_TEMP, SENML_TYPE_INT);
 }
 
-static ssize_t humid_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
-    gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
-    phydat_t res;
-    saul_reg_read(saul_reg_find_type(SAUL_SENSE_HUM), &res);
-    
-    ssize_t payload_len = snprintf(
-    	(char*)pdu->payload,
-    	GCOAP_PDU_BUF_SIZE,
-    	"%d",
-    	res.val[0]
-    );
-
+ssize_t humid_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     puts("Data from humidity sensor requested.");
-    return gcoap_finish(pdu, (size_t)payload_len, COAP_FORMAT_NONE);
+    return senml_json_send(pdu, buf, len, SAUL_SENSE_HUM, SENML_TYPE_INT);
 }
 
-static ssize_t mag_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
-    gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
-    phydat_t res;
-    saul_reg_read(saul_reg_find_type(SAUL_SENSE_MAG), &res);
-    
-    ssize_t payload_len = snprintf(
-    	(char*)pdu->payload,
-    	GCOAP_PDU_BUF_SIZE,
-    	"%d",
-    	res.val[0]
-    );
-
+ssize_t mag_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     puts("Data from magnetometer requested.");
-    return gcoap_finish(pdu, (size_t)payload_len, COAP_FORMAT_NONE);
+    return senml_json_send(pdu, buf, len, SAUL_SENSE_MAG, SENML_TYPE_INT);
 }
 
 void* ping_handler(void* args) {
