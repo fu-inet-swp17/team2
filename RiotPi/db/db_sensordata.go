@@ -5,10 +5,10 @@
 package db
 
 import (
-	"../data"                          // data for Device struct
-	"database/sql"                     // sql
-	"fmt"                              // sprintf
-	_ "github.com/go-sql-driver/mysql" // mysql driver
+	"database/sql"                               // sql
+	"fmt"                                        // sprintf
+	"github.com/fu-inet-swp17/team2/RiotPi/data" // data for Device struct
+	_ "github.com/go-sql-driver/mysql"           // mysql driver
 )
 
 func InsertSensorData(sensordata data.SensorData) {

@@ -5,11 +5,11 @@
 package riot
 
 import (
-	"../config"                    // config for Configuration struct
-	"../data"                      // data for Device struct
-	"fmt"                          // sprintf
-	"github.com/dustin/go-coap"    // coap
-	"github.com/nkristek/go-senml" // SenML parsing
+	"fmt"                                          // sprintf
+	"github.com/dustin/go-coap"                    // coap
+	"github.com/fu-inet-swp17/team2/RiotPi/config" // config for Configuration struct
+	"github.com/fu-inet-swp17/team2/RiotPi/data"   // data for Device struct
+	"github.com/nkristek/go-senml"                 // SenML parsing
 )
 
 var messageCount int = 0

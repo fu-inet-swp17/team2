@@ -5,11 +5,11 @@
 package riot
 
 import (
-	"../config" // configuration
-	"../db"     // get all devices
-	"fmt"       // sprintf
-	"net"       // udp server
-	"time"      // timer
+	"fmt"                                          // sprintf
+	"github.com/fu-inet-swp17/team2/RiotPi/config" // configuration
+	"github.com/fu-inet-swp17/team2/RiotPi/db"     // get all devices
+	"net"                                          // udp server
+	"time"                                         // timer
 )
 
 // listening for client announcements

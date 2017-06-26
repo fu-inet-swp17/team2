@@ -5,11 +5,11 @@
 package db
 
 import (
-	"../config"                        // configuration
-	"database/sql"                     // sql
-	"fmt"                              // sprintf
-	_ "github.com/go-sql-driver/mysql" // mysql driver
-	"github.com/op/go-logging"         // logging
+	"database/sql"                                 // sql
+	"fmt"                                          // sprintf
+	"github.com/fu-inet-swp17/team2/RiotPi/config" // configuration
+	_ "github.com/go-sql-driver/mysql"             // mysql driver
+	"github.com/op/go-logging"                     // logging
 )
 
 // vars
