@@ -13,12 +13,11 @@ type Configuration struct {
 }
 
 type SQLSettings struct {
-	Address                 string
-	Port                    int
-	User                    string
-	Password                string
-	DatabaseName            string
-	DeviceTableName         string
-	DeviceResourceTableName string
-	DataTableName           string
+	Address         string
+	Port            int
+	User            string
+	Password        string
+	DatabaseName    string
+	DeviceTableName string
+	DataTableName   string
 }

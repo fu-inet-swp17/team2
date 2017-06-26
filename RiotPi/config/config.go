@@ -20,7 +20,7 @@ func ReadConfig(path string) Configuration {
 	// opening file
 	file, err := os.Open(path)
 	if err != nil {
-		log.Critical("reading config file: ", err)
+		log.Critical("Reading config file: ", err)
 		panic(err)
 	}
 	defer file.Close()
@@ -30,7 +30,7 @@ func ReadConfig(path string) Configuration {
 	configuration := Configuration{}
 	err = decoder.Decode(&configuration)
 	if err != nil {
-		log.Critical("parsing config file: ", err)
+		log.Critical("Parsing config file: ", err)
 		panic(err)
 	}
 
@@ -40,39 +40,38 @@ func ReadConfig(path string) Configuration {
 func WriteSampleConfig() {
 	// check if file aleady exists
 	if _, err := os.Stat("./conf.json"); err == nil {
-		log.Error("file exists")
+		log.Error("File exists")
 		return
 	}
 
 	// create sample config
 	configuration := &Configuration{
-		PollingInterval:     10,
-		ListeningPort:       1234,
+		PollingInterval:     360,
+		ListeningPort:       2017,
 		RiotPort:            5683,
 		LowPanInterfaceName: "lowpan0",
 		SQL: SQLSettings{
-			Address:                 "sqladdr",
-			Port:                    1234,
-			User:                    "sqluser",
-			Password:                "sqlpw",
-			DatabaseName:            "sqldb",
-			DeviceTableName:         "sqldevicetable",
-			DeviceResourceTableName: "sqldeviceresourcetable",
-			DataTableName:           "sqldatatable",
+			Address:         "127.0.0.1",
+			Port:            3306,
+			User:            "SQLUSER",
+			Password:        "SQLPW",
+			DatabaseName:    "riotdata",
+			DeviceTableName: "devices",
+			DataTableName:   "sensordata",
 		},
 	}
 
 	// marshal to json
 	jsonConfiguration, err := json.Marshal(configuration)
 	if err != nil {
-		log.Error("marshaling json: %s", err)
+		log.Error("Marshaling json: %s", err)
 		return
 	}
 
 	// creating file
 	file, err := os.Create("./conf.json")
 	if err != nil {
-		log.Error("creating file: %s", err)
+		log.Error("Creating file: %s", err)
 		return
 	}
 	defer file.Close()
@@ -80,9 +79,9 @@ func WriteSampleConfig() {
 	// write to file
 	_, err = file.Write(jsonConfiguration)
 	if err != nil {
-		log.Error("writing to file: %s", err)
+		log.Error("Writing to file: %s", err)
 		return
 	}
 
-	log.Notice("config file created")
+	log.Notice("Config file created")
 }

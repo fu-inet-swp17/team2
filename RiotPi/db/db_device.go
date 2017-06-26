@@ -17,7 +17,7 @@ func RegisterDevice(address string) {
 	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port, sqlConfiguration.DatabaseName)
 	db, err := sql.Open("mysql", dbinfo)
 	if err != nil {
-		log.Error("creating connection to database: ", err)
+		log.Error("Creating connection to database: ", err)
 		return
 	}
 	defer db.Close()
@@ -25,31 +25,29 @@ func RegisterDevice(address string) {
 	// check if the device is already in the db
 	rows, err := db.Query("SELECT ID FROM "+sqlConfiguration.DeviceTableName+" WHERE Address=?", address)
 	if err != nil {
-		log.Error("checking if device already exists: ", err)
+		log.Error("Checking if device already exists: ", err)
 		return
 	}
 	if rows.Next() {
 		var id int
 		err = rows.Scan(&id)
-		if err != nil {
-			log.Warning("device already in db with ID=", id)
-		} else {
-			log.Warning("device already in db")
-		}
 		return
 	}
+
+	// -> device not in database
+	log.Notice("Register device with address: " + address)
 
 	// prepare insert
 	stmt, err := db.Prepare("INSERT " + sqlConfiguration.DeviceTableName + " SET Address=?,LastPing=?")
 	if err != nil {
-		log.Error("error preparing insert statement: ", err)
+		log.Error("Preparing insert statement: ", err)
 		return
 	}
 
 	// execute insert
 	_, err = stmt.Exec(address, time.Now())
 	if err != nil {
-		log.Error("error executing insert statement: ", err)
+		log.Error("Executing insert statement: ", err)
 		return
 	}
 }
@@ -59,7 +57,7 @@ func UnregisterDevice(deviceId int) {
 	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port, sqlConfiguration.DatabaseName)
 	db, err := sql.Open("mysql", dbinfo)
 	if err != nil {
-		log.Error("creating connection to database: ", err)
+		log.Error("Creating connection to database: ", err)
 		return
 	}
 	defer db.Close()
@@ -67,14 +65,14 @@ func UnregisterDevice(deviceId int) {
 	// prepare delete
 	stmt, err := db.Prepare("DELETE FROM " + sqlConfiguration.DeviceTableName + " WHERE ID=?")
 	if err != nil {
-		log.Error("error preparing delete statement: ", err)
+		log.Error("Preparing delete statement: ", err)
 		return
 	}
 
 	// execute delete
 	_, err = stmt.Exec(deviceId)
 	if err != nil {
-		log.Error("error executing delete statement: ", err)
+		log.Error("Executing delete statement: ", err)
 		return
 	}
 }
@@ -84,7 +82,7 @@ func GetRegisteredDevices() []data.Device {
 	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port, sqlConfiguration.DatabaseName)
 	db, err := sql.Open("mysql", dbinfo)
 	if err != nil {
-		log.Error("creating connection to database: ", err)
+		log.Error("Creating connection to database: ", err)
 		return nil
 	}
 	defer db.Close()
@@ -92,7 +90,7 @@ func GetRegisteredDevices() []data.Device {
 	// select
 	rows, err := db.Query("SELECT * FROM " + sqlConfiguration.DeviceTableName)
 	if err != nil {
-		log.Error("querying from database: ", err)
+		log.Error("Querying from database: ", err)
 		return nil
 	}
 
@@ -104,7 +102,7 @@ func GetRegisteredDevices() []data.Device {
 		var lastPing string
 		err = rows.Scan(&id, &address, &lastPing)
 		if err != nil {
-			log.Warning("reading values from row: ", err)
+			log.Warning("Reading values from row: ", err)
 			continue
 		}
 

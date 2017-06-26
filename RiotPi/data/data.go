@@ -10,11 +10,6 @@ type Device struct {
 	LastPing string
 }
 
-type DeviceResource struct {
-	BoardId int
-	Path    string
-}
-
 type SensorData struct {
 	BoardId    int
 	SensorType string

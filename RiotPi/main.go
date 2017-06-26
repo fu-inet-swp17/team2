@@ -7,7 +7,6 @@ package main
 import (
 	"flag"                                         // command line argument parsing
 	"github.com/fu-inet-swp17/team2/RiotPi/config" // configuration file handling
-	"github.com/fu-inet-swp17/team2/RiotPi/data"   // data struct
 	"github.com/fu-inet-swp17/team2/RiotPi/db"     // database handling
 	"github.com/fu-inet-swp17/team2/RiotPi/riot"   // communication with riot
 	"github.com/op/go-logging"                     // logging
@@ -35,7 +34,7 @@ func readCommandLineArgs() config.Configuration {
 	// write sample config if set and exit
 	if *sampleConfigPtr {
 		config.WriteSampleConfig()
-		log.Notice("server stopping")
+		log.Notice("Server stopping")
 		runtime.Goexit()
 	}
 
@@ -70,7 +69,7 @@ func main() {
 	logging.SetFormatter(logging.MustStringFormatter(`%{color}%{level} > %{shortfunc}: %{color:reset} %{message}`))
 
 	// start initializing
-	log.Notice("server starting")
+	log.Notice("Server starting")
 
 	// read the configuration
 	configuration := readCommandLineArgs()
@@ -82,28 +81,12 @@ func main() {
 	cancelPolling := make(chan struct{})
 	riot.StartScheduledPolling(configuration, cancelPolling)
 
-	// TODO: remove lines after debug
-	log.Debugf("registering devices for debug")
-	/*
-		db.RegisterDevice("fe80::e870:6d5b:5292:432a")
-		db.RegisterDeviceResource("/se-app/sensors", data.Device{Id: 1, Address: "fe80::e870:6d5b:5292:432a", LastPing: ""})
-	*/
-	/*
-		db.RegisterDevice("fe80::7b76:6260:b7e3:dbce")
-		db.RegisterDeviceResource("/se-app/sensors", data.Device{Id: 1, Address: "fe80::7b76:6260:b7e3:dbce", LastPing: ""})
-	*/
-
-	db.RegisterDevice("fe80::9ab0:6d51:52a4:432a")
-	db.RegisterDeviceResource("/se-app/temp", data.Device{Id: 1, Address: "fe80::9ab0:6d51:52a4:432a", LastPing: ""})
-	//db.RegisterDeviceResource("/se-app/humid", data.Device{Id: 1, Address: "fe80::9ab0:6d51:52a4:432a", LastPing: ""})
-	//db.RegisterDeviceResource("/se-app/mag", data.Device{Id: 1, Address: "fe80::9ab0:6d51:52a4:432a", LastPing: ""})
-
 	// initializing finished
-	log.Notice("server started")
+	log.Notice("Server started")
 
 	<-completion
 
 	cancelPolling <- struct{}{}
 
-	log.Notice("server stopping")
+	log.Notice("Server stopping")
 }
