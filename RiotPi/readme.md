@@ -81,6 +81,14 @@ When this fails (e.g. because the GOPATH is not in your PATH), you can run
 $GOPATH/bin/RiotPi
 ```
 
+# Tests
+
+To execute the existing unit tests, execute the following line:
+
+```sh
+go test github.com/fu-inet-swp17/team2/RiotPi/...
+```
+
 ## Used Go Libraries
 
 ### Go-logging

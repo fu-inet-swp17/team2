@@ -1,7 +1,3 @@
-/*
-	author: Niclas Kristek
-	github.com/nkristek
-*/
 package data
 
 type Device struct {

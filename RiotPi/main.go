@@ -1,7 +1,3 @@
-/*
-	author: Niclas Kristek
-	github.com/nkristek
-*/
 package main
 
 import (
@@ -22,7 +18,7 @@ var log = logging.MustGetLogger("main")
 
 func readCommandLineArgs() config.Configuration {
 	// prepare command line arguments
-	configPathPtr := flag.String("config", "conf.json", "Path to the config file")
+	configPathPtr := flag.String("config", "", "Path to the config file")
 	sampleConfigPtr := flag.Bool("sampleconfig", false, "If a conf.json file with default values should be created in the current directory")
 	initDBPtr := flag.Bool("initdb", false, "If the database should be initialized using the configuration provided in the conf.json file")
 	clearDBPtr := flag.Bool("cleardb", false, "If the database should be cleared")
@@ -33,13 +29,22 @@ func readCommandLineArgs() config.Configuration {
 
 	// write sample config if set and exit
 	if *sampleConfigPtr {
-		config.WriteSampleConfig()
+		filePath, err := config.WriteSampleConfig(*configPathPtr)
+		if err != nil {
+			log.Critical(err.Error())
+			runtime.Goexit()
+		}
+		log.Notice("Config file created at \"" + filePath + "\"")
 		log.Notice("Server stopping")
 		runtime.Goexit()
 	}
 
 	// read config
-	configuration := config.ReadConfig(*configPathPtr)
+	configuration, err := config.ReadConfig(*configPathPtr)
+	if err != nil {
+		log.Critical(err.Error())
+		runtime.Goexit()
+	}
 
 	// initialize db package
 	db.InitWithConfiguration(configuration)

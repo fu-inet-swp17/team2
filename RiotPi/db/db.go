@@ -1,7 +1,3 @@
-/*
-	author: Niclas Kristek
-	github.com/nkristek
-*/
 package db
 
 import (
