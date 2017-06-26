@@ -83,7 +83,7 @@ $GOPATH/bin/RiotPi
 
 # Tests
 
-To execute the existing unit tests, execute the following line:
+To execute the existing unit tests, execute the following line (including the trailing ...):
 
 ```sh
 go test github.com/fu-inet-swp17/team2/RiotPi/...
