@@ -48,7 +48,7 @@ export GOPATH=~/go
 
 # First run
 
-Run this command in `.../RiotPi/src/` to create a sample config file:
+Run this command in `.../RiotPi/` to create a sample config file:
 
 ```sh
 go run main.go --sampleconfig
@@ -66,7 +66,7 @@ The server is now up and running.
 
 # Run
 
-Run this command in `.../RiotPi/src/`:
+Run this command in `.../RiotPi/`:
 
 ```sh
 go run main.go
@@ -75,7 +75,7 @@ go run main.go
 
 # Build
 
-Run this command in `.../RiotPi/src/`:
+Run this command in `.../RiotPi/`:
 
 ```sh
 go build main.go

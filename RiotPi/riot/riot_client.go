@@ -60,13 +60,13 @@ func GetSensorData(device data.Device, deviceResources []data.DeviceResource, co
 
 		log.Debugf("response payload: " + string(resp.Payload[:]))
 
-		message, err := senml.ParseBytes(resp.Payload, senml.JSON)
+		message, err := senml.Decode(resp.Payload, senml.JSON)
 		if err != nil {
 			log.Error("parsing SenML: ", err)
 			continue
 		}
 
-		resolvedMessage, err := senml.Resolve(message)
+		resolvedMessage, err := message.Resolve()
 		if err != nil {
 			log.Error("resolving SenML: ", err)
 			continue
