@@ -1,10 +1,10 @@
 package config
 
 import (
-	"testing"
-	"os"
 	"crypto/rand"
-    "fmt"
+	"fmt"
+	"os"
+	"testing"
 )
 
 func TestReadWriteSampleConfig(t *testing.T) {
@@ -36,27 +36,27 @@ func TestReadWriteSampleConfig(t *testing.T) {
 }
 
 func generateUuid() (uuid string, err error) {
-    b := make([]byte, 16)
-    _, err = rand.Read(b)
-    if err != nil {
-        return
-    }
+	b := make([]byte, 16)
+	_, err = rand.Read(b)
+	if err != nil {
+		return
+	}
 
-    uuid = fmt.Sprintf("%X-%X-%X-%X-%X", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
+	uuid = fmt.Sprintf("%X-%X-%X-%X-%X", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
 
-    return
+	return
 }
 
 func isEqualConfig(a Configuration, b Configuration) bool {
 	return a.PollingInterval == b.PollingInterval &&
-	a.ListeningPort == b.ListeningPort &&
-	a.RiotPort == b.RiotPort &&
-	a.LowPanInterfaceName == b.LowPanInterfaceName &&
-	a.SQL.Address == b.SQL.Address &&
-	a.SQL.Port == b.SQL.Port &&
-	a.SQL.User == b.SQL.User &&
-	a.SQL.Password == b.SQL.Password &&
-	a.SQL.DatabaseName == b.SQL.DatabaseName &&
-	a.SQL.DeviceTableName == b.SQL.DeviceTableName &&
-	a.SQL.DataTableName == b.SQL.DataTableName
+		a.ListeningPort == b.ListeningPort &&
+		a.RiotPort == b.RiotPort &&
+		a.LowPanInterfaceName == b.LowPanInterfaceName &&
+		a.SQL.Address == b.SQL.Address &&
+		a.SQL.Port == b.SQL.Port &&
+		a.SQL.User == b.SQL.User &&
+		a.SQL.Password == b.SQL.Password &&
+		a.SQL.DatabaseName == b.SQL.DatabaseName &&
+		a.SQL.DeviceTableName == b.SQL.DeviceTableName &&
+		a.SQL.DataTableName == b.SQL.DataTableName
 }

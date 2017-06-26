@@ -1,10 +1,10 @@
 package config
 
 import (
-	"encoding/json"            // json formatting
-	"errors"                   // error handling
-	"os"                       // file handling
-	"strings"                  // string handling
+	"encoding/json" // json formatting
+	"errors"        // error handling
+	"os"            // file handling
+	"strings"       // string handling
 )
 
 var Default Configuration = Configuration{
