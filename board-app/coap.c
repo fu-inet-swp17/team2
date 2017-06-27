@@ -8,18 +8,31 @@
 #define SENML_LEN       75
 
 
-int8_t senml_json_strout(char* json_buf, uint8_t dev_type, senml_value_type_t value_type) {
+int8_t senml_json_strout(char* json_buf, uint8_t dev_type) {
     phydat_t res;
     saul_reg_t* dev = saul_reg_find_type(dev_type);
 
-    char dev_name[21];
-    strncpy(dev_name, dev->name, 20);
-    dev_name[20] = '\0';
     size_t num = saul_reg_read(dev, &res);
 
+    char dev_name[20];
+    strncpy(dev_name, dev->name, 20);
+
     char unit[4];
-    strncpy(unit, phydat_unit_to_str(res.unit), 3);
-    unit[3] = '\0';
+    strncpy(unit, phydat_unit_to_str(res.unit), 4);
+
+    char scale[10];
+    snprintf(scale, 10, "scale:%d", res.scale);
+
+    char values[20];
+    strncpy(values, "", 1);
+    for (size_t i=0; i<num; i++) {
+        char curr_value[6];
+        snprintf(curr_value, 6, "%d", res.val[i]);
+        strncat(values, curr_value, 6);
+        if (i<num-1) {
+            strncat(values, ",", 1);
+        }
+    }
 
     senml_base_info_t base_info = {
         .version = SENML_SUPPORTED_VERSION,
@@ -27,21 +40,18 @@ int8_t senml_json_strout(char* json_buf, uint8_t dev_type, senml_value_type_t va
         .base_time = 0,
         .base_unit = unit
     };
-    senml_record_t records[num];
-    for (size_t i=0; i<num; i++) {
-        records[i].name = NULL;
-        records[i].unit = NULL;
-        records[i].link = NULL;
-        records[i].time = 0;
-        records[i].update_time = 0;
-        records[i].value_sum = 0;
-        records[i].value_type = value_type;
-        records[i].value.f = res.val[i];
-    }
+    senml_record_t records = {
+        .link = scale,
+        .time = 0,
+        .update_time = 0,
+        .value_sum = 0,
+        .value_type = SENML_TYPE_STRING,
+        .value.s = values
+    };
     senml_pack_t pack = {
         .base_info = &base_info,
-        .num = num,
-        .records = records
+        .num = 1,
+        .records = &records
     };
     int8_t senml_res = senml_encode_json_s(&pack, json_buf, SENML_LEN);
 
@@ -52,12 +62,11 @@ int8_t senml_json_strout(char* json_buf, uint8_t dev_type, senml_value_type_t va
     }
 }
 
-ssize_t senml_json_send(coap_pkt_t* pdu, uint8_t *buf, size_t len, uint8_t dev_type, senml_value_type_t value_type) {
+ssize_t senml_json_send(coap_pkt_t* pdu, uint8_t *buf, size_t len, uint8_t dev_type) {
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
 
-    // char json_buf[SENML_LEN];
     char* json_buf = malloc(SENML_LEN);
-    int8_t senml_res = senml_json_strout(json_buf, dev_type, value_type);
+    int8_t senml_res = senml_json_strout(json_buf, dev_type);
 
     if (!senml_res) {
         printf("Successfully created SenML JSON string: %s\n", json_buf);
@@ -65,7 +74,6 @@ ssize_t senml_json_send(coap_pkt_t* pdu, uint8_t *buf, size_t len, uint8_t dev_t
         size_t payload_len = snprintf(
             (char*)pdu->payload,
             GCOAP_PDU_BUF_SIZE,
-            "%s",
             json_buf
         );
 
@@ -87,17 +95,17 @@ ssize_t senml_json_send(coap_pkt_t* pdu, uint8_t *buf, size_t len, uint8_t dev_t
 
 ssize_t temp_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     puts("Data from thermometer requested.");
-    return senml_json_send(pdu, buf, len, SAUL_SENSE_TEMP, SENML_TYPE_INT);
+    return senml_json_send(pdu, buf, len, SAUL_SENSE_TEMP);
 }
 
 ssize_t humid_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     puts("Data from humidity sensor requested.");
-    return senml_json_send(pdu, buf, len, SAUL_SENSE_HUM, SENML_TYPE_INT);
+    return senml_json_send(pdu, buf, len, SAUL_SENSE_HUM);
 }
 
 ssize_t mag_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     puts("Data from magnetometer requested.");
-    return senml_json_send(pdu, buf, len, SAUL_SENSE_MAG, SENML_TYPE_INT);
+    return senml_json_send(pdu, buf, len, SAUL_SENSE_MAG);
 }
 
 void* ping_handler(void* args) {
@@ -150,13 +158,13 @@ void* ping_handler(void* args) {
 
 const coap_resource_t coap_resources[] = {
     // ressource-path, ressource-type, response-handler
-    {"/se-app/temp", COAP_GET, &temp_handler},
     {"/se-app/humid", COAP_GET, &humid_handler},
-    {"/se-app/mag", COAP_GET, &mag_handler}
+    {"/se-app/mag", COAP_GET, &mag_handler},
+    {"/se-app/temp", COAP_GET, &temp_handler}
 };
 
 gcoap_listener_t coap_listener = {
-    (coap_resource_t *)&coap_resources[0],
+    (coap_resource_t *)&coap_resources,
     sizeof(coap_resources) / sizeof(coap_resources[0]),
     NULL
 };
