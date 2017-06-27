@@ -23,7 +23,6 @@ char own_addr[IPV6_ADDR_MAX_STR_LEN];
 
 int main(void) {
     printf("Smart environment app on %s\n", RIOT_BOARD);
-	printf("%u\n", APP_ID_LEN);
 	
 	msg_t msg_queueq[8];
 	msg_init_queue(msg_queueq, 8);
