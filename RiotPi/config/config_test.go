@@ -10,20 +10,20 @@ import (
 func TestReadWriteSampleConfig(t *testing.T) {
 	uuid, err := generateUuid()
 	if err != nil {
-		t.Fatalf("Generate UUID: ", err)
+		t.Fatalf("Generate UUID: " + err.Error())
 		return
 	}
 
 	_, err = WriteSampleConfig(uuid)
 	if err != nil {
-		t.Fatalf("Write config: ", err)
+		t.Fatalf("Write config: " + err.Error())
 		_ = os.Remove(uuid)
 		return
 	}
 
 	configuration, err := ReadConfig(uuid)
 	if err != nil {
-		t.Fatalf("Read config: ", err)
+		t.Fatalf("Read config: " + err.Error())
 		_ = os.Remove(uuid)
 		return
 	}

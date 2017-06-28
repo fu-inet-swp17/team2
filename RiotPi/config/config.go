@@ -1,10 +1,10 @@
 package config
 
 import (
-	"encoding/json" // json formatting
-	"errors"        // error handling
-	"os"            // file handling
-	"strings"       // string handling
+	"encoding/json"
+	"errors"
+	"os"
+	"strings"
 )
 
 var Default Configuration = Configuration{
@@ -23,6 +23,7 @@ var Default Configuration = Configuration{
 	},
 }
 
+// returns GOPATH/src/github.com/fu-inet-swp17/team2/RiotPi/
 func GetDefaultPath() (path string, err error) {
 	// get the go path
 	gopath := os.Getenv("GOPATH")
@@ -35,7 +36,7 @@ func GetDefaultPath() (path string, err error) {
 	gopath = strings.TrimSuffix(gopath, "/")
 
 	// build the default path
-	path = gopath + "/src/github.com/fu-inet-swp17/team2/RiotPi/conf.json"
+	path = gopath + "/src/github.com/fu-inet-swp17/team2/RiotPi/"
 
 	return
 }
@@ -48,6 +49,7 @@ func ReadConfig(path string) (configuration Configuration, err error) {
 			err = errors.New("Get default path: " + err.Error())
 			return
 		}
+		path = path + "conf.json"
 	}
 
 	// opening file

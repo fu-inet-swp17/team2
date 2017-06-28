@@ -1,20 +1,17 @@
 package main
 
 import (
-	"flag"                                         // command line argument parsing
-	"github.com/fu-inet-swp17/team2/RiotPi/config" // configuration file handling
-	"github.com/fu-inet-swp17/team2/RiotPi/db"     // database handling
-	"github.com/fu-inet-swp17/team2/RiotPi/riot"   // communication with riot
-	"github.com/op/go-logging"                     // logging
-	"os"                                           // file handling and command line arguments
-	"runtime"                                      // exit from another function
+	"flag"
+	"github.com/fu-inet-swp17/team2/RiotPi/config"
+	"github.com/fu-inet-swp17/team2/RiotPi/db"
+	"github.com/fu-inet-swp17/team2/RiotPi/riot"
+	"github.com/op/go-logging"
+	"os"
+	"runtime"
+	"time"
 )
 
-// vars
-
 var log = logging.MustGetLogger("main")
-
-// functions
 
 func readCommandLineArgs() config.Configuration {
 	// prepare command line arguments
@@ -42,12 +39,11 @@ func readCommandLineArgs() config.Configuration {
 	// read config
 	configuration, err := config.ReadConfig(*configPathPtr)
 	if err != nil {
-		log.Critical(err.Error())
-		runtime.Goexit()
+		panic(err)
 	}
 
 	// initialize db package
-	db.InitWithConfiguration(configuration)
+	db.Init(configuration.SQL)
 
 	if *reinitDBPtr {
 		*clearDBPtr = true
@@ -55,17 +51,21 @@ func readCommandLineArgs() config.Configuration {
 	}
 
 	if *clearDBPtr {
-		db.ClearDatabase()
+		err = db.ClearDatabase()
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	if *initDBPtr {
-		db.InitDatabase()
+		err = db.InitDatabase()
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	return configuration
 }
-
-// main
 
 func main() {
 	defer os.Exit(0)
@@ -79,19 +79,23 @@ func main() {
 	// read the configuration
 	configuration := readCommandLineArgs()
 
+	// start listening for devices to register
 	completion := make(chan struct{})
-	riot.StartListeningForDevices(configuration, completion)
+	go riot.StartListeningForAnnouncements(configuration, completion)
 
 	// start polling for information
 	cancelPolling := make(chan struct{})
-	riot.StartScheduledPolling(configuration, cancelPolling)
+	ticker := time.NewTicker(time.Duration(configuration.PollingInterval) * time.Second)
+	go riot.StartScheduledPolling(ticker, configuration, cancelPolling)
 
 	// initializing finished
 	log.Notice("Server started")
 
+	// wait for the listening goroutine to exit
 	<-completion
 
-	cancelPolling <- struct{}{}
-
 	log.Notice("Server stopping")
+
+	// stop the scheduled polling goroutine
+	cancelPolling <- struct{}{}
 }
