@@ -1,6 +1,7 @@
 #include "saul_reg.h"
 #include "net/gcoap.h"
 #include "senml.h"
+#include "floatint.h"
 
 #include "smart_environment.h"
 
@@ -20,15 +21,12 @@ int8_t senml_json_strout(char* json_buf, uint8_t dev_type) {
     char unit[4];
     strncpy(unit, phydat_unit_to_str(res.unit), 4);
 
-    char scale[10];
-    snprintf(scale, 10, "scale:%d", res.scale);
-
-    char values[20];
+    char values[25];
     strncpy(values, "", 1);
     for (size_t i=0; i<num; i++) {
-        char curr_value[6];
-        snprintf(curr_value, 6, "%d", res.val[i]);
-        strncat(values, curr_value, 6);
+        char curr_value[10];
+        int_to_floatstring(curr_value, res.val[i], res.scale);
+        strncat(values, curr_value, 10);
         if (i<num-1) {
             strncat(values, ",", 1);
         }
@@ -41,7 +39,6 @@ int8_t senml_json_strout(char* json_buf, uint8_t dev_type) {
         .base_unit = unit
     };
     senml_record_t records = {
-        .link = scale,
         .time = 0,
         .update_time = 0,
         .value_sum = 0,
