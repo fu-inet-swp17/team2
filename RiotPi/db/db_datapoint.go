@@ -1,25 +1,25 @@
 package db
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
-	//"time"
-	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/nkristek/go-senml"
 )
 
 type DataPoint struct {
-	Id         int
-	SensorType string
-	Date       string
-	Unit       string
-	Value1     string
-	Value2     string
-	Value3     string
+	Id          int
+	Name        string
+	Value       float64
+	StringValue string
+	BoolValue   bool
+	DataValue   string
+	Sum         float64
+	Time        float64
+	Link        string
 }
 
-// TODO: Parse date and save full SenMLRecord
 func InsertDataPoint(message senml.SenMLRecord) error {
 	// create connection
 	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port, sqlConfiguration.DatabaseName)
@@ -30,19 +30,16 @@ func InsertDataPoint(message senml.SenMLRecord) error {
 	defer conn.Close()
 
 	// prepare insert
-	_, err = conn.Prepare("INSERT " + sqlConfiguration.DataTableName + " SET SensorType=?,Date=?,Unit=?,Value1=?,Value2=?,Value3=?")
+	stmt, err := conn.Prepare("INSERT " + sqlConfiguration.DataTableName + " SET Name=?,Unit=?,Value=?,StringValue=?,BoolValue=?,DataValue=?,Sum=?,Time=?,Link=?")
 	if err != nil {
 		return errors.New("Preparing insert statement: " + err.Error())
 	}
 
 	// execute insert
-	/*
-		var date time.Time
-		_, err = stmt.Exec(message.Name, date, message.Unit, dataPoint.Value1, dataPoint.Value2, dataPoint.Value3)
-		if err != nil {
-			return errors.New("Executing insert statement: " + err.Error())
-		}
-	*/
+	_, err = stmt.Exec(message.Name, message.Unit, message.Value, message.StringValue, message.BoolValue, message.DataValue, message.Sum, message.Time, message.Link)
+	if err != nil {
+		return errors.New("Executing insert statement: " + err.Error())
+	}
 
 	return nil
 }
@@ -90,19 +87,21 @@ func GetDataPoints() ([]DataPoint, error) {
 	var dataPoints []DataPoint
 	for rows.Next() {
 		var id int
-		var sensorType string
-		var date string
-		var unit string
-		var value1 string
-		var value2 string
-		var value3 string
+		var name string
+		var value float64
+		var stringValue string
+		var boolValue bool
+		var dataValue string
+		var sum float64
+		var time float64
+		var link string
 
-		err = rows.Scan(&id, &sensorType, &date, &unit, &value1, &value2, &value3)
+		err = rows.Scan(&id, &name, &value, &stringValue, &boolValue, &dataValue, &sum, &time, &link)
 		if err != nil {
 			return nil, errors.New("Reading values from row: " + err.Error())
 		}
 
-		dataPoints = append(dataPoints, DataPoint{Id: id, SensorType: sensorType, Date: date, Unit: unit, Value1: value1, Value2: value2, Value3: value3})
+		dataPoints = append(dataPoints, DataPoint{Id: id, Name: name, Value: value, StringValue: stringValue, BoolValue: boolValue, DataValue: dataValue, Sum: sum, Time: time, Link: link})
 	}
 
 	return dataPoints, nil
