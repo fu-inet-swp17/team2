@@ -10,7 +10,7 @@ import (
 type Device struct {
 	Id             int
 	Address        string
-	FailedAttempts int
+	FailedAttempts int64
 }
 
 func RegisterDevice(address string) error {
@@ -116,15 +116,24 @@ func GetRegisteredDevices() ([]Device, error) {
 	var devices []Device
 	for rows.Next() {
 		var id int
-		var address string
-		var failedAttempts int
+		var address sql.NullString
+		var failedAttempts sql.NullInt64
 
 		err = rows.Scan(&id, &address, &failedAttempts)
 		if err != nil {
 			return nil, errors.New("Reading values from row: " + err.Error())
 		}
 
-		devices = append(devices, Device{Id: id, Address: address, FailedAttempts: failedAttempts})
+		var addressString string
+		if address.Valid {
+			addressString = address.String
+		}
+		var failedAttemptsInt int64
+		if failedAttempts.Valid {
+			failedAttemptsInt = failedAttempts.Int64
+		}
+
+		devices = append(devices, Device{Id: id, Address: addressString, FailedAttempts: failedAttemptsInt})
 	}
 
 	return devices, nil

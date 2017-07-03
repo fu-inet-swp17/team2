@@ -88,22 +88,59 @@ func GetDataPoints() ([]DataPoint, error) {
 	var dataPoints []DataPoint
 	for rows.Next() {
 		var id int
-		var name string
-		var unit string
-		var value float64
-		var stringValue string
-		var boolValue bool
-		var dataValue string
-		var sum float64
-		var time float64
-		var link string
+		var name sql.NullString
+		var unit sql.NullString
+		var value sql.NullFloat64
+		var stringValue sql.NullString
+		var boolValue sql.NullBool
+		var dataValue sql.NullString
+		var sum sql.NullFloat64
+		var time sql.NullFloat64
+		var link sql.NullString
 
 		err = rows.Scan(&id, &name, &unit, &value, &stringValue, &boolValue, &dataValue, &sum, &time, &link)
 		if err != nil {
 			return nil, errors.New("Reading values from row: " + err.Error())
 		}
 
-		dataPoints = append(dataPoints, DataPoint{Id: id, Name: name, Unit: unit, Value: value, StringValue: stringValue, BoolValue: boolValue, DataValue: dataValue, Sum: sum, Time: time, Link: link})
+		var nameString string
+		if name.Valid {
+			nameString = name.String
+		}
+		var unitString string
+		if unit.Valid {
+			unitString = unit.String
+		}
+		var valueFloat float64
+		if value.Valid {
+			valueFloat = value.Float64
+		}
+		var stringValueString string
+		if stringValue.Valid {
+			stringValueString = stringValue.String
+		}
+		var boolValueBool bool
+		if boolValue.Valid {
+			boolValueBool = boolValue.Bool
+		}
+		var dataValueString string
+		if dataValue.Valid {
+			dataValueString = dataValue.String
+		}
+		var sumFloat float64
+		if sum.Valid {
+			sumFloat = sum.Float64
+		}
+		var timeFloat float64
+		if time.Valid {
+			timeFloat = time.Float64
+		}
+		var linkString string
+		if link.Valid {
+			linkString = link.String
+		}
+
+		dataPoints = append(dataPoints, DataPoint{Id: id, Name: nameString, Unit: unitString, Value: valueFloat, StringValue: stringValueString, BoolValue: boolValueBool, DataValue: dataValueString, Sum: sumFloat, Time: timeFloat, Link: linkString})
 	}
 
 	return dataPoints, nil
