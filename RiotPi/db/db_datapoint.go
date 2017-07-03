@@ -11,6 +11,7 @@ import (
 type DataPoint struct {
 	Id          int
 	Name        string
+	Unit        string
 	Value       float64
 	StringValue string
 	BoolValue   bool
@@ -88,6 +89,7 @@ func GetDataPoints() ([]DataPoint, error) {
 	for rows.Next() {
 		var id int
 		var name string
+		var unit string
 		var value float64
 		var stringValue string
 		var boolValue bool
@@ -96,12 +98,12 @@ func GetDataPoints() ([]DataPoint, error) {
 		var time float64
 		var link string
 
-		err = rows.Scan(&id, &name, &value, &stringValue, &boolValue, &dataValue, &sum, &time, &link)
+		err = rows.Scan(&id, &name, &unit, &value, &stringValue, &boolValue, &dataValue, &sum, &time, &link)
 		if err != nil {
 			return nil, errors.New("Reading values from row: " + err.Error())
 		}
 
-		dataPoints = append(dataPoints, DataPoint{Id: id, Name: name, Value: value, StringValue: stringValue, BoolValue: boolValue, DataValue: dataValue, Sum: sum, Time: time, Link: link})
+		dataPoints = append(dataPoints, DataPoint{Id: id, Name: name, Unit: unit, Value: value, StringValue: stringValue, BoolValue: boolValue, DataValue: dataValue, Sum: sum, Time: time, Link: link})
 	}
 
 	return dataPoints, nil
