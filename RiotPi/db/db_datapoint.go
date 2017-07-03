@@ -6,6 +6,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/nkristek/go-senml"
+	"time"
 )
 
 type DataPoint struct {
@@ -37,7 +38,13 @@ func InsertDataPoint(message senml.SenMLRecord) error {
 	}
 
 	// execute insert
-	_, err = stmt.Exec(message.Name, message.Unit, message.Value, message.StringValue, message.BoolValue, message.DataValue, message.Sum, message.Time, message.Link)
+	var timeStamp time.Time
+	if message.Time != nil {
+		timeStamp = time.Unix(int64(*message.Time), 0)
+	} else {
+		timeStamp = time.Now()
+	}
+	_, err = stmt.Exec(message.Name, message.Unit, message.Value, message.StringValue, message.BoolValue, message.DataValue, message.Sum, timeStamp.Format(time.RFC3339), message.Link)
 	if err != nil {
 		return errors.New("Executing insert statement: " + err.Error())
 	}
