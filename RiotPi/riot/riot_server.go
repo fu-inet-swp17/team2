@@ -81,6 +81,8 @@ func pollRegisteredDevices(configuration config.Configuration) {
 		return
 	}
 
+	log.Notice("Polling " + strconv.Itoa(len(devices)) + " devices.")
+
 	// collect sensor data from all registered devices
 	var messages []senml.SenMLMessage
 	for _, device := range devices {
