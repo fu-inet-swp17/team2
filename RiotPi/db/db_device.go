@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"time"
 )
 
 type Device struct {
