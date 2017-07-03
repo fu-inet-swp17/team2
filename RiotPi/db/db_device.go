@@ -36,13 +36,13 @@ func RegisterDevice(address string) error {
 	log.Notice("Register device with address: " + address)
 
 	// prepare insert
-	stmt, err := conn.Prepare("INSERT " + sqlConfiguration.DeviceTableName + " SET Address=?,LastPing=?")
+	stmt, err := conn.Prepare("INSERT " + sqlConfiguration.DeviceTableName + " SET Address=?,FailedAttempts=?")
 	if err != nil {
 		return errors.New("Preparing insert statement: " + err.Error())
 	}
 
 	// execute insert
-	_, err = stmt.Exec(address, time.Now())
+	_, err = stmt.Exec(address, 0)
 	if err != nil {
 		return errors.New("Executing insert statement: " + err.Error())
 	}
