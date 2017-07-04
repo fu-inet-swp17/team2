@@ -23,8 +23,6 @@ func Init(settings config.SQLSettings) {
 
 func InitDatabase() error {
 	// create connection
-	log.Notice("Initialize database")
-
 	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port)
 	conn, err := sql.Open("mysql", dbinfo)
 	if err != nil {
@@ -56,14 +54,11 @@ func InitDatabase() error {
 		return errors.New("Creating data table: " + err.Error())
 	}
 
-	log.Notice("Database initialized")
 	return nil
 }
 
 func ClearDatabase() error {
 	// create connection
-	log.Notice("Clearing database")
-
 	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port)
 	conn, err := sql.Open("mysql", dbinfo)
 	if err != nil {
@@ -77,6 +72,5 @@ func ClearDatabase() error {
 		return errors.New("Dropping database: " + err.Error())
 	}
 
-	log.Notice("Database cleared")
 	return nil
 }

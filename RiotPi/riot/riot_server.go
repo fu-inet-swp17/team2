@@ -9,6 +9,7 @@ import (
 	"net"
 	"strings"
 	"time"
+	"strconv"
 )
 
 func StartListeningForAnnouncements(configuration config.Configuration, completion chan struct{}) {
@@ -80,6 +81,8 @@ func pollRegisteredDevices(configuration config.Configuration) {
 		log.Error(err)
 		return
 	}
+
+	log.Notice("Polling " + strconv.Itoa(len(devices)) + " devices.")
 
 	// collect sensor data from all registered devices
 	var messages []senml.SenMLMessage

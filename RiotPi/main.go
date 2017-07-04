@@ -51,17 +51,21 @@ func readCommandLineArgs() config.Configuration {
 	}
 
 	if *clearDBPtr {
+		log.Notice("Clearing database")
 		err = db.ClearDatabase()
 		if err != nil {
 			panic(err)
 		}
+		log.Notice("Database cleared")
 	}
 
 	if *initDBPtr {
+		log.Notice("Initialize database")
 		err = db.InitDatabase()
 		if err != nil {
 			panic(err)
 		}
+		log.Notice("Database initialized")
 	}
 
 	return configuration

@@ -10,10 +10,10 @@ $(document).ready(function(){
 			var value3 = [];
 			//first chart
 			for(var i in data) {
-				BoardId.push("BoardId " + data[i].BoardId);
-				value.push(data[i].Value1);
-				value2.push(data[i].Value2);
-				value3.push(data[i].Value3);
+				BoardId.push(data[i].ID);
+				value.push(data[i].BoolValue);
+				value2.push(data[i].Value);
+				value3.push(data[i].Sum);
 				
 			}
 
@@ -61,14 +61,14 @@ $(document).ready(function(){
 				labels: BoardId,
 				datasets : [
 					{
-						label: 'Luftdruk',
+						label: 'Luftdruck',
 						backgroundColor: "rgb(224,0,255)",
 						data: value2
 					}
 				]
 			};
 
-			var ctx = $("#Luftdruk");
+			var ctx = $("#Luftdruck");
 
 			var barGraph = new Chart(ctx, {
 				type: 'line',
@@ -81,14 +81,14 @@ $(document).ready(function(){
 				labels: BoardId,
 				datasets : [
 					{
-						label: 'Luftfr\u00fcchtigkeit',
+						label: 'Luftfeuchtigkeit',
 						backgroundColor: "rgb(0,255,255)",
 						data: value3
 					}
 				]
 			};
 
-			var ctx = $("#hi");
+			var ctx = $("#Luftfeuchtigkeit");
 
 			var barGraph = new Chart(ctx, {
 				type: 'bar',

@@ -49,6 +49,7 @@ func TestDBDevice(t *testing.T) {
 	err = InitDatabase()
 	if err != nil {
 		t.Fatalf("Initialise database: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 
@@ -57,6 +58,7 @@ func TestDBDevice(t *testing.T) {
 	err = RegisterDevice(sampleDeviceAddress)
 	if err != nil {
 		t.Fatalf("Register sample device: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 
@@ -64,12 +66,14 @@ func TestDBDevice(t *testing.T) {
 	registeredDevices, err := GetRegisteredDevices()
 	if err != nil {
 		t.Fatalf("Get all registered devices: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 
 	// validate all devices after register
 	if len(registeredDevices) != 1 {
 		t.Fatalf("After register, there are " + strconv.Itoa(len(registeredDevices)) + " devices in db, expected is 1.")
+		_ = ClearDatabase()
 		return
 	}
 	registeredDevice := registeredDevices[0]
@@ -77,6 +81,7 @@ func TestDBDevice(t *testing.T) {
 	// validate the registered device
 	if registeredDevice.Address != sampleDeviceAddress {
 		t.Fatalf("Address of registered device is not equal with the initial address.")
+		_ = ClearDatabase()
 		return
 	}
 
@@ -85,6 +90,7 @@ func TestDBDevice(t *testing.T) {
 	err = registeredDevice.Update()
 	if err != nil {
 		t.Fatalf("Update registered device: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 
@@ -92,12 +98,14 @@ func TestDBDevice(t *testing.T) {
 	updatedDevices, err := GetRegisteredDevices()
 	if err != nil {
 		t.Fatalf("Get all updated devices: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 
 	// validate all devices after update
 	if len(updatedDevices) != 1 {
 		t.Fatalf("After update, there are " + strconv.Itoa(len(updatedDevices)) + " devices in db, expected is 1.")
+		_ = ClearDatabase()
 		return
 	}
 	updatedDevice := updatedDevices[0]
@@ -105,6 +113,7 @@ func TestDBDevice(t *testing.T) {
 	// validate the device
 	if updatedDevice.Address != registeredDevice.Address {
 		t.Fatalf("Address of updated device is not equal with the previous device.")
+		_ = ClearDatabase()
 		return
 	}
 
@@ -112,6 +121,7 @@ func TestDBDevice(t *testing.T) {
 	err = updatedDevice.Unregister()
 	if err != nil {
 		t.Fatalf("Unregister updated device: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 
@@ -119,12 +129,14 @@ func TestDBDevice(t *testing.T) {
 	deletedDevices, err := GetRegisteredDevices()
 	if err != nil {
 		t.Fatalf("Get all deleted devices: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 
 	// validate all devices after delete
 	if len(deletedDevices) != 0 {
 		t.Fatalf("After delete, there are " + strconv.Itoa(len(deletedDevices)) + " devices in db, expected is 0.")
+		_ = ClearDatabase()
 		return
 	}
 
@@ -132,6 +144,7 @@ func TestDBDevice(t *testing.T) {
 	err = ClearDatabase()
 	if err != nil {
 		t.Fatalf("Clear database: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 }
@@ -141,6 +154,7 @@ func TestDBDataPoint(t *testing.T) {
 	configuration, err := getTestConfig()
 	if err != nil {
 		t.Fatalf("Get test config: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 
@@ -151,6 +165,7 @@ func TestDBDataPoint(t *testing.T) {
 	err = InitDatabase()
 	if err != nil {
 		t.Fatalf("Initialise database: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 
@@ -162,6 +177,7 @@ func TestDBDataPoint(t *testing.T) {
 	err = InsertDataPoint(sampleDataPoint)
 	if err != nil {
 		t.Fatalf("Insert sample datapoint: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 
@@ -169,12 +185,14 @@ func TestDBDataPoint(t *testing.T) {
 	dataPoints, err := GetDataPoints()
 	if err != nil {
 		t.Fatalf("Get all datapoints: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 
 	// validate datapoints after insert
 	if len(dataPoints) != 1 {
 		t.Fatalf("After insert, there are " + strconv.Itoa(len(dataPoints)) + " datapoints in db, expected is 1.")
+		_ = ClearDatabase()
 		return
 	}
 	dataPoint := dataPoints[0]
@@ -183,6 +201,7 @@ func TestDBDataPoint(t *testing.T) {
 	err = dataPoint.Delete()
 	if err != nil {
 		t.Fatalf("Delete datapoint: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 
@@ -190,12 +209,14 @@ func TestDBDataPoint(t *testing.T) {
 	deletedDataPoints, err := GetDataPoints()
 	if err != nil {
 		t.Fatalf("Get all datapoints: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 
 	// validate all datapoints after delete
 	if len(deletedDataPoints) != 0 {
 		t.Fatalf("After insert, there are " + strconv.Itoa(len(deletedDataPoints)) + " datapoints in db, expected is 0.")
+		_ = ClearDatabase()
 		return
 	}
 
@@ -203,6 +224,7 @@ func TestDBDataPoint(t *testing.T) {
 	err = ClearDatabase()
 	if err != nil {
 		t.Fatalf("Clear database: " + err.Error())
+		_ = ClearDatabase()
 		return
 	}
 }
