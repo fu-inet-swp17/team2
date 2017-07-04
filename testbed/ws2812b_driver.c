@@ -5,6 +5,49 @@
 #include "debug.h"
 #include "xtimer.h"
 
+static inline void send_zero(gpio_t pin) {
+	// complet transmission: 1.25us +/- 150ns
+	gpio_set(pin);
+	// wait 250ns +/- 150ns
+	__asm__ volatile(
+		"nop \n\t"
+	);
+	
+	gpio_clear(pin);
+	// wait 900ns +/- 150ns
+	__asm__ volatile(
+		"nop\n"
+	);
+}
+
+static inline void send_one(gpio_t pin) {
+	// complet transmission: 1.25us +/- 150ns
+	gpio_set(pin);
+	// wait 900ns +/- 150ns
+	__asm__ volatile(
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"	
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"	
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"	
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"
+	);
+	
+	gpio_clear(pin);
+	// wait 350ns +/- 150ns
+}
+
 int ws2812b_init(ws2812b_stripe_t *dev, uint32_t led_count, gpio_t pin) {
 	if (gpio_init(pin, GPIO_OUT) < 0) {
 		DEBUG("ws2812b_init: failed to init gpio %d\n", pin);
@@ -52,15 +95,24 @@ void ws2812b_show(ws2812b_stripe_t *dev) {
 	uint32_t i;	// Timing!
 	uint8_t bit;
 	color_rgb_t *pixel; // Timing!
+	gpio_t pin = dev->pin; // Timing!
 
 	gpio_clear(dev->pin);
-	for(i=0; i<dev->led_count; i++) {
-		printf("LED %"PRIu32": r: %d g: %d b: %d\n", i, dev->leds[i].r, dev->leds[i].g, dev->leds[i].b);
-	}
+	/*for(i=0; i<dev->led_count; i++) {
+		printf(
+			"LED %"PRIu32": r: %d g: %d b: %d\n",
+			i,
+			dev->leds[i].r,
+			dev->leds[i].g,
+			dev->leds[i].b
+		);
+	}*/
 
 	/* Disable IRQ's, we have hard time bounds here.
 	 * Restore it afterwards */
-	xtimer_usleep(50);
+	// gpio_set(dev->pin);
+	// gpio_clear(dev->pin);
+	
 	irq_state = irq_disable();
 	
 	/* Loop over all connected leds
@@ -71,97 +123,31 @@ void ws2812b_show(ws2812b_stripe_t *dev) {
 	 */
 	for(i=0; i<dev->led_count; i++) {
 		pixel = &(dev->leds[i]);
-		
+		// TODO Ausrollen!
 		// green
 		for(bit=0x80; bit; bit >>= 1) {
-			gpio_write(dev->pin, pixel->g & bit);
-			/* Wait 800ns */
-			__asm__ volatile(
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-			);
-			// gpio_clear(dev->pin);
-			/* Wait 450ns */
+			if(pixel->g & bit) {
+				send_one(pin);					
+			} else {
+				send_zero(pin);
+			}
 		}
 		
 		// red
 		for(bit=0x80; bit; bit >>= 1) {
-			gpio_write(dev->pin, pixel->r & bit);
-			/* Wait 800ns */
-			__asm__ volatile(
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-			);
-			// gpio_clear(dev->pin);
-			/* Wait 450ns */
+			if(pixel->r & bit) {
+				send_one(pin);		
+			} else {
+				send_zero(pin);
+			}
 		}
 		
 		for(bit=0x80; bit; bit >>= 1) {
-			gpio_write(dev->pin, pixel->b & bit);
-			/* Wait 800ns */
-			__asm__ volatile(
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-				"nop \n\t"
-			);
-			// Bgpio_clear(dev->pin);
-			/* Wait 450ns */
+			if(pixel->b & bit) {
+				send_one(pin);
+			} else {
+				send_zero(pin);
+			}
 		}
 	}
 	
