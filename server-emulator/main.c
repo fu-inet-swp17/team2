@@ -22,10 +22,8 @@
 typedef struct SensorBoard {
     bool init;
 	sock_udp_ep_t board_ep;
-	// char addr[IPV6_ADDR_MAX_STR_LEN];
 } SensorBoard;
 
-// gefährlich! sollte eigentlich gemutext werden
 SensorBoard boards[MAX_BOARD_NUM];
 char own_addr[IPV6_ADDR_MAX_STR_LEN];
 char connect_stack[THREAD_STACKSIZE_MAIN];
@@ -33,11 +31,11 @@ uint8_t conn_buf[APP_PING_MSG_LEN];
 uint8_t req_buf[128];
 
 /*
- * #description: checks if string prefix is a prefix of string str
- * #requires: stdbool.h, string.h
- * #param[char* str]: string that should start with something
- * #param[char* prefix]: the prefix to check for
- * #return[bool]: true wenn prefix is a prefix of str, false else
+ * description: checks if string prefix is a prefix of string str
+ * requires: stdbool.h, string.h
+ * param[char* str]: string that should start with something
+ * param[char* prefix]: the prefix to check for
+ * return[bool]: true wenn prefix is a prefix of str, false else
  */
 static inline bool startsWith(const char* str, const char* prefix) {
     char* substr = strstr(str, prefix);
@@ -45,13 +43,12 @@ static inline bool startsWith(const char* str, const char* prefix) {
 }
 
 /*
- * #description: compares two IPv6 Addresses
- * #param[ipv6_addr_t* addr1]: first address for compare
- * #param[ipv6_addr_t* addr2]: second address for compare
- * #return[bool]: true if addresses are equal, false if not
+ * description: compares two IPv6 addresses
+ * param[ipv6_addr_t* addr1]: first address for compare
+ * param[ipv6_addr_t* addr2]: second address for compare
+ * return[bool]: true if addresses are equal, false if not
  */
 static inline bool compareIPv6Addr(ipv6_addr_t* addr1, ipv6_addr_t* addr2) {
-	// wegen der blöden Typdefs akzeptiert der Compiler direkte Vergleiche nicht
 	for(size_t i=0; i<16; i++) {
 		if(addr1->u8[i] != addr2->u8[i]) {
 			return false;
@@ -62,11 +59,11 @@ static inline bool compareIPv6Addr(ipv6_addr_t* addr1, ipv6_addr_t* addr2) {
 }
 
 /*
- * #description: strncpy in Vernünftig, garantiert Nullterminator
- * #param[char* dst]: Speicher in den rein kopiert wird
- * #param[const char* src]: String der in 'dst' kopiert werden soll
- * #param[size_t num]: max. Anzahl Zeichen die in dst geschrieben werden darf 
- * #return[size_t]: Anzahl geschriebener Zeichen
+ * description: strncpy guaranteeing null termination
+ * param[char* dst]: buffer to copy data into
+ * param[const char* src]: string to be copied into dst
+ * param[size_t num]: max number of chars to be written into dst
+ * return[size_t]: number of chars written
  */
 static inline size_t my_strncpy(char* dst, const char* src, size_t num) {
     size_t i;
@@ -93,16 +90,12 @@ static void sensors_resp_handler(unsigned req_state, coap_pkt_t* pdu) {
         return;
     }
     
-    puts("resp!");
+    puts("response!");
     printf("%s\n", (char*)pdu->payload);
-    // TODO weitere Sensoren einfügen
 }
 
 /**********************************COAP STUFF**********************************/
 
-/*
- * printf schwierig, sorgt für Stackoverflow
- */
 static void button_handler(void* args) {
     puts("Requesting data from boards...");
     
@@ -118,7 +111,7 @@ static void button_handler(void* args) {
             coap_buff,
             GCOAP_PDU_BUF_SIZE,
             COAP_GET,
-            "/.well-known/core"
+            "/.well-known/core" /* replace this with whatever resource you wish to request */
         );
         
         size_t bytes_sent = gcoap_req_send2(
@@ -145,7 +138,7 @@ static void button_handler(void* args) {
 
 
 /*
- * Deamon der im Hintergrund läuft und neue Boards registriert
+ * Daemon running in the background and registering new boards
  */
 static void* connect_thread_handler(void* args) {
     (void)args;
@@ -175,7 +168,6 @@ static void* connect_thread_handler(void* args) {
         );
         
         if(res < 0) {
-        	// TODO Fehlerabfrage
             fprintf(
                 stderr,
                 "Error during \"sock_udp_recv\": %d!\nAboarting.",
@@ -204,7 +196,7 @@ static void* connect_thread_handler(void* args) {
                 
             if(board_index >= MAX_BOARD_NUM) {
                 fputs("Max nr. of boards registered!\n", stderr);
-                break; // der Thread beendet sich!!!
+                break; /* thread terminates! */
             }
             
             if(!in_use) {
@@ -227,27 +219,27 @@ static void* connect_thread_handler(void* args) {
        	        
        	        fputs("with: ", stdout);
        	        if(msg->sensors & IR_TEMP_SENSOR) {
-       	        	fputs("IR-Thermopile Sensor, ", stdout);
+       	        	fputs("IR-Thermopile sensor, ", stdout);
        	        }
        	        
        	        if(msg->sensors & HUMID_SENSOR) {
-       	        	fputs("Humidity Sensor, ", stdout);
+       	        	fputs("humidity sensor, ", stdout);
        	        }
        	        
        	        if(msg->sensors & MAG_SENSOR) {
-       	        	fputs("Magnetometer, ", stdout);
+       	        	fputs("magnetometer, ", stdout);
        	        }
        	        
        	        if(msg->sensors & RGB_LIGHT_SENDSOR) {
-       	        	fputs("Color Light Sensor, ", stdout);
+       	        	fputs("color light sensor, ", stdout);
        	        }
        	        
        	        if(msg->sensors & PRESS_SENSOR) {
-       	        	fputs("Pressure Sensor, ", stdout);
+       	        	fputs("pressure sensor, ", stdout);
        	        }
        	        
        	        if(msg->sensors & ACC_SENSOR) {
-       	        	fputs("Accelerometer, ", stdout);
+       	        	fputs("accelerometer, ", stdout);
        	        }
            		puts("");
            		
@@ -268,24 +260,18 @@ int main(void) {
         boards[i].init = false;
     }
     
-    // zu suchendes Prefix in ipv6 umwandeln
     ipv6_addr_t addr;
     ipv6_addr_from_str(&addr, "fe80::");
 
-    // eigene link-local adresse anhand prefix suchen 
     ipv6_addr_t* ll_addr = NULL;
     gnrc_ipv6_netif_find_by_prefix(&ll_addr, &addr);
     
     ipv6_addr_to_str(own_addr, ll_addr, IPV6_ADDR_MAX_STR_LEN);
     printf("Link-local address: \"%s\".\n", own_addr);
     
-    // funktioniert nur mit GPIO_IN_PU
-    // mit GPIO_RISING wird der Handler 2 mal bei Boardstart aufgerufen,
-    // Grund unbekannt
     gpio_init_int(BUTTON_GPIO, GPIO_IN_PU, GPIO_FALLING, button_handler, NULL);
     puts("Button activated.");
     
-    puts("Coap gedingst.");
     thread_create(
         connect_stack,
         sizeof(connect_stack),
@@ -295,11 +281,9 @@ int main(void) {
         NULL,
         "connect thread"
     );
-        
-    // TODO shell-commands bauen?
+
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(NULL, line_buf, SHELL_DEFAULT_BUFSIZE);
     
     return EXIT_SUCCESS;
 }
-
