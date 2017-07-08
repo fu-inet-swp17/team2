@@ -8,7 +8,7 @@ Clone the RIOT OS repository into your local drive.
 git clone https://github.com/RIOT-OS/RIOT
 ```
 
-This release has been tested with RIOT release 2017.04. Other branches may be used as well but bugs may occur. In that case, you can switch to the branch corresponding to the release that has been tested:
+This release has been tested with RIOT release 2017.04 on a Phytec phyNODE KW22 board. Other branches and boards may be used as well but bugs may occur. In that case, you can switch to the branch corresponding to the release that has been tested:
 
 ```sh
 git fetch
@@ -46,7 +46,7 @@ These commands can be combined as
 make all flash term
 ```
 
-If the default parameters for BOARD and RIOTBASE are not met, run the commands appending the parameters that correspond to your configuration, e.g.
+If the default parameters for BOARD and RIOTBASE do not apply to your configuration, run the commands from above and append the parameters that correspond to your configuration, e.g.
 
 ```sh
 make all flash term RIOTBASE=YOURPATH BOARD=YOURBOARD
