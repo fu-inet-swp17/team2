@@ -1,6 +1,6 @@
 # Smart Environment
 
-This is a suite of applications for visualizing sensor data in different ways. Users can deploy an IoT application for the RIOT operating system on any number of low-power IoT boards that will measure data of connected sensors whenever it is polled from a central server running on a Raspberry Pi. The Raspberry Pi stores a database that a web server can connect to in order to visualize a history of sensor data on a website. An alternate way of visualizing sensor data is on an LED stripe connected to any of the IoT boards. Drivers are provided for ... running on a Phytec phyNODE KW22 board.
+This is a suite of applications for visualizing sensor data in different ways. Users can deploy an IoT application for the RIOT operating system on any number of low-power IoT boards that will measure data of connected sensors whenever it is polled from a central server running on a Raspberry Pi. The Raspberry Pi stores a database that a web server can connect to in order to visualize a history of sensor data on a website. An alternate way of visualizing sensor data is on an LED stripe connected to any of the IoT boards. Drivers are provided for WS2812B running on a Phytec phyNODE KW22 board.
 
 *Phytec phyNODE KW22*
 
