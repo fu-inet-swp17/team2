@@ -1,10 +1,10 @@
-About the files in RiotDashboard
+# Prerequisites
 
-1-set just the right information in "RiotDashboard/chartjs/config.php"
+## PHP server
 
-2-"RiotDashboard/chartjs/db_connection_chart_1.php" get the information from the DB table and pack it in jason output
+Just set up a PHP server of your liking, e.g. Apache with XAMPP, and deploy all contents of this folder there. No further configuration should be necessary. The website can be accessed through index.html.
 
-3-open "RiotDashboard/chartjs/js/chart1.js" in editor and put the right link for url in line 3 
+## SQL database authentication
 
-4-"RiotDashboard/chartjs/js/chart1.js" gets the informations ,makes diagramm and show the on "RiotDashboard/index.html"
+Edit the chartjs/config.php file to enter the authentication information for your SQL database. The database should be the one used by RiotPi to store sensor data. If that database isn't available to you and you'd like to test RiotDashboard anyway, keep in mind your test database should conform to the correct database scheme (see wiki).
 
