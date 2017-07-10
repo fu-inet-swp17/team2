@@ -1,71 +1,73 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<title>Smart Environment</title>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" >
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  
+  <style>
+  body {
+      
+	  margin-top: 50px;
+  }
+  ul.nav-pills {
+      top: 100px;
+      position: fixed;
+  }
+  div.col-sm-9 div {
+      
+	  margin: 0;
+	  font-size: 28px;
+	  
+  }
+  
+  
+  @media screen and (max-width: 810px) {
+    #section, #section1, #section2, #section3, #section4 {
+        margin-left: 150px;
 		
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
-		<link rel="stylesheet" href="/SWP/css/bootstrap.min.css" />
+    }
+  }
+  </style>
+</head>
+<body data-spy="scroll" data-target="#myScrollspy" data-offset="20">
 
-	</head>
-	<body>
 	<!--start navibar-->
-	<nav class="navbar navbar-default navbar-static-top" ">
+	<nav class="navbar navbar-inverse navbar-fixed-top">
         
 		<ul class="nav navbar-nav">
-			<li><a href="/SWP/index.html">Home</a></li>
+			<li><a href="/index.html">Home</a></li>
             <li><a href="https://github.com/fu-inet-swp17/team2">Smart Environment GitHub</a></li>
             <li><a href="http://riot-os.org/">RIOT</a></li>
-			<li><a href="/SWP/protocol.html">Protocol</a></li>
-			<li><a href="/SWP/sequenzdiagramm.html">Sequenzdiagramm</a></li>
-			<li><a href="/SWP/index.html">Refresh</a></li>
+			<li><a href="/protocol.html">Protocol</a></li>
+			<li><a href="/sequenzdiagramm.html">Sequenzdiagramm</a></li>
+			
 		</ul>
 
       </nav>
 	  <!--end navibar-->
-	  
-	  <div class="container">
-			<h1 align="center"><a href ="/SWP/index.html">Smart Environment</a></h1>
-			<!--First chart-->
-					<div class="col-md-6">		
-						<div id="pie" style="min-width: 300px; height: 300px; margin: 30 auto; border : outset;">
-						
-						
-							<div id="chart-container">
-								<canvas id="mycanvas"></canvas>
-							</div>
-						</div>	
-					</div>
-					<!--Second chart-->
-					<div class="col-md-6">
-						<div id="bar" style="min-width: 300px; height: 300px; margin: 30 auto; border : outset;">
-							<div>
-								<canvas id="Temperatur" ></canvas>
-							</div>
 
-						</div>
-					</div>
-					<!--Third chart-->
-					<div class="col-md-6">
-						<div id="Stacked" style="min-width: 300px; height: 300px; margin: 30 auto; border : outset;">
-							<div>
-								<canvas id="Luftdruck" ></canvas>
-							</div>
-						</div>
-					</div>
-				<!--Fourth chart-->
-					<div class="col-md-6">
-						<div id="line" style="min-width: 300px; height: 300px; margin: 30 auto; border : outset;">
-							<div>
-								<canvas id="Luftfeuchtigkeit" ></canvas>
-							</div>
-						</div>
-					</div>
-				<!--End of charts-->
-
-		<!-- javascript -->
+<div class="container" margin-top: 50px;>
+  <div class="row">
+    <nav class="col-sm-3" id="myScrollspy">
+      <ul class="nav nav-pills nav-stacked">
+        <!-- 
+		<li class="active"><a href="#section1">Section 1</a></li>
+        <li><a href="#section2" >Section 2</a></li>
+        <li><a href="#section3">Section 3</a></li>
+        <li><a href="#section4">Section 4</a></li> -->
+      </ul>
+    </nav>
+    <div id="sections" class="col-sm-9"></div>
+</div>
+<!-- javascript -->
 		<script type="text/javascript" src="chartjs/js/jquery.min.js"></script>
 		<script type="text/javascript" src="chartjs/js/Chart.min.js"></script>
-		<script type="text/javascript" src="chartjs/js/chart1.js"></script>
+		<script type="text/javascript" src="chartjs/js/chart.js"></script>
 		
-	</body>
+</body>
 </html>
