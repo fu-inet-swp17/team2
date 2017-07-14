@@ -11,7 +11,6 @@
   
   <style>
   body {
-      
 	  margin-top: 50px;
   }
   ul.nav-pills {
@@ -19,18 +18,8 @@
       position: fixed;
   }
   div.col-sm-9 div {
-      
-	  margin: 0;
+	  margin: 0 auto;
 	  font-size: 28px;
-	  
-  }
-  
-  
-  @media screen and (max-width: 810px) {
-    #section, #section1, #section2, #section3, #section4 {
-        margin-left: 150px;
-		
-    }
   }
   </style>
 </head>
@@ -40,33 +29,22 @@
 	<nav class="navbar navbar-inverse navbar-fixed-top">
         
 		<ul class="nav navbar-nav">
-			<li><a href="/index.html">Home</a></li>
-            <li><a href="https://github.com/fu-inet-swp17/team2">Smart Environment GitHub</a></li>
+			<li><a href="index.html">Home</a></li>
+            <li><a href="https://github.com/fu-inet-swp17/team2">Smart Environment auf GitHub</a></li>
+			<li><a href="https://github.com/fu-inet-swp17/team2/wiki">Wiki</a></li>
             <li><a href="http://riot-os.org/">RIOT</a></li>
-			<li><a href="/protocol.html">Protocol</a></li>
-			<li><a href="/sequenzdiagramm.html">Sequenzdiagramm</a></li>
 			
 		</ul>
 
       </nav>
 	  <!--end navibar-->
 
-<div class="container" margin-top: 50px;>
-  <div class="row">
-    <nav class="col-sm-3" id="myScrollspy">
-      <ul class="nav nav-pills nav-stacked">
-        <!-- 
-		<li class="active"><a href="#section1">Section 1</a></li>
-        <li><a href="#section2" >Section 2</a></li>
-        <li><a href="#section3">Section 3</a></li>
-        <li><a href="#section4">Section 4</a></li> -->
-      </ul>
-    </nav>
-    <div id="sections" class="col-sm-9"></div>
-</div>
+	<div id="sections" class="col-sm-9" style="width:100%"></div>
+
 <!-- javascript -->
 		<script type="text/javascript" src="chartjs/js/jquery.min.js"></script>
-		<script type="text/javascript" src="chartjs/js/Chart.min.js"></script>
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+		<script type="text/javascript" src="chartjs/js/underscore-min.js"></script>
 		<script type="text/javascript" src="chartjs/js/chart.js"></script>
 		
 </body>
