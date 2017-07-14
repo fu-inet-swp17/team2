@@ -31,7 +31,7 @@ This is the C-based RIOT application that is to be deployed on the IoT boards. A
 | Radio                  | IEEE802.15.4 @ 2,4GHZ |
 | Sensors                | diverse |
 
-## RiotPi
+## SenPi
 
 This is a Golang-based application running on the Raspberry Pi that regularly polls registered devices for sensor data.
 It then saves those datapoints in a MySQL database specified in a configuration file preferrably also running on the Raspberry Pi. <br>

@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/nkristek/go-senml"
-	"time"
 )
 
 type DataPoint struct {

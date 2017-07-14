@@ -1,12 +1,12 @@
 package db
 
 import (
-	"database/sql"
-	"errors"
 	"fmt"
-	"github.com/fu-inet-swp17/team2/RiotPi/config"
+	"errors"
+	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/op/go-logging"
+	"github.com/fu-inet-swp17/team2/SenPi/config"
 )
 
 // vars

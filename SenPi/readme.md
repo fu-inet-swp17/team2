@@ -20,7 +20,7 @@ In case, there is an error when installing and in the output is something about 
 export GOPATH=$HOME/go
 ```
 
-If you also wish to run this programm like any other program on the computer, run:
+If you also wish to run this program like any other program on the computer, run:
 
 ```sh
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
@@ -29,19 +29,19 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 # Install and first run
 
 ```sh
-go get github.com/fu-inet-swp17/team2/RiotPi
-go install github.com/fu-inet-swp17/team2/RiotPi
+go get github.com/fu-inet-swp17/team2/SenPi
+go install github.com/fu-inet-swp17/team2/SenPi
 ```
 
 Now run this command to create a sample config file:
 
 ```sh
-RiotPi --sampleconfig
+SenPi --sampleconfig
 ```
 
 When this fails (e.g. because the GOPATH is not in your PATH), you can run
 ```sh
-$GOPATH/bin/RiotPi --sampleconfig
+$GOPATH/bin/SenPi --sampleconfig
 ```
 
 Now edit the newly created config file`$GOPATH/bin/conf.json` with a text editor of your choice.
@@ -54,31 +54,31 @@ You can also move the config file to a folder of you choice, you only have to sp
 Now you have to initialize the SQL database with the provided credentials in the configuration file by using the following command:
 
 ```sh
-RiotPi --initdb
+SenPi --initdb
 ```
 
 __The server is now up and running.__
 
 If you need to clear the database, run
 ```sh
-RiotPi --cleardb
+SenPi --cleardb
 ```
 
 If you need to clear and initialisethe database, run
 ```sh
-RiotPi --reinitdb
+SenPi --reinitdb
 ```
 This basically combines `--cleardb` and `--initdb`.
 
 # Run
 
 ```sh
-RiotPi
+SenPi
 ```
 
 When this fails (e.g. because the GOPATH is not in your PATH), you can run
 ```sh
-$GOPATH/bin/RiotPi
+$GOPATH/bin/SenPi
 ```
 
 # Tests
@@ -86,7 +86,7 @@ $GOPATH/bin/RiotPi
 To execute the existing unit tests, execute the following line (including the trailing ...):
 
 ```sh
-go test github.com/fu-inet-swp17/team2/RiotPi/...
+go test github.com/fu-inet-swp17/team2/SenPi/...
 ```
 
 ## Used Go Libraries
@@ -106,4 +106,3 @@ go test github.com/fu-inet-swp17/team2/RiotPi/...
 ### Go SenML
 
 `github.com/nkristek/go-senml`
-

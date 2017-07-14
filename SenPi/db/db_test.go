@@ -2,10 +2,10 @@ package db
 
 import (
 	"errors"
-	"github.com/fu-inet-swp17/team2/RiotPi/config"
-	"github.com/nkristek/go-senml"
 	"strconv"
 	"testing"
+	"github.com/nkristek/go-senml"
+	"github.com/fu-inet-swp17/team2/SenPi/config"
 )
 
 func TestInitAndClearDatabase(t *testing.T) {
