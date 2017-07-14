@@ -2,13 +2,13 @@ package main
 
 import (
 	"flag"
-	"github.com/fu-inet-swp17/team2/RiotPi/config"
-	"github.com/fu-inet-swp17/team2/RiotPi/db"
-	"github.com/fu-inet-swp17/team2/RiotPi/riot"
-	"github.com/op/go-logging"
 	"os"
 	"runtime"
 	"time"
+	"github.com/op/go-logging"
+	"github.com/fu-inet-swp17/team2/SenPi/config"
+	"github.com/fu-inet-swp17/team2/SenPi/db"
+	"github.com/fu-inet-swp17/team2/SenPi/riot"
 )
 
 var log = logging.MustGetLogger("main")
@@ -39,7 +39,8 @@ func readCommandLineArgs() config.Configuration {
 	// read config
 	configuration, err := config.ReadConfig(*configPathPtr)
 	if err != nil {
-		panic(err)
+		log.Critical(err.Error())
+		runtime.Goexit()
 	}
 
 	// initialize db package
@@ -54,7 +55,8 @@ func readCommandLineArgs() config.Configuration {
 		log.Notice("Clearing database")
 		err = db.ClearDatabase()
 		if err != nil {
-			panic(err)
+			log.Critical(err.Error())
+			runtime.Goexit()
 		}
 		log.Notice("Database cleared")
 	}
@@ -63,7 +65,8 @@ func readCommandLineArgs() config.Configuration {
 		log.Notice("Initialize database")
 		err = db.InitDatabase()
 		if err != nil {
-			panic(err)
+			log.Critical(err.Error())
+			runtime.Goexit()
 		}
 		log.Notice("Database initialized")
 	}
