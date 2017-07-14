@@ -8,15 +8,28 @@
 static inline void send_zero(gpio_t pin) {
 	// complet transmission: 1.25us +/- 150ns
 	gpio_set(pin);
-	// wait 250ns +/- 150ns
+	// wait 350ns +/- 150ns
 	__asm__ volatile(
-		"nop \n\t"
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"
 	);
 	
 	gpio_clear(pin);
 	// wait 900ns +/- 150ns
 	__asm__ volatile(
 		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"	
 	);
 }
 
@@ -28,6 +41,12 @@ static inline void send_one(gpio_t pin) {
 		"nop\n"
 		"nop\n"
 		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"	
+		"nop\n"
+		"nop\n"
+		"nop\n"
 		"nop\n"	
 		"nop\n"
 		"nop\n"
@@ -36,7 +55,11 @@ static inline void send_one(gpio_t pin) {
 		"nop\n"
 		"nop\n"
 		"nop\n"
-		"nop\n"	
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"
+		"nop\n"
 		"nop\n"
 		"nop\n"
 		"nop\n"
@@ -44,6 +67,7 @@ static inline void send_one(gpio_t pin) {
 		"nop\n"
 	);
 	
+	// TODO Zu lang! Inlinen!
 	gpio_clear(pin);
 	// wait 350ns +/- 150ns
 }
@@ -93,7 +117,7 @@ int ws2812b_get_color(ws2812b_stripe_t *dev, uint32_t index, color_rgb_t *led) {
 void ws2812b_show(ws2812b_stripe_t *dev) {
 	int irq_state;
 	uint32_t i;	// Timing!
-	uint8_t bit;
+	// uint8_t bit;
 	color_rgb_t *pixel; // Timing!
 	gpio_t pin = dev->pin; // Timing!
 
@@ -125,30 +149,152 @@ void ws2812b_show(ws2812b_stripe_t *dev) {
 		pixel = &(dev->leds[i]);
 		// TODO Ausrollen!
 		// green
-		for(bit=0x80; bit; bit >>= 1) {
-			if(pixel->g & bit) {
-				send_one(pin);					
-			} else {
-				send_zero(pin);
-			}
+		if(pixel->g & 0x80) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
 		}
 		
-		// red
-		for(bit=0x80; bit; bit >>= 1) {
-			if(pixel->r & bit) {
-				send_one(pin);		
-			} else {
-				send_zero(pin);
-			}
+		if(pixel->g & 0x40) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
 		}
 		
-		for(bit=0x80; bit; bit >>= 1) {
-			if(pixel->b & bit) {
+		if(pixel->g & 0x20) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->g & 0x10) {
 				send_one(pin);
-			} else {
-				send_zero(pin);
-			}
+		} else {
+			send_zero(pin);
 		}
+		
+		if(pixel->g & 0x08) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->g & 0x04) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->g & 0x02) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->g & 0x01) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+				
+		// red
+		if(pixel->r & 0x80) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->r & 0x40) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->r & 0x20) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->r & 0x10) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->r & 0x08) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->r & 0x04) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->r & 0x02) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->r & 0x01) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+
+		// blue
+		if(pixel->b & 0x80) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->b & 0x40) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->b & 0x20) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->b & 0x10) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->b & 0x08) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->b & 0x04) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->b & 0x02) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+		
+		if(pixel->b & 0x01) {
+			send_one(pin);
+		} else {
+			send_zero(pin);
+		}
+
 	}
 	
 	/* Restore IRQ State */

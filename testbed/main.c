@@ -19,15 +19,17 @@ ws2812b_stripe_t test;
 
 int main(void) {
 	
-	gpio_t pin = GPIO_PIN(0, 7);
+	gpio_t pin = GPIO_PIN(PORT_A, 2);
+	gpio_init(pin, GPIO_OUT);
+	gpio_clear(pin);
 	ws2812b_init(&test, LED_NUM, pin);
 	
 	for(size_t i=0; i<LED_NUM; i++) {
 		color_rgb_t led;
 	
 		led.r = 0xAA;
-		led.g = 0xAA;
-		led.b = 0xAA;
+		led.g = 0x00;
+		led.b = 0xFF;
 		
 		ws2812b_set_color(&test, i, led);
 	}
