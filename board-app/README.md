@@ -1,96 +1,54 @@
-# Task 1: Starting the RIOT
+# Prerequisites
 
-## Task 1.1: Run your first application as Linux process
+## RIOT
 
-1.  Compile and run on `native` platform:
-    ```sh
-    make all term
-    ```
+Clone the RIOT OS repository into your local drive.
 
-2.  Run `help` to see a list of all available commands
-    ```
-    > help
-    help
-    Command              Description
-    ---------------------------------------
-    reboot               Reboot the node
-    ps                   Prints information about running threads.
-    ```
+```sh
+git clone https://github.com/RIOT-OS/RIOT
+```
 
-3.  Look at the output of `ps`
-    ```
-    > ps
-    ps
-            pid | name                 | state    Q | pri | stack ( used) | base       | current
-              - | isr_stack            | -        - |   - |  8192 (   -1) |  0x8055520 |  0x8055520
-              1 | idle                 | pending  Q |  15 |  8192 ( 6240) |  0x8053240 |  0x80539dd
-              2 | main                 | running  Q |   7 | 12288 ( 9312) |  0x8050240 |  0x8050ddd
-                | SUM                  |            |     | 28672 (15552)
-    ```
+This release has been tested with RIOT release 2017.04 on a Phytec phyNODE KW22 board. Other branches and boards may be used as well but bugs may occur. In that case, you can switch to the branch corresponding to the release that has been tested:
 
-4.  Add a print statement to the `main()` function to output the name of the board.
-    ```
-    printf("This application runs on %s\n", RIOT_BOARD);
-    ```
+```sh
+git fetch
+git checkout 2017.04-branch
+```
 
-    Recompile and run again:
-    ```sh
-    make all term
-    ```
+# Build, flash and connect to terminal
 
-## Task 1.2: Run your first application on real hardware
-1.  Get to know your hardware
+By default, board-app will build with the following parameters:
 
-    *Atmel SAM R21 Xplained Pro*
+- BOARD ?= pba-d-01-kw2x
+- RIOTBASE ?= $(CURDIR)/../RIOT
 
-    ![SAMR21-XPRO](../SAM-R21.jpg)
+This means that the application will be built for a Phytec phyNODE KW22 board and the path of the RIOT root folder will be assumed to be two directories above the board-app directory (e.g. if you copy or clone the entire team2 folder into the RIOT root folder). In this case, the project can be built simply by running
 
-    MCU                    | ATSAMR21G18A
-    -----------------------|------------------------------------
-    Family                 | ARM Cortex-M0+
-    Vendor                 | Atmel
-    RAM/ROM                | 32Kb / 256Kb
-    Frequency              | up to 48MHz
-    Timers                 | 6 (1x 16-bit, 2x 24-bit, 3x 32-bit)
-    ADCs                   | 1x 12-bit (8 channels)
-    UARTs / SPIs / I2Cs    | max 5 (shared)
-    Vcc                    | 1.8V - 3.6V
-    Radio                  | IEEE802.15.4 @ 2,4GHz
-    Sensors                | none
+```sh
+make all
+```
 
-    *Phytec phyNODE KW22*
+Flash the application by running
 
-    ![phyNODE](../phytec.png)
+```sh
+make flash
+```
 
-    MCU                    | MKW22D512
-    -----------------------|------------------------------------
-    Family                 | ARM Cortex-M4
-    Vendor                 | Kinetis
-    RAM/ROM                | 65Kb / 512Kb
-    Frequency              | up to 50MHz
-    Timers                 | up to 12 (16-bit, 24-bit, 32-bit)
-    ADCs                   | 1x 16-bit (8 channels)
-    UARTs / SPIs / I2Cs    | 3 / 1 / 2
-    Vcc                    | 1.8V - 3.6V
-    Radio                  | IEEE802.15.4 @ 2,4GHZ
-    Sensors                | diverse
+Connect to the board's terminal via serial connection by running
 
-2.  To compile an application for a specific board, we can make use of the `BOARD` environment
-    variable.
+```sh
+make term
+```
 
-    In case you are running on an Atmel board, type:
-    ```sh
-    BOARD=samr21-xpro make all flash term
-    ```
+These commands can be combined as
 
-    For the (yellow) phyNODE use;
-    ```sh
-    BOARD=pba-d-01-kw2x make all flash term
-    ```
+```sh
+make all flash term
+```
 
-    This command will compile the application, burn the image onto the board and open a
-    connection to the RIOT shell.
+If the default parameters for BOARD and RIOTBASE do not apply to your configuration, run the commands from above and append the parameters that correspond to your configuration, e.g.
 
-3.  Verify the output of `RIOT_BOARD` matches your hardware.
+```sh
+make all flash term RIOTBASE=YOURPATH BOARD=YOURBOARD
+```
 
-[next task](../task-02)
