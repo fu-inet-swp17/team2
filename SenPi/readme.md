@@ -1,5 +1,8 @@
 # Prerequisites
 
+Prepare your Raspberry Pi like described [here](https://github.com/RIOT-Makers/wpan-raspbian/wiki/Spice-up-Raspbian-for-the-IoT).
+Now follow these steps:
+
 ## Go runtime
 
 ```sh
@@ -25,6 +28,8 @@ If you also wish to run this program like any other program on the computer, run
 ```sh
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 ```
+
+
 
 # Install and first run
 
