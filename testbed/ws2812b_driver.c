@@ -32,10 +32,12 @@
 						"NOP\n"\
 						"NOP\n"\
 						"NOP\n"\
+						"NOP\n"\
+						"NOP\n"\
+						"NOP\n"\
 					);\
 					GPIOA->PCOR = 0x04;\
 					asm volatile(\
-						"NOP\n"\
 						"NOP\n"\
 						"NOP\n"\
 						"NOP\n"\
@@ -115,12 +117,12 @@
 						"NOP\n"\
 						"NOP\n"\
 						"NOP\n"\
-						"NOP\n"\
-						"NOP\n"\
-						"NOP\n"\
 					);\
 					GPIOA->PCOR = 0x04;\
 					asm volatile(\
+						"NOP\n"\
+						"NOP\n"\
+						"NOP\n"\
 						"NOP\n"\
 						"NOP\n"\
 						"NOP\n"\
