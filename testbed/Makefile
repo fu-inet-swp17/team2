@@ -2,11 +2,11 @@
 APPLICATION = testbed
 
 # If no BOARD is found in the environment, use this default:
-#BOARD ?= pba-d-01-kw2x #native
-BOARD ?= samr21-xpro #native
-SERIAL ?= ATML2127031800001974
-#SERIAL ?= 02000203C3014E6A3EFDB392 #Thomas
-# SERIAL ?= 02000203C36C4E143E90B3EC #Adrian
+BOARD ?= pba-d-01-kw2x #native
+#BOARD ?= samr21-xpro #native
+#SERIAL ?= ATML2127031800001974
+SERIAL ?= 02000203C3014E6A3EFDB392 #Thomas
+#SERIAL ?= 02000203C36C4E143E90B3EC #Adrian
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../RIOT
