@@ -105,11 +105,26 @@ ssize_t mag_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
     return senml_json_send(pdu, buf, len, SAUL_SENSE_MAG);
 }
 
+ssize_t press_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+    puts("Data from pressure sensor requested.");
+    return senml_json_send(pdu, buf, len, SAUL_SENSE_PRESS);
+}
+
+ssize_t gyro_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+    puts("Data from gyroscope requested.");
+    return senml_json_send(pdu, buf, len, SAUL_SENSE_GYRO);
+}
+
+ssize_t color_handler(coap_pkt_t* pdu, uint8_t *buf, size_t len) {
+    puts("Data from color sensor requested.");
+    return senml_json_send(pdu, buf, len, SAUL_SENSE_COLOR);
+}
+
+
 void* ping_handler(void* args) {
     (void)args;
     sock_udp_ep_t remote = SOCK_IPV6_EP_ANY;
     remote.port = SERVER_CONN_PORT;
-    // ff02::1 -> addr für link-local broadcast
     ipv6_addr_from_str((ipv6_addr_t *)&remote.addr.ipv6, "ff02::1");
     PingMsg intro_msg;
     snprintf(intro_msg.app_id, APP_ID_LEN, "%s", app_id);
@@ -154,9 +169,12 @@ void* ping_handler(void* args) {
 }
 
 const coap_resource_t coap_resources[] = {
-    // ressource-path, ressource-type, response-handler
+    /* ressource-path, ressource-type, response-handler */
+    {"/se-app/color", COAP_GET, &color_handler},
+    {"/se-app/gyro", COAP_GET, &gyro_handler},
     {"/se-app/humid", COAP_GET, &humid_handler},
     {"/se-app/mag", COAP_GET, &mag_handler},
+    {"/se-app/press", COAP_GET, &press_handler},
     {"/se-app/temp", COAP_GET, &temp_handler}
 };
 
