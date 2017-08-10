@@ -5,7 +5,7 @@
 
 #include "smart_environment.h"
 
-#define PING_TIMEOUT	10
+#define PING_TIMEOUT	60
 #define SENML_LEN       75
 
 
