@@ -126,19 +126,14 @@ void* ping_handler(void* args) {
     sock_udp_ep_t remote = SOCK_IPV6_EP_ANY;
     remote.port = SERVER_CONN_PORT;
     ipv6_addr_from_str((ipv6_addr_t *)&remote.addr.ipv6, "ff02::1");
-    PingMsg intro_msg;
-    snprintf(intro_msg.app_id, APP_ID_LEN, "%s", app_id);
-    
-    intro_msg.sensors = IR_TEMP_SENSOR | HUMID_SENSOR | MAG_SENSOR |
-    RGB_LIGHT_SENDSOR | PRESS_SENSOR | ACC_SENSOR;
     
     puts("Ping thread running");
     
     while(true) {
         ssize_t res = sock_udp_send(
             NULL,
-            &intro_msg,
-            APP_PING_MSG_LEN,
+            app_id,
+            APP_ID_LEN,
             &remote
         );
         
