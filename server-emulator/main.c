@@ -27,7 +27,7 @@ typedef struct SensorBoard {
 SensorBoard boards[MAX_BOARD_NUM];
 char own_addr[IPV6_ADDR_MAX_STR_LEN];
 char connect_stack[THREAD_STACKSIZE_MAIN];
-uint8_t conn_buf[APP_PING_MSG_LEN];
+uint8_t conn_buf[APP_ID_LEN];
 uint8_t req_buf[128];
 
 /*
@@ -90,7 +90,6 @@ static void sensors_resp_handler(unsigned req_state, coap_pkt_t* pdu) {
         return;
     }
     
-    puts("response!");
     printf("%s\n", (char*)pdu->payload);
 }
 
@@ -162,7 +161,7 @@ static void* connect_thread_handler(void* args) {
         ssize_t res = sock_udp_recv(
             &sock,
             conn_buf,
-            APP_PING_MSG_LEN,
+            APP_ID_LEN,
             SOCK_NO_TIMEOUT,
             &remote
         );
@@ -215,34 +214,6 @@ static void* connect_thread_handler(void* args) {
             	);
             
            		printf("board found at: %s\n", addr_str);
-       	        PingMsg* msg = (PingMsg*)conn_buf;
-       	        
-       	        fputs("with: ", stdout);
-       	        if(msg->sensors & IR_TEMP_SENSOR) {
-       	        	fputs("IR-Thermopile sensor, ", stdout);
-       	        }
-       	        
-       	        if(msg->sensors & HUMID_SENSOR) {
-       	        	fputs("humidity sensor, ", stdout);
-       	        }
-       	        
-       	        if(msg->sensors & MAG_SENSOR) {
-       	        	fputs("magnetometer, ", stdout);
-       	        }
-       	        
-       	        if(msg->sensors & RGB_LIGHT_SENDSOR) {
-       	        	fputs("color light sensor, ", stdout);
-       	        }
-       	        
-       	        if(msg->sensors & PRESS_SENSOR) {
-       	        	fputs("pressure sensor, ", stdout);
-       	        }
-       	        
-       	        if(msg->sensors & ACC_SENSOR) {
-       	        	fputs("accelerometer, ", stdout);
-       	        }
-           		puts("");
-           		
             }
         }
     }
