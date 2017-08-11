@@ -17,12 +17,12 @@ git checkout 2017.04-branch
 
 # Build, flash and connect to terminal
 
-By default, board-app will build with the following parameters:
+By default, SenPhy will build with the following parameters:
 
 - BOARD ?= pba-d-01-kw2x
 - RIOTBASE ?= $(CURDIR)/../RIOT
 
-This means that the application will be built for a Phytec phyNODE KW22 board and the path of the RIOT root folder will be assumed to be two directories above the board-app directory (e.g. if you copy or clone the entire team2 folder into the RIOT root folder). In this case, the project can be built simply by running
+This means that the application will be built for a Phytec phyNODE KW22 board and the path of the RIOT root folder will be assumed to be two directories above the SenPhy directory (e.g. if you copy or clone the entire team2 folder into the RIOT root folder). In this case, the project can be built simply by running
 
 ```sh
 make all

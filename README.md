@@ -12,7 +12,7 @@ Further details of the application suite's architecture and architectural choice
 
 Refer to each module's `README.md` for details regarding respective prerequisites and installation instructions.
 
-## board-app
+## SenPhy
 
 This is the C-based RIOT application that is to be deployed on the IoT boards. A _Phytec phyNODE KW22_ board was used but other boards can be used as long as drivers implementing the SAUL interface are available for the sensors to be polled. All SAUL compatible sensors will be automatically initialized but CoAP resources for the corresponding sensors can and must be created manually, which is a simple process that allows for increased flexibility.
 

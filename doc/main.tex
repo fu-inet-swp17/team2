@@ -30,10 +30,10 @@
 Das Ziel des SenPi Smart-Environment-Projekts ist die Sammlung und Visualisierung verschiedener Sensordaten. Zu diesem Zweck wird ein Board mit integrierten oder extern angeschlossenen Sensoren mit einer RIOT-basierten Applikation bestückt, das die Daten der angeschlossenen Sensoren sammelt und an ein Raspberry Pi verschickt, welches die Daten in einer Datenbank speichert, die einem Webserver zur Verfügung steht. Zusätzlich können Sensordaten über an das Board angeschlossene LED-Streifen visualisiert werden. Es wird ein Phytec phyNODE KW22 benutzt, aber die Anwendung ist so geschrieben, dass beliebige Boards benutzt werden können, auf denen RIOT läuft. In diesem Bericht wird der Aufbau des Projekts beschrieben und Entscheidungen zur Architektur erläutert sowie auf Fehlschläge und noch anstehende Herausforderungen eingegangen.
 
 % TODO besseren Namen finden
-\section{Board-App}
-Die Board-App ist RIOT-basiert. Die Wahl von RIOT als IoT-Betriebssystem war naheliegend, da RIOT von vielen FU-Mitarbeitern mitentwickelt wird (inklusive der Betreuer des Softwareprojekts) und somit direkte Unterstützung 
+\section{SenPhy}
+Die SenPhy-Anwendung ist RIOT-basiert. Die Wahl von RIOT als IoT-Betriebssystem war naheliegend, da RIOT von vielen FU-Mitarbeitern mitentwickelt wird (inklusive der Betreuer des Softwareprojekts) und somit direkte Unterstützung 
 % TODO Formulierung verbessern
-vorhanden war. Die Board-App liest die Werte der angeschlossenen Sensoren aus und überträgt sie auf Anfrage an den Server. Auch wenn die Anwendung theoretisch auf allen Boards, die von RIOT unterstützt werden, laufen sollte, wird primär das Phytec-phyNODE-KW22 verwendet, weil es bereits über eine Vielzahl vormontierter Sensoren verfügt. Bei diesen Sensoren handelt es sich um:
+vorhanden war. SenPhy liest die Werte der angeschlossenen Sensoren aus und überträgt sie auf Anfrage an den Server. Auch wenn die Anwendung theoretisch auf allen Boards, die von RIOT unterstützt werden, laufen sollte, wird primär das Phytec-phyNODE-KW22 verwendet, weil es bereits über eine Vielzahl vormontierter Sensoren verfügt. Bei diesen Sensoren handelt es sich um:
 \begin{enumerate}
 	\item Thermometer
     \item Luftfeuchtigkeitssensor
@@ -85,16 +85,16 @@ Die Architektur der in Golang geschriebenen Anwendung ist in einzelne kontextbez
 \item Das Modul \emph{main} ist der Startpunkt der Anwendung und startet die einzelnen Services. 
 \item Das Modul \emph{db} ist für die Verbindung zur Datenbank zuständig. 
 \item Das Modul \emph{config} ist dafür zuständig, die Konfigurationsdatei auszulesen und die angegebene Konfiguration als Datenstruktur bereitzustellen.
-\item Das Modul \emph{riot} ist für die Kommunikation mit der Board-App zuständig und referenziert dafür das Modul \emph{db} um die erhaltenen Daten zu persistieren.
+\item Das Modul \emph{riot} ist für die Kommunikation mit SenPhy zuständig und referenziert dafür das Modul \emph{db} um die erhaltenen Daten zu persistieren.
 \end{enumerate}
 
 \section{Webanwendung}
-Die Webanwendung liest die vom Raspberry Pi in die Datenbank eingefügten Daten aus und plottet sie auf mehrere Charts. Die Charts werden beim Aufruf der Website dynamisch erstellt, abhängig davon, für welche Sensoren es Einträge in der Datenbank gibt. Es wird für jeden Sensor und für jede Dateneinheit ein Chart erstellt. Die Charts werden mit Google Charts erstellt. Andere Kandidaten waren Chart.js und Highchart. Chart.js wurde verworfen, weil es nicht in der Lage war, eine dynamische Anzahl Charts auf einer Seite zu plotten. Für jedes Chart musste bereits vor Durchlauf des Skripts ein Prototyp im Seitenquelltext vorhanden sein. Highchart wurde nur versuchsweise benutzt, aber letztendlich nicht verwendet, weil es in der Vollversion kostenpflichtig ist und in alle Charts ein Wasserzeichen einfügt.
+Die Webanwendung liest die von SenPi in die Datenbank eingefügten Daten aus und plottet sie auf mehrere Charts. Die Charts werden beim Aufruf der Website dynamisch erstellt, abhängig davon, für welche Sensoren es Einträge in der Datenbank gibt. Es wird für jeden Sensor und für jede Dateneinheit ein Chart erstellt. Die Charts werden mit Google Charts erstellt. Andere Kandidaten waren Chart.js und Highchart. Chart.js wurde verworfen, weil es nicht in der Lage war, eine dynamische Anzahl Charts auf einer Seite zu plotten. Für jedes Chart musste bereits vor Durchlauf des Skripts ein Prototyp im Seitenquelltext vorhanden sein. Highchart wurde nur versuchsweise benutzt, aber letztendlich nicht verwendet, weil es in der Vollversion kostenpflichtig ist und in alle Charts ein Wasserzeichen einfügt.
 
 Aufgrund der Lizenzbestimmungen von Google Charts muss der Code extern eingebunden werden. Die Daten werden mit einem PHP-Skript aus einer MySQL-Datenbank gelesen und als JSON-String zurückgegeben. Dieser JSON-String wird dann von einem JS-Skript ausgelesen und die Daten mittels Google Charts visualisiert. Die Entscheidung für PHP fiel aufgrund bereits vorhandener Kenntniss dieser Programmiersprache. Die Konfiguration der Datenbank, d.h. Adresse, Datenbankname und Authentifizierungsinformationen, sind auf eine eigene PHP-Datei ausgelagert. Weiterhin wurde Bootstrap für die Website benutzt, um eine ansprechende Darstellung zu erreichen.
 
 \section{Zusammenfassung}
-Der SenPi fragt die Sensorwerte der Boards ab und speichert sie in einer Datenbank ab. Die Webanwedung liest diese Daten aus und stellt sie graphisch dar. Die groben Interaktionen sind in Abbildung \ref{fig:interacion} dargestellt.
+SenPi fragt die Sensorwerte von SenPhy ab und speichert sie in einer Datenbank. Die Webanwedung liest diese Daten aus und stellt sie graphisch dar. Die groben Interaktionen sind in Abbildung \ref{fig:interacion} dargestellt.
 \begin{figure}[h]
 \centering
 \includegraphics[scale=0.7]{interactionDiagram.pdf}
