@@ -49,13 +49,11 @@ int main(void) {
     ipv6_addr_t addr;
     ipv6_addr_from_str(&addr, "fe80::");
 
-    ipv6_addr_to_str(own_addr, &addr, IPV6_ADDR_MAX_STR_LEN);
-
     ipv6_addr_t* out = NULL;
     gnrc_ipv6_netif_find_by_prefix(&out, &addr);
     
     ipv6_addr_to_str(own_addr, out, IPV6_ADDR_MAX_STR_LEN);
-    printf("own ipv6 addr: %s\n", own_addr);
+    printf("own ipv6 ll-addr: %s\n", own_addr);
 
 	gcoap_register_listener(&coap_listener);
 	puts("coap ready");

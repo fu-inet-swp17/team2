@@ -15,11 +15,13 @@ int8_t senml_json_strout(char* json_buf, uint8_t dev_type) {
 
     size_t num = saul_reg_read(dev, &res);
 
-    char dev_name[20];
+    char dev_name[21];
     strncpy(dev_name, dev->name, 20);
+    dev_name[20] = 0;
 
-    char unit[4];
+    char unit[5];
     strncpy(unit, phydat_unit_to_str(res.unit), 4);
+    unit[4] = 0;
 
     char values[25];
     strncpy(values, "", 1);
@@ -165,11 +167,11 @@ void* ping_handler(void* args) {
 
 const coap_resource_t coap_resources[] = {
     /* ressource-path, ressource-type, response-handler */
-    {"/se-app/color", COAP_GET, &color_handler},
-    {"/se-app/gyro", COAP_GET, &gyro_handler},
+    // {"/se-app/color", COAP_GET, &color_handler},
+    // {"/se-app/gyro", COAP_GET, &gyro_handler},
     {"/se-app/humid", COAP_GET, &humid_handler},
-    {"/se-app/mag", COAP_GET, &mag_handler},
-    {"/se-app/press", COAP_GET, &press_handler},
+    // {"/se-app/mag", COAP_GET, &mag_handler},
+    // {"/se-app/press", COAP_GET, &press_handler},
     {"/se-app/temp", COAP_GET, &temp_handler}
 };
 
