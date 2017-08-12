@@ -29,11 +29,8 @@
 
 Das Ziel des SenPi Smart-Environment-Projekts ist die Sammlung und Visualisierung verschiedener Sensordaten. Zu diesem Zweck wird ein Board mit integrierten oder extern angeschlossenen Sensoren mit einer RIOT-basierten Applikation bestückt, das die Daten der angeschlossenen Sensoren sammelt und an ein Raspberry Pi verschickt, welches die Daten in einer Datenbank speichert, die einem Webserver zur Verfügung steht. Zusätzlich können Sensordaten über an das Board angeschlossene LED-Streifen visualisiert werden. Es wird ein Phytec phyNODE KW22 benutzt, aber die Anwendung ist so geschrieben, dass beliebige Boards benutzt werden können, auf denen RIOT läuft. In diesem Bericht wird der Aufbau des Projekts beschrieben und Entscheidungen zur Architektur erläutert sowie auf Fehlschläge und noch anstehende Herausforderungen eingegangen.
 
-% TODO besseren Namen finden
 \section{SenPhy}
-Die SenPhy-Anwendung ist RIOT-basiert. Die Wahl von RIOT als IoT-Betriebssystem war naheliegend, da RIOT von vielen FU-Mitarbeitern mitentwickelt wird (inklusive der Betreuer des Softwareprojekts) und somit direkte Unterstützung 
-% TODO Formulierung verbessern
-vorhanden war. SenPhy liest die Werte der angeschlossenen Sensoren aus und überträgt sie auf Anfrage an den Server. Auch wenn die Anwendung theoretisch auf allen Boards, die von RIOT unterstützt werden, laufen sollte, wird primär das Phytec-phyNODE-KW22 verwendet, weil es bereits über eine Vielzahl vormontierter Sensoren verfügt. Bei diesen Sensoren handelt es sich um:
+Die SenPhy-Anwendung ist RIOT-basiert. Die Wahl von RIOT als IoT-Betriebssystem war naheliegend, da RIOT von vielen FU-Mitarbeitern mitentwickelt wird (inklusive der Betreuer des Softwareprojekts) und somit direkte Unterstützung vorhanden war. SenPhy liest die Werte der angeschlossenen Sensoren aus und überträgt sie auf Anfrage an den Server. Auch wenn die Anwendung theoretisch auf allen Boards, die von RIOT unterstützt werden, laufen sollte, wird primär das Phytec-phyNODE-KW22 verwendet, weil es bereits über eine Vielzahl vormontierter Sensoren verfügt. Bei diesen Sensoren handelt es sich um:
 \begin{enumerate}
 	\item Thermometer
     \item Luftfeuchtigkeitssensor
@@ -106,7 +103,7 @@ Der genaue Ablauf der Anfragen an die Boards, ist in Abbildung \ref{fig:seq_diag
 dargestellt.
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.7]{sequenceDiagram.pdf}
+\includegraphics[scale=0.5]{sequenceDiagram.pdf}
 \caption{\label{fig:seq_diagram}Sequenzdiagramm der Anwendung}
 \end{figure}
 
