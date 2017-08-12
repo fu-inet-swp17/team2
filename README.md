@@ -37,10 +37,10 @@ This is a Golang-based application running on the Raspberry Pi that regularly po
 It then saves those datapoints in a MySQL database specified in a configuration file preferrably also running on the Raspberry Pi. <br>
 Please consider checking the provided `README.md` for more details.
 
-## RiotDashboard
+## WebDashboard
 
-This is the PHP-based website to be deployed on a web server, e.g. running on XAMPP, on the Raspberry Pi or another device. It presents the history of sensor data from RiotPi's database graphically on a dynamic web frontend.
+This is the PHP-based website to be deployed on a web server, e.g. running on XAMPP, on the Raspberry Pi or another device. It presents the history of sensor data from SenPi's database graphically on a dynamic web frontend.
 
 ## server-emulator
 
-If a Raspberry Pi is not available, this C-based RIOT application can be deployed on another IoT board for testing purposes. A desired CoAP resource will be requested from the board-app running on the other IoT board. The response will be printed on the terminal.
+If a Raspberry Pi is not available, this C-based RIOT application can be deployed on another IoT board for testing purposes. A desired CoAP resource will be requested from the SenPhy application running on the other IoT board. The response will be printed on the terminal.
