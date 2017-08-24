@@ -41,13 +41,13 @@ int8_t senml_json_strout(char* json_buf, uint8_t dev_type) {
 
     senml_base_info_t base_info = {
         .version = SENML_SUPPORTED_VERSION,
-        .base_name = dev_name,
-        .base_time = 0,
-        .base_unit = unit
+        .base_time = 0
     };
     senml_record_t records = {
+	    .name = dev_name,
         .time = 0,
         .update_time = 0,
+        .unit = unit,
         .value_sum = 0,
         .value_type = SENML_TYPE_STRING,
         .value.s = values
