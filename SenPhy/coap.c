@@ -22,6 +22,11 @@ int8_t senml_json_strout(char* json_buf, uint8_t dev_type) {
     char unit[5];
     strncpy(unit, phydat_unit_to_str(res.unit), 4);
     unit[4] = 0;
+    // necessary because later a snprintf will be used
+    if (strcmp(unit, "%") == 0) {
+    	unit[1] = '%';
+    	unit[2] = 0;
+    } 
 
     char values[25];
     strncpy(values, "", 1);
