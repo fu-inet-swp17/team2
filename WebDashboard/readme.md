@@ -2,7 +2,7 @@
 
 ## PHP server
 
-Just set up a PHP server of your liking, e.g. Apache with XAMPP, and deploy all contents of this folder there. No further configuration should be necessary. The website can be accessed through index.html.
+Just set up a PHP server of your liking, e.g. Apache with XAMPP, and deploy all contents of this folder there. localhost should point to the contents of this folder. The website can be accessed through index.html.
 
 ## SQL database authentication
 

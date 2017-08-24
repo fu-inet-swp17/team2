@@ -1,6 +1,6 @@
 $(document).ready(function(){
 	$.ajax({
-		url: "http://localhost/WebDashboard/chartjs/db_connection_datapoints.php",
+		url: "http://localhost/chartjs/db_connection_datapoints.php",
 		method: "GET",
 		success: function(data) {
 			for (var sensorTuple in data) {
