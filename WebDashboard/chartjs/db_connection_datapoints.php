@@ -3,7 +3,7 @@
 header('Content-Type: application/json');
 
 //config.php database and get connection  
-include '/config.php';
+include 'config.php';
 
 //get connection
 $mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
