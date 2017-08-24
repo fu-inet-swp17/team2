@@ -1,6 +1,7 @@
 $(document).ready(function(){
+	var domain = ""; // INSERT DOMAIN OF WEBDASHBOARD HERE (WITHOUT HTTP://)
 	$.ajax({
-		url: "http://localhost/chartjs/db_connection_datapoints.php",
+		url: "http://" + domain + "/chartjs/db_connection_datapoints.php",
 		method: "GET",
 		success: function(data) {
 			for (var sensorTuple in data) {
