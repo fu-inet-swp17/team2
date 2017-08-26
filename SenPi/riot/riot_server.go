@@ -46,7 +46,7 @@ func listenToLinkLocalMulticast(port int) error {
 
 		err = handleRequest(remoteAddress.IP.String(), buffer)
 		if err != nil {
-			log.Error("Process message: " + err.Error())
+			log.Warning(err.Error())
 			continue
 		}
 	}
