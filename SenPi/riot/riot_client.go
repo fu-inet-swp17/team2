@@ -35,10 +35,10 @@ func ExecuteCoAPGetRequest(address string, port int, interfaceName string, path 
 
 	// validate response
 	if response == nil {
-		return nil, errors.New("No response received")
+		return nil, errors.New("No response received from resource path \"" + path + "\"")
 	}
 	if len(response.Payload) <= 0 {
-		return nil, errors.New("Response payload is empty")
+		return nil, errors.New("Response payload is empty from resource path \"" + path + "\"")
 	}
 
 	return response.Payload, nil
