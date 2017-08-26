@@ -11,15 +11,15 @@ import (
 
 type DataPoint struct {
 	Id          int
-	Name        string
-	Unit        string
-	Value       float64
-	StringValue string
-	BoolValue   bool
-	DataValue   string
-	Sum         float64
-	Time        float64
-	Link        string
+	Name        *string
+	Unit        *string
+	Value       *float64
+	StringValue *string
+	BoolValue   *bool
+	DataValue   *string
+	Sum         *float64
+	Time        *float64
+	Link        *string
 }
 
 func InsertDataPoint(message senml.SenMLRecord) error {
@@ -37,14 +37,65 @@ func InsertDataPoint(message senml.SenMLRecord) error {
 		return errors.New("Preparing insert statement: " + err.Error())
 	}
 
-	// execute insert
+	// prepare data
+
+	var name sql.NullString
+	if message.Name != nil {
+		name.String = *message.Name
+		name.Valid = true
+	}
+
+	var unit sql.NullString
+	if message.Unit != nil {
+		unit.String = *message.Unit
+		unit.Valid = true
+	}
+
+	var value sql.NullFloat64
+	if message.Value != nil {
+		value.Float64 = *message.Value
+		value.Valid = true
+	}
+
+	var stringValue sql.NullString
+	if message.StringValue != nil {
+		stringValue.String = *message.StringValue
+		stringValue.Valid = true
+	}
+
+	var boolValue sql.NullBool
+	if message.BoolValue != nil {
+		boolValue.Bool = *message.BoolValue
+		boolValue.Valid = true
+	}
+
+	var dataValue sql.NullString
+	if message.DataValue != nil {
+		dataValue.String = *message.DataValue
+		dataValue.Valid = true
+	}
+
+	var sum sql.NullFloat64
+	if message.Sum != nil {
+		sum.Float64 = *message.Sum
+		sum.Valid = true
+	}
+
 	var timeStamp time.Time
 	if message.Time != nil {
 		timeStamp = time.Unix(int64(*message.Time), 0)
 	} else {
 		timeStamp = time.Now()
 	}
-	_, err = stmt.Exec(message.Name, message.Unit, message.Value, message.StringValue, message.BoolValue, message.DataValue, message.Sum, timeStamp.Format(time.RFC3339), message.Link)
+
+	var link sql.NullString
+	if message.Link != nil {
+		link.String = *message.Link
+		link.Valid = true
+	}
+
+	// execute insert
+	_, err = stmt.Exec(name, unit, value, stringValue, boolValue, dataValue, sum, timeStamp.Format(time.RFC3339), link)
 	if err != nil {
 		return errors.New("Executing insert statement: " + err.Error())
 	}
@@ -110,41 +161,41 @@ func GetDataPoints() ([]DataPoint, error) {
 			return nil, errors.New("Reading values from row: " + err.Error())
 		}
 
-		var nameString string
+		var nameString *string
 		if name.Valid {
-			nameString = name.String
+			nameString = &name.String
 		}
-		var unitString string
+		var unitString *string
 		if unit.Valid {
-			unitString = unit.String
+			unitString = &unit.String
 		}
-		var valueFloat float64
+		var valueFloat *float64
 		if value.Valid {
-			valueFloat = value.Float64
+			valueFloat = &value.Float64
 		}
-		var stringValueString string
+		var stringValueString *string
 		if stringValue.Valid {
-			stringValueString = stringValue.String
+			stringValueString = &stringValue.String
 		}
-		var boolValueBool bool
+		var boolValueBool *bool
 		if boolValue.Valid {
-			boolValueBool = boolValue.Bool
+			boolValueBool = &boolValue.Bool
 		}
-		var dataValueString string
+		var dataValueString *string
 		if dataValue.Valid {
-			dataValueString = dataValue.String
+			dataValueString = &dataValue.String
 		}
-		var sumFloat float64
+		var sumFloat *float64
 		if sum.Valid {
-			sumFloat = sum.Float64
+			sumFloat = &sum.Float64
 		}
-		var timeFloat float64
+		var timeFloat *float64
 		if time.Valid {
-			timeFloat = time.Float64
+			timeFloat = &time.Float64
 		}
-		var linkString string
+		var linkString *string
 		if link.Valid {
-			linkString = link.String
+			linkString = &link.String
 		}
 
 		dataPoints = append(dataPoints, DataPoint{Id: id, Name: nameString, Unit: unitString, Value: valueFloat, StringValue: stringValueString, BoolValue: boolValueBool, DataValue: dataValueString, Sum: sumFloat, Time: timeFloat, Link: linkString})
