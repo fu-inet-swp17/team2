@@ -3,11 +3,11 @@ package riot
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"github.com/dustin/go-coap"
-	"github.com/nkristek/go-senml"
 	"github.com/fu-inet-swp17/team2/SenPi/config"
 	"github.com/fu-inet-swp17/team2/SenPi/db"
+	"github.com/nkristek/go-senml"
+	"strings"
 )
 
 func ExecuteCoAPGetRequest(address string, port int, interfaceName string, path string) ([]byte, error) {

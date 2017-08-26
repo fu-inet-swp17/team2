@@ -2,13 +2,13 @@ package main
 
 import (
 	"flag"
-	"os"
-	"runtime"
-	"time"
-	"github.com/op/go-logging"
 	"github.com/fu-inet-swp17/team2/SenPi/config"
 	"github.com/fu-inet-swp17/team2/SenPi/db"
 	"github.com/fu-inet-swp17/team2/SenPi/riot"
+	"github.com/op/go-logging"
+	"os"
+	"runtime"
+	"time"
 )
 
 var log = logging.MustGetLogger("main")

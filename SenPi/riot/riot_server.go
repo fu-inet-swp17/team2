@@ -3,13 +3,13 @@ package riot
 import (
 	"errors"
 	"fmt"
-	"net"
-	"strings"
-	"time"
-	"strconv"
-	"github.com/nkristek/go-senml"
 	"github.com/fu-inet-swp17/team2/SenPi/config"
 	"github.com/fu-inet-swp17/team2/SenPi/db"
+	"github.com/nkristek/go-senml"
+	"net"
+	"strconv"
+	"strings"
+	"time"
 )
 
 func StartListeningForAnnouncements(configuration config.Configuration, completion chan struct{}) {
