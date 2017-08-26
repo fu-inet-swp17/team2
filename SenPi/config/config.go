@@ -36,7 +36,7 @@ func GetDefaultPath() (path string, err error) {
 	gopath = strings.TrimSuffix(gopath, "/")
 
 	// build the default path
-	path = gopath + "/src/github.com/fu-inet-swp17/team2/RiotPi/"
+	path = gopath + "/src/github.com/fu-inet-swp17/team2/SenPi/"
 
 	return
 }
