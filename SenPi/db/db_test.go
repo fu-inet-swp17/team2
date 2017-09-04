@@ -174,7 +174,8 @@ func TestDBDataPoint(t *testing.T) {
 	var sampleUnit string = "SENSORUNIT"
 	var sampleValue float64 = 42
 	sampleDataPoint := senml.SenMLRecord{Name: &sampleName, Unit: &sampleUnit, Value: &sampleValue}
-	err = InsertDataPoint(sampleDataPoint)
+	device := Device{Id: 1, Address: "::1/128",	FailedAttempts: 0}
+	err = InsertDataPoint(sampleDataPoint, device)
 	if err != nil {
 		t.Fatalf("Insert sample datapoint: " + err.Error())
 		_ = ClearDatabase()
