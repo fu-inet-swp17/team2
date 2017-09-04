@@ -22,7 +22,7 @@ type DataPoint struct {
 	Link        *string
 }
 
-func InsertDataPoint(message senml.SenMLRecord) error {
+func InsertDataPoint(message senml.SenMLRecord, device Device) error {
 	// create connection
 	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", sqlConfiguration.User, sqlConfiguration.Password, sqlConfiguration.Address, sqlConfiguration.Port, sqlConfiguration.DatabaseName)
 	conn, err := sql.Open("mysql", dbinfo)
@@ -32,7 +32,7 @@ func InsertDataPoint(message senml.SenMLRecord) error {
 	defer conn.Close()
 
 	// prepare insert
-	stmt, err := conn.Prepare("INSERT " + sqlConfiguration.DataTableName + " SET Name=?,Unit=?,Value=?,StringValue=?,BoolValue=?,DataValue=?,Sum=?,Time=?,Link=?")
+	stmt, err := conn.Prepare("INSERT " + sqlConfiguration.DataTableName + " SET Device=?,Name=?,Unit=?,Value=?,StringValue=?,BoolValue=?,DataValue=?,Sum=?,Time=?,Link=?")
 	if err != nil {
 		return errors.New("Preparing insert statement: " + err.Error())
 	}
@@ -95,7 +95,7 @@ func InsertDataPoint(message senml.SenMLRecord) error {
 	}
 
 	// execute insert
-	_, err = stmt.Exec(name, unit, value, stringValue, boolValue, dataValue, sum, timeStamp.Format(time.RFC3339), link)
+	_, err = stmt.Exec(device.Address, name, unit, value, stringValue, boolValue, dataValue, sum, timeStamp.Format(time.RFC3339), link)
 	if err != nil {
 		return errors.New("Executing insert statement: " + err.Error())
 	}
@@ -137,7 +137,7 @@ func GetDataPoints() ([]DataPoint, error) {
 	defer conn.Close()
 
 	// select
-	rows, err := conn.Query("SELECT * FROM " + sqlConfiguration.DataTableName)
+	rows, err := conn.Query("SELECT Name, Unit, Value, StringValue, BoolValue, DataValue, Sum, Time, Link FROM " + sqlConfiguration.DataTableName)
 	if err != nil {
 		return nil, errors.New("Querying from database: " + err.Error())
 	}

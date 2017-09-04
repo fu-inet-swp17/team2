@@ -85,23 +85,20 @@ func pollRegisteredDevices(configuration config.Configuration) {
 	log.Notice("Polling " + strconv.Itoa(len(devices)) + " devices.")
 
 	// collect sensor data from all registered devices
-	var messages []senml.SenMLMessage
 	for _, device := range devices {
-		currentMessages, err := GetDataPointsFromDevice(device, configuration)
+		messages, err := GetDataPointsFromDevice(device, configuration)
 		if err != nil {
 			log.Error(err)
 			continue
 		}
 
-		messages = append(messages, currentMessages...)
-	}
-
-	// save the datapoints
-	for _, message := range messages {
-		for _, dataPoint := range message.Records {
-			err = db.InsertDataPoint(dataPoint)
-			if err != nil {
-				log.Error(err)
+		// save the datapoints
+		for _, message := range messages {
+			for _, dataPoint := range message.Records {
+				err = db.InsertDataPoint(dataPoint, device)
+				if err != nil {
+					log.Error(err)
+				}
 			}
 		}
 	}
