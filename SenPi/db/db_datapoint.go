@@ -137,7 +137,7 @@ func GetDataPoints() ([]DataPoint, error) {
 	defer conn.Close()
 
 	// select
-	rows, err := conn.Query("SELECT Name, Unit, Value, StringValue, BoolValue, DataValue, Sum, Time, Link FROM " + sqlConfiguration.DataTableName)
+	rows, err := conn.Query("SELECT Id, Name, Unit, Value, StringValue, BoolValue, DataValue, Sum, Time, Link FROM " + sqlConfiguration.DataTableName)
 	if err != nil {
 		return nil, errors.New("Querying from database: " + err.Error())
 	}
