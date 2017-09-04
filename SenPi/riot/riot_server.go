@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/fu-inet-swp17/team2/SenPi/config"
 	"github.com/fu-inet-swp17/team2/SenPi/db"
-	"github.com/nkristek/go-senml"
 	"net"
 	"strconv"
 	"strings"
