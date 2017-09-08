@@ -111,3 +111,21 @@ go test github.com/fu-inet-swp17/team2/SenPi/...
 ### Go SenML
 
 `github.com/nkristek/go-senml`
+
+### Autostart
+Es gibt im großen und ganzen zwei Möglichkeiten für einen Autostart. Die
+erste ist das einfügen eines bashscripts in den Ordner '/etc/init.d'. Siehe
+als Beispiel das SenPi Skript im SenPi Ordner oder als Vorlage das skeleton im
+init.d Ordner. Das Skript muss den '### BEGIN INIT INFO' Kommentar am Anfang
+enthalten. Nach dem Erstellen des Skripts (das Skript muss für alle User
+executable sein 'chmod 755') muss der Befehl:
+	sudo update-rc.d meinprog defaults
+ausgeführt werden. Beim nächsten Systemstart wird das Skript mit ausgeführt.
+
+Die andere Möglichkeit ist in das Skript /etc/rc.local einen entsprechenden
+Befehl einzufügen. Das kann als etwas uneleganter bezeichnet werden, da dieses
+Skript dafür eigentlich nicht gedacht ist. Wenn aber ein Befehl zum starten
+eines Programms wie z.B. '/usr/bin/tool' zwischen dem Kopfkommentar und den
+'exit 0' Befehl eingfügt wird, wird dieses Programm auch bei jedem Systemstart
+gestartet.
+

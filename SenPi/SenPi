@@ -1,0 +1,48 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          SenPi 
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: provides smart-environment-deamon 
+# Description:       SenPi smart-environment is an App, which collects data about
+#		     the enviroment (like temperature and humidity)  and in
+#		     further using it should be possible to controll home-gadets
+#		     like the windows or the heaters
+### END INIT INFO
+
+# kFreeBSD do not accept scripts as interpreters, using #!/bin/sh and sourcing.
+#if [ true != "$INIT_D_SCRIPT_SOURCED" ] ; then
+#    set "$0" "$@"; INIT_D_SCRIPT_SOURCED=true . /lib/init/init-d-script
+#fi
+
+export GOPATH=/home/pi/go
+
+case "$1" in
+	start)
+		echo "starting SenPi smart-environment"
+		/home/pi/go/bin/SenPi >> /home/pi/log.txt 2>&1
+		;;
+	stop)
+		echo "stoping SenPi smart-environment"
+		killall /home/pi/go/bin/SenPi
+		;;
+	restart)
+		echo "restarting SenPi smart-environment and clear DB"
+		killall /home/pi/go/bin/SenPi
+		/home/pi/go/bin/SenPi >> /home/pi/log.txt 2>&1
+		;;
+	*)
+		echo "(start|stop|restart)"
+		;;
+esac
+
+# do_start()
+# do_stop()
+# do_retart()
+# do_status()
+
+exit 0
+
