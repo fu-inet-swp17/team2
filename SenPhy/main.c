@@ -18,11 +18,14 @@
 #include "coap.h"
 #include "sensors.h"
 
-
+/* Buffer for IP of the board */
 char own_addr[IPV6_ADDR_MAX_STR_LEN];
 
+/* Stack for the ping thread */
+char ping_stack[THREAD_STACKSIZE_DEFAULT];
+
 int main(void) {
-    printf("Smart environment app on %s\n", RIOT_BOARD);
+    printf("SenPhy: Smart environment app on %s\n", RIOT_BOARD);
 	
 	msg_t msg_queueq[8];
 	msg_init_queue(msg_queueq, 8);
@@ -53,12 +56,12 @@ int main(void) {
     gnrc_ipv6_netif_find_by_prefix(&out, &addr);
     
     ipv6_addr_to_str(own_addr, out, IPV6_ADDR_MAX_STR_LEN);
-    printf("own ipv6 ll-addr: %s\n", own_addr);
+    printf("Own IPv6 ll-addr: %s\n", own_addr);
 
 	gcoap_register_listener(&coap_listener);
-	puts("coap ready");
+	puts("CoAP ready");
 
-    // thread für pings
+    /* Thread for pings */
     thread_create(
         ping_stack,
         THREAD_STACKSIZE_DEFAULT,
@@ -69,7 +72,7 @@ int main(void) {
         "ping"
     );
     
-    // shell starten damit Application nicht terminiert
+    /* Start shell to avoid termination of the main thread */
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(NULL, line_buf, SHELL_DEFAULT_BUFSIZE);
         

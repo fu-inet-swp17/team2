@@ -2,7 +2,9 @@
 
 #include "saul_reg.h"
 
-
+/*
+ * @brief   Checks which sensors are connected to the board and prints their names to stdout
+ */
 void sensors_test(void) {
     puts("\n##############################################");
     puts("############## SAUL sensor test ##############\n");
