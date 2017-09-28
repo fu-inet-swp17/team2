@@ -1,4 +1,4 @@
-# name of your application
+# Name of the application
 APPLICATION = server-emulator
 
 # If no BOARD is found in the environment, use this default:
@@ -16,7 +16,7 @@ CFLAGS += -DDEVELHELP
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
-#Packeges to include:
+# Packages to include:
 USEPKG += nanocoap
 
 # Modules to include:
@@ -27,7 +27,6 @@ USEMODULE += gcoap
 USEMODULE += xtimer
 USEMODULE += ipv6_addr
 USEMODULE += auto_init
-# USEMODULE += auto_init
 
 USEMODULE += gnrc_netdev_default
 USEMODULE += auto_init_gnrc_netif

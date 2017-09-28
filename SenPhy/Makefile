@@ -1,4 +1,4 @@
-# name of your application
+# Name of the application
 APPLICATION = SenPhy 
 
 # If no BOARD is found in the environment, use this default:
@@ -16,12 +16,12 @@ CFLAGS += -DDEBUG_ASSERT_VERBOSE
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
-#Packeges to include:
+# Packages to include:
 USEPKG += nanocoap
 USEPKG += jsmn
 
 # Modules to include:
-# We going to need some parts of RIOT
+# We're going to need some parts of RIOT
 USEMODULE += fmt
 USEMODULE += gcoap
 USEMODULE += saul_default
