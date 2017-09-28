@@ -2,9 +2,7 @@
 APPLICATION = SenPhy 
 
 # If no BOARD is found in the environment, use this default:
-BOARD ?= pba-d-01-kw2x #native
-# SERIAL ?= 02000203C3014E6A3EFDB392 #Thomas
-SERIAL ?= 02000203C31C4E043EE0B3FC #Adrian
+BOARD ?= pba-d-01-kw2x
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../RIOT
