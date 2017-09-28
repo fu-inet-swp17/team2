@@ -2,8 +2,8 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generiert durch Microsoft Visio, SVG Export sequenceDiagram.svg Page-1 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
-		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="12.2338in" height="9.46017in"
-		viewBox="0 0 880.833 681.132" xml:space="preserve" color-interpolation-filters="sRGB" class="st17">
+		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="11.0921in" height="9.46017in"
+		viewBox="0 0 798.628 681.132" xml:space="preserve" color-interpolation-filters="sRGB" class="st17">
 	<v:documentProperties v:langID="1031" v:metric="true" v:viewMarkup="false">
 		<v:userDefs>
 			<v:ud v:nameU="msvNoAutoConnect" v:prompt="" v:val="VT0(0):26"/>
@@ -22,10 +22,10 @@
 		.st8 {fill:#73ae42;stroke:#6ca43d;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.5}
 		.st9 {marker-end:url(#mrkr4-99);stroke:#6ca43d;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.5}
 		.st10 {fill:#6ca43d;fill-opacity:1;stroke:#6ca43d;stroke-opacity:1;stroke-width:0.13368983957219}
-		.st11 {fill:#ffffff;stroke:none;stroke-linecap:butt;stroke-width:7.2}
+		.st11 {fill:#ffffff;stroke:none;stroke-linecap:butt}
 		.st12 {fill:#53802e;font-family:Calibri;font-size:0.666664em}
 		.st13 {marker-end:url(#mrkr3-109);stroke:#6ca43d;stroke-dasharray:3.5,2.5;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.5}
-		.st14 {fill:#ffffff;stroke:none;stroke-linecap:butt}
+		.st14 {fill:#ffffff;stroke:none;stroke-linecap:butt;stroke-width:7.2}
 		.st15 {fill:#a5a5a5;font-family:Calibri;font-size:0.666664em}
 		.st16 {marker-end:url(#mrkr3-109);stroke:#6ca43d;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.5}
 		.st17 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
@@ -328,7 +328,7 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="-73.5302" cy="688.219" width="96.87" height="17.6036"/>
 			<path d="M0 688.21 L-147.06 688.23" class="st13"/>
-			<rect v:rectContext="textBkgnd" x="-117.057" y="683.419" width="87.0535" height="9.59985" class="st11"/>
+			<rect v:rectContext="textBkgnd" x="-117.057" y="683.419" width="87.0535" height="9.59985" class="st14"/>
 			<text x="-117.06" y="690.62" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>data serialized with SenML</text>		</g>
 		<g id="shape1142-112" v:mID="1142" v:groupContext="shape" v:layerMember="1" transform="translate(422.187,-205.725)">
 			<title>Nachricht.1142</title>
@@ -342,7 +342,7 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="-59.5276" cy="674.045" width="61.9" height="17.6036"/>
 			<path d="M0 674.05 L-111.58 674.05" class="st9"/>
-			<rect v:rectContext="textBkgnd" x="-85.5682" y="669.246" width="52.0815" height="9.59985" class="st11"/>
+			<rect v:rectContext="textBkgnd" x="-85.5682" y="669.246" width="52.0815" height="9.59985" class="st14"/>
 			<text x="-85.57" y="676.45" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>store data in DB</text>		</g>
 		<g id="shape1143-119" v:mID="1143" v:groupContext="shape" transform="translate(-378,505.171) rotate(-90)">
 			<title>Aktivierung.1143</title>
@@ -363,7 +363,7 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="61.6535" cy="688.219" width="51.85" height="17.6036"/>
 			<path d="M0 688.22 L123.31 688.22" class="st13"/>
-			<rect v:rectContext="textBkgnd" x="40.6383" y="683.419" width="42.0307" height="9.59985" class="st11"/>
+			<rect v:rectContext="textBkgnd" x="40.6383" y="683.419" width="42.0307" height="9.59985" class="st14"/>
 			<text x="40.64" y="690.62" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>confirmation</text>		</g>
 		<g id="shape1145-128" v:mID="1145" v:groupContext="shape" transform="translate(-633.118,607.077) rotate(-90)">
 			<title>Aktivierung.1119</title>
@@ -384,7 +384,7 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="59.5276" cy="674.045" width="53.76" height="17.6036"/>
 			<path d="M0 674.05 L111.58 674.05" class="st9"/>
-			<rect v:rectContext="textBkgnd" x="37.5573" y="669.246" width="43.9406" height="9.59985" class="st11"/>
+			<rect v:rectContext="textBkgnd" x="37.5573" y="669.246" width="43.9406" height="9.59985" class="st14"/>
 			<text x="37.56" y="676.45" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>open website</text>		</g>
 		<g id="shape1147-137" v:mID="1147" v:groupContext="shape" transform="translate(-505.559,601.408) rotate(-90)">
 			<title>Aktivierung.1121</title>
@@ -412,7 +412,7 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="59.5276" cy="688.219" width="68.23" height="17.6036"/>
 			<path d="M0 688.22 L111.58 688.22" class="st9"/>
-			<rect v:rectContext="textBkgnd" x="30.3227" y="683.419" width="58.4099" height="9.59985" class="st11"/>
+			<rect v:rectContext="textBkgnd" x="30.3227" y="683.419" width="58.4099" height="9.59985" class="st14"/>
 			<text x="30.32" y="690.62" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>query sensor data</text>		</g>
 		<g id="shape1150-148" v:mID="1150" v:groupContext="shape" v:layerMember="1" transform="translate(294.628,-95.315)">
 			<title>Antwortnachricht.1124</title>
@@ -504,7 +504,7 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="-73.7008" cy="688.219" width="102.16" height="17.6036"/>
 			<path d="M0 688.22 L-147.4 688.22" class="st16"/>
-			<rect v:rectContext="textBkgnd" x="-119.874" y="683.419" width="92.3461" height="9.59985" class="st14"/>
+			<rect v:rectContext="textBkgnd" x="-119.874" y="683.419" width="92.3461" height="9.59985" class="st11"/>
 			<text x="-119.87" y="690.62" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>announcement via multicast</text>		</g>
 		<g id="shape1161-181" v:mID="1161" v:groupContext="shape" v:layerMember="1" transform="translate(581.953,-311.386)">
 			<title>Nachricht.1161</title>
@@ -532,124 +532,16 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="-61.5998" cy="674.045" width="47.62" height="17.6036"/>
 			<path d="M0 675.06 L-123.2 673.03" class="st13"/>
-			<rect v:rectContext="textBkgnd" x="-80.502" y="669.246" width="37.8045" height="9.59985" class="st11"/>
+			<rect v:rectContext="textBkgnd" x="-80.502" y="669.246" width="37.8045" height="9.59985" class="st14"/>
 			<text x="-80.5" y="676.45" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>sensor data</text>		</g>
-		<g id="group1163-195" transform="translate(811.559,-589.819)" v:mID="1163" v:groupContext="group">
-			<v:userDefs>
-				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
-				<v:ud v:nameU="ShowActor" v:prompt="" v:val="VT0(1):5"/>
-				<v:ud v:nameU="ShowDestruction" v:prompt="" v:val="VT0(0):5"/>
-			</v:userDefs>
-			<title>Akteur-Lebenslinie.1163</title>
-			<desc>User</desc>
-			<g id="shape1164-196" v:mID="1164" v:groupContext="shape">
-				<title>Tabelle.1164</title>
-				<rect x="0" y="655.62" width="51.0236" height="25.5118" class="st1"/>
-			</g>
-			<g id="shape1165-198" v:mID="1165" v:groupContext="shape" transform="translate(17.0079,-29.0551)">
-				<title>Tabelle.1165</title>
-				<path d="M3.4 681.13 L3.4 664.12 L3.4 670.93 L0 670.93 L0 657.32 L1.7 655.62 L15.31 655.62 L17.01 657.32 L17.01 670.93
-							 L13.61 670.93 L13.61 664.12 L13.61 681.13 L8.5 681.13 L8.5 667.53 L8.5 681.13 L3.4 681.13 ZM11.91 650.52
-							 A3.40157 3.40157 -180 1 0 5.1 650.52 A3.40157 3.40157 -180 1 0 11.91 650.52 Z" class="st1"/>
-			</g>
-			<g id="shape1166-200" v:mID="1166" v:groupContext="shape" transform="translate(17.0079,566.757)">
-				<title>Tabelle.1166</title>
-			</g>
-			<g id="shape1167-202" v:mID="1167" v:groupContext="shape" transform="translate(706.644,681.132) rotate(90)">
-				<title>Tabelle.1167</title>
-				<path d="M0 681.13 L549.14 681.13" class="st2"/>
-			</g>
-			<g id="shape1163-205" v:mID="1163" v:groupContext="groupContent">
-				<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-				<v:textRect cx="25.5118" cy="668.376" width="51.03" height="25.5118"/>
-				<rect x="0" y="655.62" width="51.0236" height="25.5118" class="st1"/>
-				<text x="14.05" y="671.98" class="st3" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>User</text>			</g>
-		</g>
-		<g id="shape1168-208" v:mID="1168" v:groupContext="shape" transform="translate(160.191,623.447) rotate(-90)">
-			<title>Aktivierung.1168</title>
-			<v:userDefs>
-				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
-			</v:userDefs>
-			<rect x="0" y="672.628" width="96.378" height="8.50394" class="st8"/>
-		</g>
-		<g id="shape1169-210" v:mID="1169" v:groupContext="shape" transform="translate(-94.5356,623.447) rotate(-90)">
-			<title>Aktivierung.1169</title>
-			<v:userDefs>
-				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
-			</v:userDefs>
-			<rect x="0" y="672.628" width="96.378" height="8.50394" class="st8"/>
-		</g>
-		<g id="shape1170-212" v:mID="1170" v:groupContext="shape" v:layerMember="1" transform="translate(837.071,-146.976)">
-			<title>Asynchrone Nachricht.1170</title>
-			<desc>press button</desc>
-			<v:userDefs>
-				<v:ud v:nameU="IsReturn" v:prompt="" v:val="VT0(0):5"/>
-				<v:ud v:nameU="IsAsync" v:prompt="" v:val="VT0(1):26"/>
-				<v:ud v:nameU="IsSelfMessage" v:prompt="" v:val="VT0(0):5"/>
-				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
-			</v:userDefs>
-			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="-125.237" cy="674.045" width="51.04" height="17.6036"/>
-			<path d="M0 674.05 L-250.47 674.05" class="st16"/>
-			<rect v:rectContext="textBkgnd" x="-145.85" y="669.246" width="41.2262" height="9.59985" class="st14"/>
-			<text x="-145.85" y="676.45" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>press button</text>		</g>
-		<g id="shape1171-219" v:mID="1171" v:groupContext="shape" transform="translate(33.0235,597.935) rotate(-90)">
-			<title>Aktivierung.1171</title>
-			<v:userDefs>
-				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
-			</v:userDefs>
-			<rect x="0" y="672.628" width="48.189" height="8.50394" class="st8"/>
-		</g>
-		<g id="shape1172-221" v:mID="1172" v:groupContext="shape" v:layerMember="1" transform="translate(582.345,-124.299)">
-			<title>Nachricht.1172</title>
-			<desc>query sensor data</desc>
-			<v:userDefs>
-				<v:ud v:nameU="IsReturn" v:prompt="" v:val="VT0(0):5"/>
-				<v:ud v:nameU="IsAsync" v:prompt="" v:val="VT0(0):26"/>
-				<v:ud v:nameU="IsSelfMessage" v:prompt="" v:val="VT0(0):5"/>
-				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
-			</v:userDefs>
-			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="61.6535" cy="674.045" width="68.23" height="17.6036"/>
-			<path d="M0 674.05 L115.83 674.05" class="st9"/>
-			<rect v:rectContext="textBkgnd" x="32.4487" y="669.246" width="58.4099" height="9.59985" class="st14"/>
-			<text x="32.45" y="676.45" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>query sensor data</text>		</g>
-		<g id="shape1173-228" v:mID="1173" v:groupContext="shape" v:layerMember="1" transform="translate(709.904,-76.1102)">
-			<title>Antwortnachricht.1173</title>
-			<desc>sensor data</desc>
-			<v:userDefs>
-				<v:ud v:nameU="IsReturn" v:prompt="" v:val="VT0(1):5"/>
-				<v:ud v:nameU="IsAsync" v:prompt="" v:val="VT0(0):26"/>
-				<v:ud v:nameU="IsSelfMessage" v:prompt="" v:val="VT0(0):5"/>
-				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
-			</v:userDefs>
-			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="-61.6535" cy="674.045" width="47.62" height="17.6036"/>
-			<path d="M0 674.05 L-123.31 674.05" class="st13"/>
-			<rect v:rectContext="textBkgnd" x="-80.5557" y="669.246" width="37.8045" height="9.59985" class="st11"/>
-			<text x="-80.56" y="676.45" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>sensor data</text>		</g>
-		<g id="shape1174-235" v:mID="1174" v:groupContext="shape" v:layerMember="1" transform="translate(586.596,-61.937)">
-			<title>Asynchrone Nachricht.1174</title>
-			<desc>output sensor data through LED stripes</desc>
-			<v:userDefs>
-				<v:ud v:nameU="IsReturn" v:prompt="" v:val="VT0(0):5"/>
-				<v:ud v:nameU="IsAsync" v:prompt="" v:val="VT0(1):26"/>
-				<v:ud v:nameU="IsSelfMessage" v:prompt="" v:val="VT0(0):5"/>
-				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
-			</v:userDefs>
-			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="123.111" cy="674.045" width="137.04" height="17.6036"/>
-			<path d="M0 674.05 L246.22 674.05" class="st16"/>
-			<rect v:rectContext="textBkgnd" x="59.4985" y="669.246" width="127.226" height="9.59985" class="st14"/>
-			<text x="59.5" y="676.45" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>output sensor data through LED stripes</text>		</g>
-		<g id="shape1175-242" v:mID="1175" v:groupContext="shape" transform="translate(-378,176.352) rotate(-90)">
+		<g id="shape1175-195" v:mID="1175" v:groupContext="shape" transform="translate(-378,176.352) rotate(-90)">
 			<title>Aktivierung.1175</title>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<rect x="0" y="672.628" width="34.0157" height="8.50394" class="st8"/>
 		</g>
-		<g id="shape1176-244" v:mID="1176" v:groupContext="shape" v:layerMember="1" transform="translate(422.187,-531.709)">
+		<g id="shape1176-197" v:mID="1176" v:groupContext="shape" v:layerMember="1" transform="translate(422.187,-531.709)">
 			<title>Nachricht.1176</title>
 			<desc>register board in DB</desc>
 			<v:userDefs>
@@ -661,9 +553,9 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="-59.5276" cy="674.045" width="74.75" height="17.6036"/>
 			<path d="M0 674.05 L-111.58 674.05" class="st9"/>
-			<rect v:rectContext="textBkgnd" x="-91.994" y="669.246" width="64.933" height="9.59985" class="st14"/>
+			<rect v:rectContext="textBkgnd" x="-91.994" y="669.246" width="64.933" height="9.59985" class="st11"/>
 			<text x="-91.99" y="676.45" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>register board in DB</text>		</g>
-		<g id="shape1177-251" v:mID="1177" v:groupContext="shape" v:layerMember="1" transform="translate(303.132,-497.693)">
+		<g id="shape1177-204" v:mID="1177" v:groupContext="shape" v:layerMember="1" transform="translate(303.132,-497.693)">
 			<title>Antwortnachricht.1177</title>
 			<desc>confirmation</desc>
 			<v:userDefs>
@@ -675,16 +567,16 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="59.5276" cy="674.045" width="51.85" height="17.6036"/>
 			<path d="M0 674.05 L119.06 674.05" class="st13"/>
-			<rect v:rectContext="textBkgnd" x="38.5123" y="669.246" width="42.0307" height="9.59985" class="st14"/>
+			<rect v:rectContext="textBkgnd" x="38.5123" y="669.246" width="42.0307" height="9.59985" class="st11"/>
 			<text x="38.51" y="676.45" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>confirmation</text>		</g>
-		<g id="shape1178-258" v:mID="1178" v:groupContext="shape" transform="translate(-378,275.565) rotate(-90)">
+		<g id="shape1178-211" v:mID="1178" v:groupContext="shape" transform="translate(-378,275.565) rotate(-90)">
 			<title>Aktivierung.1178</title>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<rect x="0" y="672.628" width="42.5197" height="8.50394" class="st8"/>
 		</g>
-		<g id="shape1179-260" v:mID="1179" v:groupContext="shape" v:layerMember="1" transform="translate(426.439,-455.173)">
+		<g id="shape1179-213" v:mID="1179" v:groupContext="shape" v:layerMember="1" transform="translate(426.439,-455.173)">
 			<title>Nachricht.1179</title>
 			<desc>query boards</desc>
 			<v:userDefs>
@@ -696,9 +588,9 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="-61.6535" cy="688.219" width="52.8" height="17.6036"/>
 			<path d="M0 688.22 L-115.83 688.22" class="st9"/>
-			<rect v:rectContext="textBkgnd" x="-83.1437" y="683.419" width="42.9804" height="9.59985" class="st11"/>
+			<rect v:rectContext="textBkgnd" x="-83.1437" y="683.419" width="42.9804" height="9.59985" class="st14"/>
 			<text x="-83.14" y="690.62" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>query boards</text>		</g>
-		<g id="shape1180-267" v:mID="1180" v:groupContext="shape" v:layerMember="1" transform="translate(303.132,-406.984)">
+		<g id="shape1180-220" v:mID="1180" v:groupContext="shape" v:layerMember="1" transform="translate(303.132,-406.984)">
 			<title>Antwortnachricht.1180</title>
 			<desc>return</desc>
 			<v:userDefs>
@@ -712,14 +604,14 @@
 			<path d="M0 674.05 L119.06 674.05" class="st13"/>
 			<rect v:rectContext="textBkgnd" x="49.2054" y="669.246" width="20.6444" height="9.59985" class="st11"/>
 			<text x="49.21" y="676.45" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>return</text>		</g>
-		<g id="shape1181-274" v:mID="1181" v:groupContext="shape" transform="translate(-94.5356,326.589) rotate(-90)">
+		<g id="shape1181-227" v:mID="1181" v:groupContext="shape" transform="translate(-94.5356,326.589) rotate(-90)">
 			<title>Aktivierung.1181</title>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<rect x="0" y="672.628" width="36.8504" height="8.50394" class="st8"/>
 		</g>
-		<g id="shape1182-276" v:mID="1182" v:groupContext="shape" v:layerMember="1" transform="translate(426.439,-384.307)">
+		<g id="shape1182-229" v:mID="1182" v:groupContext="shape" v:layerMember="1" transform="translate(426.439,-384.307)">
 			<title>Nachricht.1182</title>
 			<desc>query resources</desc>
 			<v:userDefs>
@@ -733,7 +625,7 @@
 			<path d="M0 674.05 L144.17 674.05" class="st9"/>
 			<rect v:rectContext="textBkgnd" x="49.7235" y="669.246" width="52.2068" height="9.59985" class="st11"/>
 			<text x="49.72" y="676.45" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>query resources</text>		</g>
-		<g id="shape1183-283" v:mID="1183" v:groupContext="shape" v:layerMember="1" transform="translate(586.596,-364.465)">
+		<g id="shape1183-236" v:mID="1183" v:groupContext="shape" v:layerMember="1" transform="translate(586.596,-364.465)">
 			<title>Antwortnachricht.1183</title>
 			<desc>return</desc>
 			<v:userDefs>
@@ -745,17 +637,17 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="-77.9528" cy="688.219" width="40" height="17.6036"/>
 			<path d="M0 688.22 L-155.91 688.22" class="st13"/>
-			<rect v:rectContext="textBkgnd" x="-88.2749" y="683.419" width="20.6444" height="9.59985" class="st14"/>
+			<rect v:rectContext="textBkgnd" x="-88.2749" y="683.419" width="20.6444" height="9.59985" class="st11"/>
 			<text x="-88.27" y="690.62" class="st12" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>return</text>		</g>
-		<g id="group1184-290" transform="translate(281.48,-169.795)" v:mID="1184" v:groupContext="group">
+		<g id="group1184-243" transform="translate(281.48,-169.795)" v:mID="1184" v:groupContext="group">
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<title>Schleifenfragment.1184</title>
-			<g id="shape1184-291" v:mID="1184" v:groupContext="groupContent">
+			<g id="shape1184-244" v:mID="1184" v:groupContext="groupContent">
 				<rect x="0" y="505.384" width="450.709" height="175.748" class="st5"/>
 			</g>
-			<g id="shape1185-293" v:mID="1185" v:groupContext="shape" transform="translate(0,-158.144)">
+			<g id="shape1185-246" v:mID="1185" v:groupContext="shape" transform="translate(0,-158.144)">
 				<title>Tabelle.1185</title>
 				<desc>Loop</desc>
 				<v:userDefs>
@@ -773,7 +665,7 @@
 				<v:textRect cx="32" cy="672.33" width="64" height="17.6036"/>
 				<path d="M0 681.13 L56.91 681.13 L64 674.05 L64 663.53 L0 663.53 L0 681.13 Z" class="st6"/>
 				<text x="4" y="674.73" class="st7" v:langID="1031"><v:paragraph/><v:tabList/>Loop</text>			</g>
-			<g id="shape1186-296" v:mID="1186" v:groupContext="shape" transform="translate(0,-140.541)">
+			<g id="shape1186-249" v:mID="1186" v:groupContext="shape" transform="translate(0,-140.541)">
 				<title>Tabelle.1186</title>
 				<desc>through all resources</desc>
 				<v:userDefs>

@@ -3,7 +3,7 @@
 <!-- Generiert durch Microsoft Visio, SVG Export interactionDiagram.svg Page-1 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
 		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="7.8022in" height="3.70429in"
-		viewBox="0 0 561.759 266.709" xml:space="preserve" color-interpolation-filters="sRGB" class="st9">
+		viewBox="0 0 561.759 266.709" xml:space="preserve" color-interpolation-filters="sRGB" class="st10">
 	<v:documentProperties v:langID="1031" v:metric="true" v:viewMarkup="false">
 		<v:userDefs>
 			<v:ud v:nameU="msvNoAutoConnect" v:val="VT0(1):26"/>
@@ -18,9 +18,10 @@
 		.st4 {fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:0.18796992481203}
 		.st5 {fill:#ffffff;stroke:none;stroke-linecap:butt;stroke-width:7.2}
 		.st6 {fill:#000000;font-family:Calibri;font-size:0.666664em}
-		.st7 {fill:#ffffff;font-family:Calibri;font-size:1.00001em}
-		.st8 {fill:#ffffff;stroke:#ffffff;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.24}
-		.st9 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+		.st7 {fill:#ffffff;stroke:none;stroke-linecap:butt}
+		.st8 {fill:#ffffff;font-family:Calibri;font-size:1.00001em}
+		.st9 {fill:#ffffff;stroke:#ffffff;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.24}
+		.st10 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
 	]]>
 	</style>
 
@@ -40,14 +41,14 @@
 		<v:layer v:name="Verbinder" v:index="0"/>
 		<g id="shape2-1" v:mID="2" v:groupContext="shape" transform="translate(18.12,-163.55)">
 			<title>Rechteck.2</title>
-			<desc>Board</desc>
+			<desc>SenPhy</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.6929" cy="224.189" width="113.39" height="85.0394"/>
 			<rect x="0" y="181.67" width="113.386" height="85.0394" class="st1"/>
-			<text x="34.87" y="229.59" class="st2" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>Board</text>		</g>
+			<text x="29.9" y="229.59" class="st2" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>SenPhy</text>		</g>
 		<g id="shape4-4" v:mID="4" v:groupContext="shape" transform="translate(227.458,-163.55)">
 			<title>Rechteck.4</title>
 			<desc>SenPi</desc>
@@ -88,14 +89,14 @@
 			<text x="-71.08" y="262.02" class="st6" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>CoAP-Request</text>		</g>
 		<g id="shape14-22" v:mID="14" v:groupContext="shape" transform="translate(18.12,-18.12)">
 			<title>Rechteck.14</title>
-			<desc>Board</desc>
+			<desc>SenPhy</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.6929" cy="224.189" width="113.39" height="85.0394"/>
 			<rect x="0" y="181.67" width="113.386" height="85.0394" class="st1"/>
-			<text x="34.87" y="229.59" class="st2" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>Board</text>		</g>
+			<text x="29.9" y="229.59" class="st2" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>SenPhy</text>		</g>
 		<g id="shape16-25" v:mID="16" v:groupContext="shape" v:layerMember="0" transform="translate(131.506,-70.2939)">
 			<title>Nachricht.16</title>
 			<desc>CoAP-Response</desc>
@@ -108,7 +109,7 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="41.3612" cy="267.264" width="60.7" height="17.6036"/>
 			<path d="M0 266.71 L77.64 266.71 L77.64 121.28 L87.97 121.28" class="st3"/>
-			<rect v:rectContext="textBkgnd" x="15.9201" y="262.464" width="50.8824" height="9.59985" class="st5"/>
+			<rect v:rectContext="textBkgnd" x="15.9201" y="262.464" width="50.8824" height="9.59985" class="st7"/>
 			<text x="15.92" y="269.66" class="st6" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>CoAP-Response</text>		</g>
 		<g id="shape17-32" v:mID="17" v:groupContext="shape" v:layerMember="0" transform="translate(227.458,-197.031)">
 			<title>Nachricht.17</title>
@@ -122,7 +123,7 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="-50.9055" cy="412.426" width="56.03" height="17.6036"/>
 			<path d="M0 266.71 L-7.68 266.71 L-7.68 412.14 L-87.97 412.14" class="st3"/>
-			<rect v:rectContext="textBkgnd" x="-74.0125" y="407.626" width="46.2143" height="9.59985" class="st5"/>
+			<rect v:rectContext="textBkgnd" x="-74.0125" y="407.626" width="46.2143" height="9.59985" class="st7"/>
 			<text x="-74.01" y="414.83" class="st6" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>CoAP-Request</text>		</g>
 		<g id="shape20-39" v:mID="20" v:groupContext="shape" transform="translate(227.458,-125.015)">
 			<title>Rechteck</title>
@@ -133,7 +134,7 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.6929" cy="246.866" width="113.39" height="39.685"/>
 			<rect x="0" y="227.024" width="113.386" height="39.685" class="st1"/>
-			<text x="31.22" y="250.47" class="st7" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>MySQL DB</text>		</g>
+			<text x="31.22" y="250.47" class="st8" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>MySQL DB</text>		</g>
 		<g id="shape21-42" v:mID="21" v:groupContext="shape" transform="translate(430.253,-125.015)">
 			<title>Rechteck.21</title>
 			<desc>Webanwendung</desc>
@@ -143,7 +144,7 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.6929" cy="224.764" width="113.39" height="83.8891"/>
 			<rect x="0" y="182.82" width="113.386" height="83.8891" class="st1"/>
-			<text x="16.48" y="228.36" class="st7" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>Webanwendung</text>		</g>
+			<text x="16.48" y="228.36" class="st8" v:langID="1031"><v:paragraph v:horizAlign="1"/><v:tabList/>Webanwendung</text>		</g>
 		<g id="shape22-45" v:mID="22" v:groupContext="shape" v:layerMember="0" transform="translate(340.843,-144.857)">
 			<title>Nachricht.22</title>
 			<desc>Sensordaten</desc>
@@ -163,7 +164,7 @@
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
-			<path d="M0 266.71 L113.39 266.71 L0 266.71 Z" class="st8"/>
+			<path d="M0 266.71 L113.39 266.71 L0 266.71 Z" class="st9"/>
 		</g>
 	</g>
 </svg>
